@@ -1,7 +1,5 @@
-import { HomePageContent } from '@/features/home';
-
 const HomePage = async () => {
-  return <HomePageContent />;
+  return <div>teste</div>;
 };
 
 export default HomePage;

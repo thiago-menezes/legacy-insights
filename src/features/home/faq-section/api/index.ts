@@ -1,1 +1,0 @@
-export { useFAQ } from './query';
