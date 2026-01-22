@@ -14,30 +14,39 @@ interface ShellPreferences {
   headerVisible: boolean;
 }
 
+// Helper function to load preferences from localStorage
+const loadPreferences = (): ShellPreferences => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error('Failed to parse shell preferences:', e);
+  }
+  return {
+    sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
+    sidebarVisible: true,
+    headerVisible: true,
+  };
+};
+
 export const useShellState = () => {
-  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
-  const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [headerVisible, setHeaderVisible] = useState(true);
+  // Initialize state with lazy initializer functions to avoid cascading renders
+  // Load preferences once and use for all initial states
+  const initialPrefs = loadPreferences();
+  const [sidebarWidth, setSidebarWidth] = useState(initialPrefs.sidebarWidth);
+  const [sidebarVisible, setSidebarVisible] = useState(
+    initialPrefs.sidebarVisible,
+  );
+  const [headerVisible, setHeaderVisible] = useState(
+    initialPrefs.headerVisible,
+  );
   const [isResizing, setIsResizing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [previousSidebarVisible, setPreviousSidebarVisible] = useState(true);
   const [previousHeaderVisible, setPreviousHeaderVisible] = useState(true);
-
-  // Load preferences from localStorage on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const prefs: ShellPreferences = JSON.parse(stored);
-        setSidebarWidth(prefs.sidebarWidth || DEFAULT_SIDEBAR_WIDTH);
-        setSidebarVisible(prefs.sidebarVisible ?? true);
-        setHeaderVisible(prefs.headerVisible ?? true);
-      } catch (e) {
-        console.error('Failed to parse shell preferences:', e);
-      }
-    }
-  }, []);
 
   // Save preferences to localStorage
   useEffect(() => {
@@ -108,11 +117,11 @@ export const useShellState = () => {
     setIsFullscreen(true);
   }, [sidebarVisible, headerVisible]);
 
-  const exitFullScreen = useCallback(() => {
+  const exitFullScreen = () => {
     setSidebarVisible(previousSidebarVisible);
     setHeaderVisible(previousHeaderVisible);
     setIsFullscreen(false);
-  }, []);
+  };
 
   return {
     sidebarWidth,
