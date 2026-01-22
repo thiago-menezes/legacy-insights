@@ -1,0 +1,19 @@
+name: Production|Deploy ECS|LPs Front
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+concurrency:
+  group: 'lps-front-production-deploy'
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/template-deploy-to-ecs.yml
+    with:
+      environment: production
+      envFilename: .env.production
+    secrets:
+      gh_bot_release_id: ${{ secrets.GH_BOT_RELEASE_ID }}
+      gh_bot_release_private_key: ${{ secrets.GH_BOT_RELEASE_PRIVATE_KEY }}

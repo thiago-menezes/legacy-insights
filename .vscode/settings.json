@@ -1,0 +1,6 @@
+{
+  "eslint.runtime": "/opt/homebrew/bin/node",
+  "typescript.referencesCodeLens.enabled": true,
+  "javascript.referencesCodeLens.enabled": true,
+  "typescript.implementationsCodeLens.enabled": true
+}

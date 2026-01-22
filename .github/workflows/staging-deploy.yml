@@ -1,0 +1,19 @@
+name: Staging|Deploy ECS|LPs Front
+
+on:
+  push:
+    tags:
+      - 'v*-staging.*'
+
+concurrency:
+  group: 'lps-front-staging-deploy'
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/template-deploy-to-ecs.yml
+    with:
+      environment: staging
+      envFilename: .env.staging
+    secrets:
+      gh_bot_release_id: ${{ secrets.GH_BOT_RELEASE_ID }}
+      gh_bot_release_private_key: ${{ secrets.GH_BOT_RELEASE_PRIVATE_KEY }}

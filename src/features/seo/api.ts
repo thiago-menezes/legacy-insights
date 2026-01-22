@@ -1,0 +1,46 @@
+import { initStrapi, strapiFetch } from '@/bff/services/strapi';
+import type { StrapiSeoResponse } from './types';
+
+const getStrapiUrl = (): string => {
+  const url = process.env.STRAPI_URL || process.env.NEXT_PUBLIC_STRAPI_URL;
+  if (!url) {
+    throw new Error('STRAPI_URL is not configured');
+  }
+  return url;
+};
+
+export const getSeoFromStrapi = async (
+  institutionSlug: string,
+): Promise<StrapiSeoResponse['data'][0] | null> => {
+  try {
+    const strapiUrl = getStrapiUrl();
+    const strapiToken = process.env.STRAPI_TOKEN;
+
+    initStrapi({ baseUrl: strapiUrl, token: strapiToken });
+
+    const strapiResponse = await strapiFetch<StrapiSeoResponse>('seos', {
+      filters: {
+        instituicao: {
+          slug: { $eq: institutionSlug },
+        },
+      },
+      params: {
+        status: 'published',
+      },
+      populate: 'instituicao',
+    });
+
+    if (
+      !strapiResponse ||
+      !strapiResponse.data ||
+      strapiResponse.data.length === 0
+    ) {
+      return null;
+    }
+
+    return strapiResponse.data[0];
+  } catch (error) {
+    console.error('SEO fetch error:', error);
+    return null;
+  }
+};

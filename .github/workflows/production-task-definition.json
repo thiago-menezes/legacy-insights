@@ -1,0 +1,107 @@
+{
+  "family": "td-ser-lps-front-prd",
+  "containerDefinitions": [
+    {
+      "name": "ser-lps-front-prd",
+      "cpu": 0,
+      "essential": true,
+      "image": "992382784330.dkr.ecr.us-east-1.amazonaws.com/ser-lps-front-prod:v1.0.0",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ser-lps-front-prd",
+          "awslogs-create-group": "true",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "portMappings": [
+        {
+          "appProtocol": "http",
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "name": "port",
+          "protocol": "tcp"
+        }
+      ],
+      "readonlyRootFilesystem": false,
+      "secrets": [
+        {
+          "name": "STRAPI_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:STRAPI_URL::"
+        },
+        {
+          "name": "STRAPI_TOKEN",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:STRAPI_TOKEN::"
+        },
+        {
+          "name": "NEXT_PUBLIC_INSTITUTION",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:NEXT_PUBLIC_INSTITUTION::"
+        },
+        {
+          "name": "API_BASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:API_BASE_URL::"
+        },
+        {
+          "name": "API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:API_KEY::"
+        },
+        {
+          "name": "CHECKOUT_API_BASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:CHECKOUT_API_BASE_URL::"
+        },
+        {
+          "name": "CHECKOUT_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:CHECKOUT_API_KEY::"
+        },
+        {
+          "name": "CDN_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:CDN_URL::"
+        },
+        {
+          "name": "HUBSPOT_PORTAL_ID",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:HUBSPOT_PORTAL_ID::"
+        },
+        {
+          "name": "HUBSPOT_FORM_ID",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:HUBSPOT_FORM_ID::"
+        },
+        {
+          "name": "HUBSPOT_MARCA",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:HUBSPOT_MARCA::"
+        },
+        {
+          "name": "HUBSPOT_ORIGEM_LEAD",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:HUBSPOT_ORIGEM_LEAD::"
+        },
+        {
+          "name": "NEXT_PUBLIC_GTM_ID",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:NEXT_PUBLIC_GTM_ID::"
+        },
+        {
+          "name": "NEXT_PUBLIC_RECAPTCHA_SITE_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:NEXT_PUBLIC_RECAPTCHA_SITE_KEY::"
+        },
+        {
+          "name": "RECAPTCHA_SECRET_KEY",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:RECAPTCHA_SECRET_KEY::"
+        },
+        {
+          "name": "GEOCODE_API_BASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:992382784330:secret:prod/ser-lps-novo-ps-front-jT8JrO:GEOCODE_API_BASE_URL::"
+        }
+      ]
+    }
+  ],
+  "cpu": "1024",
+  "enableFaultInjection": false,
+  "executionRoleArn": "arn:aws:iam::992382784330:role/GDEV_010_ECSTaskExecutionRoleForProduction",
+  "memory": "2048",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "runtimePlatform": {
+    "cpuArchitecture": "ARM64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "taskRoleArn": "arn:aws:iam::992382784330:role/GDEV_009_ECSTaskRoleForProduction"
+}

@@ -1,0 +1,218 @@
+name: Deploy ECS Template
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+      envFilename:
+        description: 'Environment file name'
+        required: true
+        type: string
+    secrets:
+      gh_bot_release_id:
+        description: 'GitHub Bot Release App ID'
+        required: true
+      gh_bot_release_private_key:
+        description: 'GitHub Bot Release Private Key'
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build_docker_image:
+    timeout-minutes: 30
+    name: build image and push
+    runs-on: ubuntu-latest
+    outputs:
+      image_id: ${{ steps.push_image_to_ecr.outputs.image_id }}
+    environment: ${{ inputs.environment }}
+    env:
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+
+    steps:
+      - name: 0 - Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: '1 - Login to Amazon ECR'
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: '2 - Get the Code (Checkout)'
+        uses: actions/checkout@v4
+
+      - name: '2.1 - Set up QEMU'
+        uses: docker/setup-qemu-action@v3
+
+      - name: '2.2 - Set up Docker Buildx'
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+
+      - name: '2.2.1 Make env'
+        run: |
+          cp ${{inputs.envFilename}} .env
+
+      - name: '2.3 - Build and Push Docker image to ECR'
+        id: push_image_to_ecr
+        run: |
+          VERSION=${{ github.ref_name }}
+          echo "VERSION is ====> $VERSION"
+          docker buildx build --platform linux/arm64 \
+            --cache-from=type=gha \
+            --cache-to=type=gha,mode=max \
+            --push -t $ECR_REPOSITORY:$VERSION -f Dockerfile .
+          echo "image_id is ====> $ECR_REPOSITORY:$VERSION"
+          echo "image_id=$ECR_REPOSITORY:$VERSION" >> "$GITHUB_OUTPUT"
+
+  deploy_to_ecs:
+    timeout-minutes: 10
+    name: deploy image
+    runs-on: ubuntu-latest
+    needs: build_docker_image
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: 0 - Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: 1 - Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v2.1.0
+        with:
+          app_id: ${{ secrets.gh_bot_release_id }}
+          private_key: ${{ secrets.gh_bot_release_private_key }}
+
+      - name: 1.1 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: 2 - Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ vars.ECS_TASK_DEFINITION }}
+          container-name: ${{ vars.ECS_SERVICE }}
+          image: ${{ needs.build_docker_image.outputs.image_id }}
+
+      - name: 3 - Deploy to ECS
+        id: ecs-deploy
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ vars.ECS_SERVICE }}
+          cluster: ${{ vars.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: 4 - Check if deployment was successful
+        id: check-deployment
+        run: |
+          CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster ${{ vars.ECS_CLUSTER }} --services ${{ vars.ECS_SERVICE }} --query services[0].deployments[0].taskDefinition | jq -r ".")
+          NEW_TASK_DEF_ARN=${{ steps.ecs-deploy.outputs.task-definition-arn }}
+          echo "Current task arn: $CURRENT_TASK_DEF_ARN"
+          echo "New task arn: $NEW_TASK_DEF_ARN"
+          if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
+            echo "Deployment failed."
+            exit 1
+          fi
+
+          echo "✅ Deployment completed successfully!"
+
+  # run_migrations:
+  #   name: run database migrations
+  #   needs: deploy_to_ecs
+  #   runs-on: ubuntu-latest
+  #   environment: ${{ inputs.environment }}
+  #   timeout-minutes: 30
+
+  #   steps:
+  #     - name: 0 - Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+  #         aws-region: ${{ vars.AWS_REGION }}
+
+  #     - name: 1 - Login to Amazon ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v2
+
+  #     - name: 2 - Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #         persist-credentials: false
+
+  #     - name: 3 - run migrations task and wait for completion
+  #       run: |
+  #         # Executar a task e capturar o task ARN
+  #         TASK_ARN=$(aws ecs run-task \
+  #           --cluster ${{ vars.ECS_CLUSTER }} \
+  #           --task-definition ${{ vars.FAMILY_NAME}} \
+  #           --network-configuration "${{ vars.ECS_NETWORK_CONFIGURATION }}" \
+  #           --overrides "{\"containerOverrides\":[{\"name\":\"${{ vars.ECS_CONTAINER_NAME }}\",\"command\":[\"bun\",\"db:migrate\"]}]}" \
+  #           --launch-type FARGATE \
+  #           --started-by "github-actions" \
+  #           --query 'tasks[0].taskArn' \
+  #           --output text)
+
+  #         echo "Task ARN: $TASK_ARN"
+
+  #         # Esperar a task terminar e capturar o status
+  #         aws ecs wait tasks-stopped --cluster ${{ vars.ECS_CLUSTER }} --tasks $TASK_ARN
+
+  #         # Pegar o status final da task
+  #         TASK_STATUS=$(aws ecs describe-tasks \
+  #           --cluster ${{ vars.ECS_CLUSTER }} \
+  #           --tasks $TASK_ARN \
+  #           --query 'tasks[0].lastStatus' \
+  #           --output text)
+
+  #         # Pegar os logs do CloudWatch
+  #         TASK_ID=$(echo $TASK_ARN | cut -d'/' -f3)
+  #         echo "=================================="
+  #         echo "📋 Migration Logs (Task: $TASK_ID)"
+  #         echo "=================================="
+
+  #         aws logs get-log-events \
+  #           --log-group-name "${{ vars.LOG_GROUP_NAME}}" \
+  #           --log-stream-name "ecs/${{ vars.ECS_SERVICE }}/$TASK_ID" \
+  #           --query 'events[*].message' \
+  #           --output text | while read -r line; do
+  #             echo "$line"
+  #           done
+
+  #         echo "=================================="
+
+  #         # Verificar se a task foi bem sucedida
+  #         if [ "$TASK_STATUS" != "STOPPED" ]; then
+  #           echo "Task failed with status: $TASK_STATUS"
+  #           exit 1
+  #         fi
+
+  #         # Verificar o exit code da task
+  #         EXIT_CODE=$(aws ecs describe-tasks \
+  #           --cluster ${{ vars.ECS_CLUSTER }} \
+  #           --tasks $TASK_ARN \
+  #           --query 'tasks[0].containers[0].exitCode' \
+  #           --output text)
+
+  #         if [ "$EXIT_CODE" != "0" ]; then
+  #           echo "Task failed with exit code: $EXIT_CODE"
+  #           exit 1
+  #         fi
+
+  #         echo "Migrations completed successfully!"
