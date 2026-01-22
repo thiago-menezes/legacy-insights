@@ -1,8 +1,8 @@
 'use client';
 
-import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { Reshaped, ToastProvider } from 'reshaped';
 import '@/styles/theme.scss';
 
@@ -19,7 +19,7 @@ if (typeof window !== 'undefined') {
 }
 
 const Providers = ({ children }: PropsWithChildren) => {
-  const queryClient = useQueryClient();
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
     <Reshaped theme="legacy">
