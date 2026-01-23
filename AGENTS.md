@@ -62,3 +62,11 @@ The `src/components/shell` is the reference for complex architectural organizati
 1. Define shared components in `src/components` if they are pure UI.
 2. Define Shell-related components in `src/components/shell`.
 3. Update `src/app/layout.tsx` to include the Shell.
+
+## Dashboard Context
+
+- **Filters**: Located below the page title "Gestão de campanhas...".
+  - **Date Range**: Calendar picker (e.g., "01 Dez, 2025 - 31 Dez, 2025").
+  - **General Filters**: "Filtros" button with icon for advanced options.
+  - **Launch Context**: "Lançamentos" dropdown for campaign type context.
+- **Data**: Dashboard charts, funnels, and lists must react to these filter changes.

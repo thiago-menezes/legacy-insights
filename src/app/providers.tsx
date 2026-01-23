@@ -20,7 +20,7 @@ const Providers = ({ children }: PropsWithChildren) => {
   if (delayToRender) return <></>;
 
   return (
-    <Reshaped theme="legacy" defaultColorMode="dark">
+    <Reshaped theme="legacy" defaultColorMode="light">
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
           {children}

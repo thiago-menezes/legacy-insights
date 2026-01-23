@@ -47,7 +47,7 @@ export const Shell = ({ children }: PropsWithChildren) => {
           <View
             backgroundColor="neutral-faded"
             borderRadius="large"
-            height="100%"
+            minHeight="100%"
             padding={6}
             shadow="raised"
             className={styles.mainContainer}

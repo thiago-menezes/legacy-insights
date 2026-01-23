@@ -1,14 +1,9 @@
-import { View, Text } from 'reshaped';
+'use client';
 
-const HomePage = () => {
-  return (
-    <View gap={4}>
-      <Text variant="title-6">Dashboard</Text>
-      <Text variant="body-2" color="neutral-faded">
-        Gestão de campanhas do Instagram, Facebook e outras ferramentas da Meta
-      </Text>
-    </View>
-  );
+import { Dashboard } from '@/features/dashboard';
+
+const DashboardPage = () => {
+  return <Dashboard />;
 };
 
-export default HomePage;
+export default DashboardPage;

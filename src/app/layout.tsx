@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Zalando_Sans_Expanded } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import localFont from 'next/font/local';
 import 'reshaped/bundle.css';
 import './icon/tabler-300.css';
@@ -7,15 +7,51 @@ import '@/styles/global.scss';
 import { Shell } from '@/components/shell';
 import Providers from './providers';
 
-const montserrat = Zalando_Sans_Expanded({
+const montserrat = Montserrat({
   subsets: ['latin'],
   variable: '--font-primary',
   display: 'swap',
   preload: true,
 });
 
-const zalando = Zalando_Sans_Expanded({
-  subsets: ['latin'],
+const newBlackTypeface = localFont({
+  src: [
+    {
+      path: './fonts/NewBlackTypeface-UltraLight.woff2',
+      weight: '200',
+      style: 'normal',
+    },
+    {
+      path: './fonts/NewBlackTypeface-Light.woff2',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: './fonts/NewBlackTypeface-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/NewBlackTypeface-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: './fonts/NewBlackTypeface-SemiBold.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: './fonts/NewBlackTypeface-Bold.woff2',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: './fonts/NewBlackTypeface-ExtraBold.woff2',
+      weight: '800',
+      style: 'normal',
+    },
+  ],
   variable: '--font-secondary',
   display: 'swap',
   preload: true,
@@ -41,7 +77,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="pt-BR" className={tablerIcons.variable}>
-      <body className={clsx(montserrat.className, zalando.className)}>
+      <body className={clsx(montserrat.className, newBlackTypeface.variable)}>
         <Providers>
           <Shell>{children}</Shell>
         </Providers>
