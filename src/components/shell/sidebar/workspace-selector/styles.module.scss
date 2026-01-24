@@ -14,12 +14,7 @@
   outline: none;
 
   &:hover {
-    border-color: var(--rs-color-border-neutral);
-    background-color: var(--rs-color-background-neutral-faded);
-  }
-
-  &:focus-visible {
-    box-shadow: 0 0 0 2px var(--rs-color-border-primary);
+    border-color: var(--rs-color-foreground-primary);
   }
 }
 

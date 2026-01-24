@@ -1,6 +1,4 @@
-import clsx from 'clsx';
-import React from 'react';
-import { View, Text, Popover, Divider, Button } from 'reshaped';
+import { View, Text, DropdownMenu } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { ORGANIZATIONS, DEFAULT_ORG_ICON } from './constants';
 import { useWorkspaceSelector } from './hooks';
@@ -10,10 +8,8 @@ export const WorkspaceSelector = () => {
   const {
     selectedOrgId,
     selectedWorkspaceId,
-    expandedOrgs,
     selectedOrg,
     selectedWorkspace,
-    toggleOrg,
     handleSelectWorkspace,
   } = useWorkspaceSelector();
 
@@ -21,15 +17,10 @@ export const WorkspaceSelector = () => {
 
   return (
     <div className={styles.container}>
-      <Popover
-        triggerType="hover"
-        width="trigger"
-        position="top-end"
-        padding={0}
-      >
-        <Popover.Trigger>
+      <DropdownMenu width="content" triggerType="hover" position="start-top">
+        <DropdownMenu.Trigger>
           {(attributes) => (
-            <button className={styles.trigger} {...attributes} type="button">
+            <DropdownMenu.Item className={styles.trigger} {...attributes}>
               <View direction="row" align="center" gap={3}>
                 <View className={styles.orgIcon}>
                   <Icon name={currentOrgIcon} size={24} />
@@ -46,110 +37,60 @@ export const WorkspaceSelector = () => {
                   <Icon name="chevron-down" size={16} />
                 </View>
               </View>
-            </button>
+            </DropdownMenu.Item>
           )}
-        </Popover.Trigger>
+        </DropdownMenu.Trigger>
 
-        <Popover.Content>
-          <div className={styles.dropdown}>
-            {ORGANIZATIONS.map((org, index) => {
-              const isExpanded = expandedOrgs.includes(org.id);
+        <DropdownMenu.Content>
+          {ORGANIZATIONS.map((org) => (
+            <DropdownMenu.Section key={org.id}>
+              <DropdownMenu.SubMenu>
+                <DropdownMenu.SubTrigger
+                  startSlot={<Icon name={org.logoIcon} size={20} />}
+                >
+                  {org.name}
+                </DropdownMenu.SubTrigger>
 
-              return (
-                <div key={org.id} className={styles.orgGroup}>
-                  {index !== 0 && <Divider />}
-                  <button
-                    className={clsx(
-                      styles.orgHeader,
-                      isExpanded && styles.orgHeaderActive,
-                    )}
-                    onClick={(e) => toggleOrg(org.id, e)}
-                    type="button"
-                  >
-                    <View direction="row" align="center" gap={3}>
-                      <Icon name={org.logoIcon} size={20} />
-                      <View grow>
-                        <Text variant="body-2" weight="medium">
-                          {org.name}
-                        </Text>
-                      </View>
-                      <View>
-                        <Icon
-                          name={isExpanded ? 'chevron-down' : 'chevron-right'}
-                          size={16}
-                        />
-                      </View>
-                    </View>
-                  </button>
-
-                  {isExpanded && (
-                    <View
-                      direction="column"
-                      className={styles.workspaceList}
-                      padding={2}
-                      gap={2}
-                    >
-                      {org.workspaces.map((ws) => {
-                        const isSelected =
-                          selectedOrgId === org.id &&
-                          selectedWorkspaceId === ws.id;
-                        return (
-                          <Button
-                            key={ws.id}
-                            variant={isSelected ? 'faded' : 'ghost'}
-                            onClick={() => handleSelectWorkspace(org.id, ws.id)}
-                            type="button"
-                            className={clsx(
-                              styles.workspaceItem,
-                              isSelected && styles.workspaceItemSelected,
-                            )}
-                          >
-                            {ws.name}
-                          </Button>
-                        );
-                      })}
-
-                      <Divider />
-
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        icon={<Icon name="plus" size={16} />}
-                        attributes={{
-                          style: {
-                            textAlign: 'left',
-                            justifyContent: 'flex-start',
-                          },
-                        }}
+                <DropdownMenu.Content>
+                  {org.workspaces.map((ws) => {
+                    const isSelected =
+                      selectedOrgId === org.id && selectedWorkspaceId === ws.id;
+                    return (
+                      <DropdownMenu.Item
+                        key={ws.id}
+                        onClick={() => handleSelectWorkspace(org.id, ws.id)}
+                        selected={isSelected}
                       >
-                        Add novo Projeto
-                      </Button>
-                    </View>
-                  )}
-                </div>
-              );
-            })}
+                        {ws.name}
+                      </DropdownMenu.Item>
+                    );
+                  })}
 
-            <Divider />
+                  <DropdownMenu.Item
+                    startSlot={<Icon name="plus" size={16} />}
+                    onClick={() => {
+                      console.log('Add novo Projeto para', org.name);
+                    }}
+                  >
+                    Add novo Projeto
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.SubMenu>
+            </DropdownMenu.Section>
+          ))}
 
-            <View padding={2} gap={2}>
-              <Button
-                variant="ghost"
-                type="button"
-                icon={<Icon name="plus" size={16} />}
-                attributes={{
-                  style: {
-                    textAlign: 'left',
-                    justifyContent: 'flex-start',
-                  },
-                }}
-              >
-                Add novo Workspace
-              </Button>
-            </View>
-          </div>
-        </Popover.Content>
-      </Popover>
+          <DropdownMenu.Section>
+            <DropdownMenu.Item
+              startSlot={<Icon name="plus" size={16} />}
+              onClick={() => {
+                console.log('Add novo Workspace');
+              }}
+            >
+              Add novo Workspace
+            </DropdownMenu.Item>
+          </DropdownMenu.Section>
+        </DropdownMenu.Content>
+      </DropdownMenu>
     </div>
   );
 };
