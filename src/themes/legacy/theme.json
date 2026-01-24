@@ -204,13 +204,13 @@
   },
   "radius": {
     "small": {
-      "px": 4
-    },
-    "medium": {
       "px": 8
     },
-    "large": {
+    "medium": {
       "px": 12
+    },
+    "large": {
+      "px": 16
     }
   },
   "color": {

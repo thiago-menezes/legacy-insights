@@ -15,6 +15,17 @@ const config = {
           family: 'newBlackTypeface, sans-serif',
         },
       },
+      radius: {
+        small: {
+          px: 8,
+        },
+        medium: {
+          px: 12,
+        },
+        large: {
+          px: 16,
+        },
+      },
     },
   },
 };
