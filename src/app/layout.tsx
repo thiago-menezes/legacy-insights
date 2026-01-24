@@ -9,7 +9,7 @@ import Providers from './providers';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
-  variable: '--font-primary',
+  variable: '--font-montserrat',
   display: 'swap',
   preload: true,
 });
@@ -52,7 +52,7 @@ const newBlackTypeface = localFont({
       style: 'normal',
     },
   ],
-  variable: '--font-secondary',
+  variable: '--font-new-black-typeface',
   display: 'swap',
   preload: true,
 });
@@ -77,7 +77,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="pt-BR" className={tablerIcons.variable}>
-      <body className={clsx(montserrat.className, newBlackTypeface.variable)}>
+      <body className={clsx(montserrat.variable, newBlackTypeface.variable)}>
         <Providers>
           <Shell>{children}</Shell>
         </Providers>

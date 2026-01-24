@@ -43,7 +43,7 @@
   right: 6px;
   width: 6px;
   height: 6px;
-  background-color: #b42318;
+  background-color: var(--rs-color-background-critical);
   border-radius: 50%;
   border: 1px solid var(--rs-color-background-elevation-base);
 }
@@ -51,19 +51,20 @@
 .headerCollapsed {
   display: flex;
   justify-content: center;
-  background-color: var(--rs-color-background-elevation-base);
+  background-color: var(--rs-color-foreground-neutral-faded);
+  color: var(--rs-color-background-neutral);
   border-block-end: 1px solid var(--rs-color-border-neutral-faded);
   transition: all 0.3s ease;
   position: fixed;
-  top: 0;
+  top: -16px;
   left: 50%;
   transform: translateX(-50%);
   right: 0;
   z-index: 1000;
   width: fit-content;
-  border-radius: 0 0 var(--rs-radius-small) var(--rs-radius-small);
+  border-radius: var(--rs-radius-small);
 
   &:hover {
-    background-color: var(--rs-color-background-neutral);
+    top: 4px;
   }
 }

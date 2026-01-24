@@ -14,7 +14,8 @@
     "format": "prettier --write . && npm run lint:fix",
     "clean": "rm -rf .next node_modules/.cache",
     "semantic-release": "semantic-release",
-    "prepare": "husky"
+    "prepare": "husky",
+    "generate:theme": "npx reshaped theming --output src/themes"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

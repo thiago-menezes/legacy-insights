@@ -1,0 +1,156 @@
+$mobile: 768px;
+$tablet: 1024px;
+
+.integrations {
+  width: 100%;
+}
+
+.platformsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--rs-unit-x6);
+
+  @media (max-width: $tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.platformCard {
+  background-color: var(--rs-color-background-elevated);
+  border: 1px solid var(--rs-color-border-neutral-faded);
+  border-radius: var(--rs-radius-large);
+  padding: var(--rs-unit-x6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-unit-x4);
+}
+
+.platformHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x3);
+}
+
+.platformIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platformInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-unit-x1);
+}
+
+.profilesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-unit-x3);
+}
+
+.profileItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--rs-unit-x3) var(--rs-unit-x4);
+  background-color: var(--rs-color-background-neutral-faded);
+  border-radius: var(--rs-radius-medium);
+  gap: var(--rs-unit-x3);
+
+  @media (max-width: $mobile) {
+    flex-wrap: wrap;
+  }
+}
+
+.profileName {
+  flex: 1;
+  min-width: 120px;
+}
+
+.profileStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+  min-width: 140px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusDot_connected {
+  background-color: var(--rs-color-foreground-positive);
+}
+
+.statusDot_disconnected {
+  background-color: var(--rs-color-foreground-neutral-faded);
+}
+
+.profileActions {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+}
+
+.actionButton {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rs-color-border-neutral-faded);
+  border-radius: var(--rs-radius-small);
+  background-color: var(--rs-color-background-elevated);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--rs-color-foreground-neutral-faded);
+
+  &:hover {
+    background-color: var(--rs-color-background-neutral-faded);
+    color: var(--rs-color-foreground-neutral);
+  }
+}
+
+.actionButton_delete {
+  color: var(--rs-color-foreground-critical);
+
+  &:hover {
+    background-color: var(--rs-color-background-critical-faded);
+  }
+}
+
+.addProfileButton {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+  padding: var(--rs-unit-x3) var(--rs-unit-x4);
+  border: 1px solid var(--rs-color-border-neutral-faded);
+  border-radius: var(--rs-radius-medium);
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--rs-color-foreground-neutral);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--rs-color-background-neutral-faded);
+  }
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--rs-color-foreground-neutral);
+  margin-bottom: var(--rs-unit-x2);
+}
+
+.iconIntegration {
+  width: 40px;
+  height: auto;
+}

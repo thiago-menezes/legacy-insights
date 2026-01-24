@@ -22,11 +22,7 @@ export const MetricCard = ({
         <View direction="row" align="center" gap={2}>
           <View direction="row" align="center" className={styles.titleBar}>
             {icon && (
-              <View
-                backgroundColor="primary-faded"
-                padding={2}
-                borderRadius="small"
-              >
+              <View padding={2} borderRadius="small">
                 <Icon name={icon} size={18} />
               </View>
             )}

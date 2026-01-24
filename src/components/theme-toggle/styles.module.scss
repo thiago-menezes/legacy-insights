@@ -1,5 +1,3 @@
-$highlight-color: #9810fa;
-
 .toggle {
   position: relative;
   width: 68px;
@@ -45,7 +43,7 @@ $highlight-color: #9810fa;
   position: absolute;
   width: 24px;
   height: 24px;
-  background-color: $highlight-color;
+  background-color: var(--rs-color-background-primary);
   border-radius: 999px;
   z-index: 0;
 }

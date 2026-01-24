@@ -27,6 +27,14 @@ $tablet: 1024px;
 
 .navButton {
   justify-content: flex-start !important;
+  opacity: 0.5;
+}
+
+.navButtonActive {
+  opacity: 1;
+  .navButtonIcon {
+    color: var(--rs-color-background-primary);
+  }
 }
 
 .logo {

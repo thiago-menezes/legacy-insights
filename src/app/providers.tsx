@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { PropsWithChildren, useLayoutEffect, useState } from 'react';
 import { Reshaped, ToastProvider } from 'reshaped';
+import '@/themes/legacy/theme.css';
 
 const Providers = ({ children }: PropsWithChildren) => {
   const [queryClient] = useState(() => new QueryClient());

@@ -78,18 +78,23 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
                 return (
                   <View key={item.href} direction="column" gap={1}>
                     <Button
-                      variant={isActive || hasActiveSubItem ? 'faded' : 'ghost'}
-                      color={
-                        isActive || hasActiveSubItem ? 'primary' : 'neutral'
+                      variant="ghost"
+                      color={'neutral'}
+                      icon={
+                        <Icon
+                          name={item.icon}
+                          className={styles.navButtonIcon}
+                        />
                       }
-                      icon={<Icon name={item.icon} />}
                       endIcon={
                         <Icon
-                          className={styles.navButtonIcon}
+                          className={styles.expandIcon}
                           name={isExpanded ? 'chevron-down' : 'chevron-right'}
                         />
                       }
-                      className={styles.navButton}
+                      className={clsx(styles.navButton, {
+                        [styles.navButtonActive]: isActive || hasActiveSubItem,
+                      })}
                       onClick={() => toggleExpand(item.label)}
                     >
                       {item.label}
