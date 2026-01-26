@@ -126,6 +126,7 @@ export const Workspaces = () => {
           </Text>
 
           <WorkspaceForm
+            key={editingWorkspace?.documentId || 'new'}
             initialValues={
               editingWorkspace
                 ? {

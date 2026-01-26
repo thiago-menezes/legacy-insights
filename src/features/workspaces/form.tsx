@@ -40,7 +40,7 @@ export const WorkspaceForm = ({
   const [tempLogoPreview, setTempLogoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { register, handleSubmit, setValue, reset, control } =
+  const { register, handleSubmit, setValue, control } =
     useForm<WorkspaceFormValues>({
       defaultValues: (initialValues as WorkspaceFormValues) || {
         name: '',
@@ -80,12 +80,7 @@ export const WorkspaceForm = ({
     }
   }, [nameValue, setValue, initialValues]);
 
-  useEffect(() => {
-    if (initialValues) {
-      reset(initialValues as WorkspaceFormValues);
-      setTempLogoPreview(null); // Clear any previous selection when initialValues change
-    }
-  }, [initialValues, reset]);
+  // No longer needed: useEffect for reset/state sync. Using key prop in parent for remounting.
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
