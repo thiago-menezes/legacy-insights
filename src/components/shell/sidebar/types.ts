@@ -7,7 +7,7 @@ export interface NavSubItem {
 
 export interface NavItem {
   label: string;
-  href: string;
+  href: ((projectId: string) => string) | string;
   icon: IconNames;
   expandable?: boolean;
   subItems?: NavSubItem[];

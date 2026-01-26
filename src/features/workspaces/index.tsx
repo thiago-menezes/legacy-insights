@@ -107,7 +107,7 @@ export const Workspaces = () => {
           </View>
         </div>
       ) : (
-        <Grid columns={{ s: 1, m: 2, l: 3 }} gap={4}>
+        <Grid columns={{ s: 1, m: 1, l: 2, xl: 3 }} gap={4}>
           {workspaces.map((workspace) => (
             <WorkspaceCard
               key={workspace.id}

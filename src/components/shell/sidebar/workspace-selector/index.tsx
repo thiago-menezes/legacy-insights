@@ -6,11 +6,6 @@ import { DEFAULT_ORG_ICON } from './constants';
 import { useWorkspaceSelector } from './hooks';
 import styles from './styles.module.scss';
 
-const PROVIDER_LOGOS: Record<string, string> = {
-  google_ads: '/icon-google.png',
-  meta_ads: '/icon-meta.png',
-};
-
 export const WorkspaceSelector = () => {
   const {
     selectedOrgId,
@@ -80,12 +75,11 @@ export const WorkspaceSelector = () => {
                 </DropdownMenu.SubTrigger>
 
                 <DropdownMenu.Content>
-                  {(org.integrations || []).map((ws) => {
+                  {(org.projects || []).map((ws) => {
                     const isSelected =
                       selectedOrgId === org.documentId &&
                       selectedWorkspaceId === String(ws.id);
 
-                    console.log({ ws });
                     return (
                       <DropdownMenu.Item
                         key={ws.id}
@@ -93,15 +87,7 @@ export const WorkspaceSelector = () => {
                           handleSelectWorkspace(org.documentId, String(ws.id))
                         }
                         selected={isSelected}
-                        startSlot={
-                          PROVIDER_LOGOS[ws.type.toLowerCase()] && (
-                            <img
-                              src={PROVIDER_LOGOS[ws.type.toLowerCase()]}
-                              alt={ws.type}
-                              className={styles.providerLogo}
-                            />
-                          )
-                        }
+                        startSlot={<Icon name="folder" size={16} />}
                       >
                         {ws.name}
                       </DropdownMenu.Item>

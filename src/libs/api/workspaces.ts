@@ -1,5 +1,4 @@
 import { apiClient } from './axios';
-import { IntegrationType } from './integrations';
 
 export interface StrapiWorkspace {
   id: number;
@@ -30,12 +29,12 @@ export interface StrapiWorkspace {
         email: string;
       }[]
     | null;
-  integrations:
+  projects:
     | {
         id: number;
         documentId: string;
         name: string;
-        type: IntegrationType;
+        slug: string;
       }[]
     | null;
 }

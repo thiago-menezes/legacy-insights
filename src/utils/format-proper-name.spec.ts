@@ -1,4 +1,4 @@
-import { formatProperName } from './formatProperName';
+import { formatProperName } from './format-proper-name';
 
 describe('formatProperName', () => {
   it('should format a name with multiple words', () => {

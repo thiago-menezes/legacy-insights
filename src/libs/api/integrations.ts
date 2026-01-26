@@ -17,7 +17,7 @@ export interface StrapiIntegration {
   updatedAt: string;
   publishedAt: string | null;
   config: Record<string, unknown> | null;
-  workspace?: {
+  project?: {
     id: number;
     documentId: string;
     name: string;
@@ -43,19 +43,19 @@ export interface SingleIntegrationResponse {
 export interface IntegrationCreateInput {
   name: string;
   type: IntegrationType;
-  workspace: string | number; // documentId or ID
+  project: string | number; // documentId or ID
   config?: Record<string, unknown>;
   status?: IntegrationStatus;
 }
 
 export const integrationService = {
   /**
-   * List all integrations, optionally filtered by workspace
+   * List all integrations, optionally filtered by project
    */
-  async list(workspaceId?: string | number): Promise<IntegrationResponse> {
+  async list(projectId?: string | number): Promise<IntegrationResponse> {
     let url = '/api/integrations?populate=*';
-    if (workspaceId) {
-      url += `&filters[workspace][documentId][$eq]=${workspaceId}`;
+    if (projectId) {
+      url += `&filters[project][documentId][$eq]=${projectId}`;
     }
     const { data } = await apiClient.get<IntegrationResponse>(url);
     return data;

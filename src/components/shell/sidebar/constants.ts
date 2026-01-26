@@ -15,7 +15,11 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
           { label: 'Google', href: '/campanhas/google' },
         ],
       },
-      { label: 'Integrações', href: '/integracoes', icon: 'arrows-exchange' },
+      {
+        label: 'Integrações',
+        href: (projectId) => `/integracoes/projetos/${projectId}`,
+        icon: 'arrows-exchange',
+      },
     ],
   },
   {

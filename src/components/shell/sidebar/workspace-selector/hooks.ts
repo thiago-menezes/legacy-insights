@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useWorkspaces } from '@/features/workspaces/hooks';
+import { useState, useMemo, useCallback } from 'react';
+import { useSelectedWorkspace } from '@/features/workspaces/context';
 import { DEFAULT_ORG_ICON } from './constants';
 import type { WorkspaceSelectorState, WorkspaceSelectorActions } from './types';
 
@@ -7,47 +7,16 @@ interface UseWorkspaceSelectorReturn
   extends WorkspaceSelectorState, WorkspaceSelectorActions {}
 
 export const useWorkspaceSelector = (): UseWorkspaceSelectorReturn => {
-  const { workspaces, isLoading } = useWorkspaces();
-  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
-  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(
-    null,
-  );
+  const {
+    selectedOrgId,
+    selectedProjectId: selectedWorkspaceId,
+    selectedOrg: selectedOrgData,
+    selectedProject: selectedWorkspaceData,
+    selectWorkspace,
+  } = useSelectedWorkspace();
+
+  // UI-specific local state (not shared across pages)
   const [expandedOrgs, setExpandedOrgs] = useState<string[]>([]);
-
-  // Initialize from localStorage or first available workspace
-  useEffect(() => {
-    if (!isLoading && workspaces.length > 0) {
-      const savedOrgId = localStorage.getItem('selectedOrgId');
-      const savedWsId = localStorage.getItem('selectedWorkspaceId');
-
-      if (savedOrgId && workspaces.find((w) => w.documentId === savedOrgId)) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setSelectedOrgId(savedOrgId);
-        if (savedWsId) {
-          setSelectedWorkspaceId(savedWsId);
-        }
-      } else {
-        const firstOrg = workspaces[0];
-        setSelectedOrgId(firstOrg.documentId);
-        if (firstOrg.integrations && firstOrg.integrations.length > 0) {
-          setSelectedWorkspaceId(String(firstOrg.integrations[0].id));
-        }
-      }
-    }
-  }, [isLoading, workspaces]);
-
-  const selectedOrg = useMemo(
-    () => workspaces.find((o) => o.documentId === selectedOrgId),
-    [workspaces, selectedOrgId],
-  );
-
-  const selectedWorkspace = useMemo(
-    () =>
-      selectedOrg?.integrations?.find(
-        (w) => String(w.id) === selectedWorkspaceId,
-      ) || selectedOrg?.integrations?.[0],
-    [selectedOrg, selectedWorkspaceId],
-  );
 
   const toggleOrg = useCallback((orgId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -58,35 +27,43 @@ export const useWorkspaceSelector = (): UseWorkspaceSelectorReturn => {
     );
   }, []);
 
-  const handleSelectWorkspace = useCallback((orgId: string, wsId: string) => {
-    setSelectedOrgId(orgId);
-    setSelectedWorkspaceId(wsId);
-    localStorage.setItem('selectedOrgId', orgId);
-    localStorage.setItem('selectedWorkspaceId', wsId);
-  }, []);
+  const handleSelectWorkspace = useCallback(
+    (orgId: string, wsId: string) => {
+      selectWorkspace(orgId, wsId);
+    },
+    [selectWorkspace],
+  );
+
+  // Transform selectedOrg to the expected format for the selector UI
+  const selectedOrg = useMemo(() => {
+    if (!selectedOrgData) return undefined;
+    return {
+      id: selectedOrgData.documentId,
+      name: selectedOrgData.name,
+      logoIcon: DEFAULT_ORG_ICON,
+      logo: selectedOrgData.logo,
+      workspaces: (selectedOrgData.projects || []).map((i) => ({
+        id: String(i.id),
+        name: i.name,
+      })),
+    };
+  }, [selectedOrgData]);
+
+  // Transform selectedWorkspace to the expected format
+  const selectedWorkspace = useMemo(() => {
+    if (!selectedWorkspaceData) return undefined;
+    return {
+      id: String(selectedWorkspaceData.id),
+      name: selectedWorkspaceData.name,
+    };
+  }, [selectedWorkspaceData]);
 
   return {
     selectedOrgId: selectedOrgId || '',
     selectedWorkspaceId: selectedWorkspaceId || '',
     expandedOrgs,
-    selectedOrg: selectedOrg
-      ? {
-          id: selectedOrg.documentId,
-          name: selectedOrg.name,
-          logoIcon: DEFAULT_ORG_ICON, // Or map from logo if icons are used
-          logo: selectedOrg.logo,
-          workspaces: (selectedOrg.integrations || []).map((i) => ({
-            id: String(i.id),
-            name: i.name,
-          })),
-        }
-      : undefined,
-    selectedWorkspace: selectedWorkspace
-      ? {
-          id: String(selectedWorkspace.id),
-          name: selectedWorkspace.name,
-        }
-      : undefined,
+    selectedOrg,
+    selectedWorkspace,
     toggleOrg,
     handleSelectWorkspace,
   };

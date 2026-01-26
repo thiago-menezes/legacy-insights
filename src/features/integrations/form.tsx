@@ -10,7 +10,7 @@ interface IntegrationFormProps {
   onSubmit: (values: IntegrationCreateInput) => void;
   onCancel: () => void;
   isLoading?: boolean;
-  workspaceId: string | number;
+  projectId: string | number;
 }
 
 const INTEGRATION_TYPES: { label: string; value: IntegrationType }[] = [
@@ -23,14 +23,14 @@ export const IntegrationForm = ({
   onSubmit,
   onCancel,
   isLoading,
-  workspaceId,
+  projectId,
 }: IntegrationFormProps) => {
   const { register, handleSubmit, setValue, watch } =
     useForm<IntegrationCreateInput>({
       defaultValues: {
         name: initialValues?.name || '',
         type: initialValues?.type || 'meta_ads',
-        workspace: workspaceId,
+        project: projectId,
         status: initialValues?.status || 'disconnected',
       },
     });

@@ -16,10 +16,12 @@ export const PageTitle = ({
 }: PageTitle) => {
   return (
     <View
+      gap={4}
       direction="row"
       align="center"
       justify="space-between"
       className={styles.container}
+      paddingBottom={4}
     >
       <View gap={1}>
         <View direction="row" align="center" gap={3}>

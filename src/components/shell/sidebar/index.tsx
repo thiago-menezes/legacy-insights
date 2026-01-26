@@ -10,10 +10,13 @@ import styles from './styles.module.scss';
 import { SidebarProps } from './types';
 import { UserSelector } from './user-selector';
 import { WorkspaceSelector } from './workspace-selector';
+import { useSelectedWorkspace } from '@/features/workspaces/context';
+import { normalizeUrlPath, sanitizeSlug } from '@/utils/sanitize-slug';
 
 export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
   const pathname = usePathname();
   const { colorMode } = useTheme();
+  const { selectedProject } = useSelectedWorkspace();
 
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
@@ -77,7 +80,19 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
               </View>
             )}
             {section.items.map((item) => {
-              const isActive = pathname === item.href;
+              const href =
+                typeof item.href === 'string'
+                  ? item.href
+                  : item.href(selectedProject?.slug!);
+
+              console.log({
+                pathname: normalizeUrlPath(pathname),
+                href: normalizeUrlPath(href),
+              });
+
+              const isActive =
+                normalizeUrlPath(pathname) === normalizeUrlPath(href);
+
               const isExpanded = expandedItems.includes(item.label);
               const hasActiveSubItem =
                 item.subItems?.some((subItem) => pathname === subItem.href) ||
@@ -85,7 +100,7 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
 
               if (item.expandable && item.subItems) {
                 return (
-                  <View key={item.href} direction="column" gap={1}>
+                  <View key={href} direction="column" gap={1}>
                     <Button
                       variant="ghost"
                       color={'neutral'}
@@ -132,8 +147,8 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
 
               return (
                 <SidebarItem
-                  key={item.href}
-                  href={item.href}
+                  key={href}
+                  href={href}
                   label={item.label}
                   icon={item.icon}
                   isActive={isActive}

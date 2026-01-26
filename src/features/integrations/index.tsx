@@ -2,14 +2,16 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { View, Text, Tabs, Loader, Modal } from 'reshaped';
 import { Icon } from '@/components/icon';
-import { PageTitle } from '@/components/page-title';
-import { useWorkspaceSelector } from '@/components/shell/sidebar/workspace-selector/hooks';
 import { IntegrationType } from '@/libs/api/integrations';
 import { STATUS_CONFIG, TABS } from './constants';
 import { IntegrationForm } from './form';
 import { useIntegrations } from './hooks';
 import styles from './styles.module.scss';
 import { IntegrationPlatform, IntegrationProfile } from './types';
+
+interface IntegrationsProps {
+  projectId: string;
+}
 
 interface ProfileItemProps {
   profile: IntegrationProfile;
@@ -117,10 +119,9 @@ const PlatformCard = ({ platform, onDelete, onAdd }: PlatformCardProps) => {
   );
 };
 
-export const Integrations = () => {
-  const { selectedOrgId } = useWorkspaceSelector();
+export const Integrations = ({ projectId }: IntegrationsProps) => {
   const { integrations, isLoading, deleteIntegration, createIntegration } =
-    useIntegrations(selectedOrgId);
+    useIntegrations(projectId);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<IntegrationType>('meta_ads');
 
@@ -187,11 +188,6 @@ export const Integrations = () => {
 
   return (
     <View gap={6} className={styles.integrations}>
-      <PageTitle
-        title="Integrações"
-        description="Gerencie suas integrações com as plataformas de ADS e ferramentas"
-      />
-
       <View>
         <Tabs variant="pills-elevated" defaultValue="all">
           <Tabs.List>
@@ -230,19 +226,13 @@ export const Integrations = () => {
         <Text variant="featured-3" weight="bold">
           Nova Integração
         </Text>
-        {selectedOrgId ? (
-          <IntegrationForm
-            workspaceId={selectedOrgId}
-            initialValues={{ type: selectedType }}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onSubmit={handleFormSubmit as any}
-            onCancel={() => setIsModalOpen(false)}
-          />
-        ) : (
-          <Text color="critical">
-            Por favor, selecione um workspace primeiro.
-          </Text>
-        )}
+        <IntegrationForm
+          projectId={projectId}
+          initialValues={{ type: selectedType }}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onSubmit={handleFormSubmit as any}
+          onCancel={() => setIsModalOpen(false)}
+        />
       </Modal>
     </View>
   );

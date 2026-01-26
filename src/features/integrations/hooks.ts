@@ -5,7 +5,7 @@ import {
   IntegrationCreateInput,
 } from '@/libs/api/integrations';
 
-export const useIntegrations = (workspaceId?: string | number) => {
+export const useIntegrations = (projectId?: string | number) => {
   const [integrations, setIntegrations] = useState<StrapiIntegration[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +14,7 @@ export const useIntegrations = (workspaceId?: string | number) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await integrationService.list(workspaceId);
+      const response = await integrationService.list(projectId);
       setIntegrations(response.data);
     } catch (err) {
       setError('Falha ao carregar integrações');
@@ -23,7 +23,7 @@ export const useIntegrations = (workspaceId?: string | number) => {
     } finally {
       setIsLoading(false);
     }
-  }, [workspaceId]);
+  }, [projectId]);
 
   const createIntegration = async (data: IntegrationCreateInput) => {
     try {

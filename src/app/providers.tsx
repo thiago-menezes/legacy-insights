@@ -6,6 +6,7 @@ import { SessionProvider } from 'next-auth/react';
 import { PropsWithChildren, useLayoutEffect, useState } from 'react';
 import { Reshaped, ToastProvider } from 'reshaped';
 import { AuthProvider } from '@/features/auth/context';
+import { SelectedWorkspaceProvider } from '@/features/workspaces/context';
 import '@/themes/legacy/theme.css';
 
 const Providers = ({ children }: PropsWithChildren) => {
@@ -27,7 +28,9 @@ const Providers = ({ children }: PropsWithChildren) => {
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
           <SessionProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <SelectedWorkspaceProvider>{children}</SelectedWorkspaceProvider>
+            </AuthProvider>
           </SessionProvider>
           {process.env.NODE_ENV === 'development' && (
             <ReactQueryDevtools initialIsOpen={false} />
