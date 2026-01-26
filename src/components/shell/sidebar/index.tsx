@@ -4,14 +4,14 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { View, Text, Button, useTheme } from 'reshaped';
 import { Icon } from '@/components/icon';
+import { useSelectedWorkspace } from '@/features/workspaces/context';
+import { normalizeUrlPath } from '@/utils/sanitize-slug';
 import { NAVIGATION_SECTIONS } from './constants';
 import { SidebarItem } from './item';
 import styles from './styles.module.scss';
 import { SidebarProps } from './types';
 import { UserSelector } from './user-selector';
 import { WorkspaceSelector } from './workspace-selector';
-import { useSelectedWorkspace } from '@/features/workspaces/context';
-import { normalizeUrlPath, sanitizeSlug } from '@/utils/sanitize-slug';
 
 export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
   const pathname = usePathname();
@@ -83,12 +83,7 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
               const href =
                 typeof item.href === 'string'
                   ? item.href
-                  : item.href(selectedProject?.slug!);
-
-              console.log({
-                pathname: normalizeUrlPath(pathname),
-                href: normalizeUrlPath(href),
-              });
+                  : item.href(selectedProject?.slug ?? '');
 
               const isActive =
                 normalizeUrlPath(pathname) === normalizeUrlPath(href);
