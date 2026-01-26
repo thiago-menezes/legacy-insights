@@ -1,19 +1,24 @@
-'use client';
-
 import Image from 'next/image';
-import { View, Text, Tabs } from 'reshaped';
+import { useState } from 'react';
+import { View, Text, Tabs, Loader, Modal } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
-import { INTEGRATIONS, STATUS_CONFIG, TABS } from './constants';
+import { useWorkspaceSelector } from '@/components/shell/sidebar/workspace-selector/hooks';
+import { IntegrationType } from '@/libs/api/integrations';
+import { STATUS_CONFIG, TABS } from './constants';
+import { IntegrationForm } from './form';
+import { useIntegrations } from './hooks';
 import styles from './styles.module.scss';
 import { IntegrationPlatform, IntegrationProfile } from './types';
 
 interface ProfileItemProps {
   profile: IntegrationProfile;
+  onDelete: (id: string) => void;
 }
 
-const ProfileItem = ({ profile }: ProfileItemProps) => {
-  const statusConfig = STATUS_CONFIG[profile.status];
+const ProfileItem = ({ profile, onDelete }: ProfileItemProps) => {
+  const statusConfig =
+    STATUS_CONFIG[profile.status] || STATUS_CONFIG.disconnected;
 
   return (
     <div className={styles.profileItem}>
@@ -51,6 +56,7 @@ const ProfileItem = ({ profile }: ProfileItemProps) => {
         <button
           className={`${styles.actionButton} ${styles.actionButton_delete}`}
           title="Remover"
+          onClick={() => onDelete(profile.id)}
         >
           <Icon name="trash" size={18} />
         </button>
@@ -61,21 +67,28 @@ const ProfileItem = ({ profile }: ProfileItemProps) => {
 
 interface PlatformCardProps {
   platform: IntegrationPlatform;
+  onDelete: (id: string) => void;
+  onAdd: (type: string) => void;
 }
 
-const PlatformCard = ({ platform }: PlatformCardProps) => {
+const PlatformCard = ({ platform, onDelete, onAdd }: PlatformCardProps) => {
   return (
     <div className={styles.platformCard}>
       <div className={styles.platformHeader}>
         <div className={styles.platformIcon}>
-          <Image
-            src={platform.icon}
-            width={40}
-            height={40}
-            alt={platform.name}
-            priority
-            className={styles.iconIntegration}
-          />
+          {platform.icon.startsWith('/') ? (
+            <Image
+              src={platform.icon}
+              width={40}
+              height={40}
+              alt={platform.name}
+              priority
+              className={styles.iconIntegration}
+            />
+          ) : (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            <Icon name={platform.icon as any} size={40} />
+          )}
         </div>
         <div className={styles.platformInfo}>
           <Text variant="body-1" weight="bold">
@@ -89,10 +102,13 @@ const PlatformCard = ({ platform }: PlatformCardProps) => {
 
       <div className={styles.profilesList}>
         {platform.profiles.map((profile) => (
-          <ProfileItem key={profile.id} profile={profile} />
+          <ProfileItem key={profile.id} profile={profile} onDelete={onDelete} />
         ))}
 
-        <button className={styles.addProfileButton}>
+        <button
+          className={styles.addProfileButton}
+          onClick={() => onAdd(platform.id)}
+        >
           <Icon name="plus" size={18} />
           Adicionar novo perfil
         </button>
@@ -102,11 +118,78 @@ const PlatformCard = ({ platform }: PlatformCardProps) => {
 };
 
 export const Integrations = () => {
+  const { selectedOrgId } = useWorkspaceSelector();
+  const { integrations, isLoading, deleteIntegration, createIntegration } =
+    useIntegrations(selectedOrgId);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<IntegrationType>('meta_ads');
+
+  const platforms: IntegrationPlatform[] = [
+    {
+      id: 'meta_ads',
+      name: 'Meta Ads',
+      description: 'Conecte seus perfis do Meta Ads',
+      icon: '/icon-meta.png',
+      category: 'ads',
+      profiles: integrations
+        .filter((i) => i.type === 'meta_ads')
+        .map((i) => ({
+          id: i.documentId,
+          name: i.name,
+          status: i.status === 'connected' ? 'connected' : 'disconnected',
+        })),
+    },
+    {
+      id: 'google_ads',
+      name: 'Google Ads',
+      description: 'Conecte seus perfis do Google Ads',
+      icon: '/icon-google.png',
+      category: 'ads',
+      profiles: integrations
+        .filter((i) => i.type === 'google_ads')
+        .map((i) => ({
+          id: i.documentId,
+          name: i.name,
+          status: i.status === 'connected' ? 'connected' : 'disconnected',
+        })),
+    },
+  ];
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Tem certeza que deseja remover esta integração?')) {
+      await deleteIntegration(id);
+    }
+  };
+
+  const handleAdd = (type: string) => {
+    setSelectedType(type as IntegrationType);
+    setIsModalOpen(true);
+  };
+
+  const handleFormSubmit = async (values: unknown) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await createIntegration(values as any);
+      setIsModalOpen(false);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <View align="center" justify="center" paddingTop={10}>
+        <Loader />
+      </View>
+    );
+  }
+
   return (
     <View gap={6} className={styles.integrations}>
       <PageTitle
         title="Integrações"
-        description="Gerencie suas integrções com as plataformas de ADS e ferramentas"
+        description="Gerencie suas integrações com as plataformas de ADS e ferramentas"
       />
 
       <View>
@@ -130,11 +213,37 @@ export const Integrations = () => {
         </Text>
 
         <div className={styles.platformsGrid}>
-          {INTEGRATIONS.filter((p) => p.category === 'ads').map((platform) => (
-            <PlatformCard key={platform.id} platform={platform} />
-          ))}
+          {platforms
+            .filter((p) => p.category === 'ads')
+            .map((platform) => (
+              <PlatformCard
+                key={platform.id}
+                platform={platform}
+                onDelete={handleDelete}
+                onAdd={handleAdd}
+              />
+            ))}
         </div>
       </View>
+
+      <Modal active={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <Text variant="featured-3" weight="bold">
+          Nova Integração
+        </Text>
+        {selectedOrgId ? (
+          <IntegrationForm
+            workspaceId={selectedOrgId}
+            initialValues={{ type: selectedType }}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onSubmit={handleFormSubmit as any}
+            onCancel={() => setIsModalOpen(false)}
+          />
+        ) : (
+          <Text color="critical">
+            Por favor, selecione um workspace primeiro.
+          </Text>
+        )}
+      </Modal>
     </View>
   );
 };

@@ -1,8 +1,15 @@
 import { View, Text, DropdownMenu } from 'reshaped';
 import { Icon } from '@/components/icon';
-import { ORGANIZATIONS, DEFAULT_ORG_ICON } from './constants';
+import { useWorkspaces } from '@/features/workspaces/hooks';
+import { getMediaUrl } from '@/libs/api/strapi';
+import { DEFAULT_ORG_ICON } from './constants';
 import { useWorkspaceSelector } from './hooks';
 import styles from './styles.module.scss';
+
+const PROVIDER_LOGOS: Record<string, string> = {
+  google_ads: '/icon-google.png',
+  meta_ads: '/icon-meta.png',
+};
 
 export const WorkspaceSelector = () => {
   const {
@@ -12,8 +19,11 @@ export const WorkspaceSelector = () => {
     selectedWorkspace,
     handleSelectWorkspace,
   } = useWorkspaceSelector();
+  const { workspaces } = useWorkspaces();
 
-  const currentOrgIcon = selectedOrg?.logoIcon || DEFAULT_ORG_ICON;
+  const currentOrgLogo = selectedOrg?.logo?.url
+    ? getMediaUrl(selectedOrg.logo.url)
+    : null;
 
   return (
     <div className={styles.container}>
@@ -23,14 +33,22 @@ export const WorkspaceSelector = () => {
             <DropdownMenu.Item className={styles.trigger} {...attributes}>
               <View direction="row" align="center" gap={3}>
                 <View className={styles.orgIcon}>
-                  <Icon name={currentOrgIcon} size={24} />
+                  {currentOrgLogo ? (
+                    <img
+                      src={currentOrgLogo}
+                      alt={selectedOrg?.name}
+                      className={styles.logoImage}
+                    />
+                  ) : (
+                    <Icon name={DEFAULT_ORG_ICON} size={24} />
+                  )}
                 </View>
                 <View direction="column" className={styles.info}>
                   <Text variant="body-2" weight="medium">
-                    {selectedOrg?.name}
+                    {selectedOrg?.name || 'Selecione um Workspace'}
                   </Text>
                   <Text variant="caption-1" color="neutral">
-                    {selectedWorkspace?.name}
+                    {selectedWorkspace?.name || 'Selecione um Projeto'}
                   </Text>
                 </View>
                 <View>
@@ -42,24 +60,48 @@ export const WorkspaceSelector = () => {
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content>
-          {ORGANIZATIONS.map((org) => (
-            <DropdownMenu.Section key={org.id}>
+          {workspaces.map((org) => (
+            <DropdownMenu.Section key={org.documentId}>
               <DropdownMenu.SubMenu>
                 <DropdownMenu.SubTrigger
-                  startSlot={<Icon name={org.logoIcon} size={20} />}
+                  startSlot={
+                    org.logo?.url ? (
+                      <img
+                        src={getMediaUrl(org.logo.url)!}
+                        alt={org.name}
+                        className={styles.menuLogoImage}
+                      />
+                    ) : (
+                      <Icon name={DEFAULT_ORG_ICON} size={20} />
+                    )
+                  }
                 >
                   {org.name}
                 </DropdownMenu.SubTrigger>
 
                 <DropdownMenu.Content>
-                  {org.workspaces.map((ws) => {
+                  {(org.integrations || []).map((ws) => {
                     const isSelected =
-                      selectedOrgId === org.id && selectedWorkspaceId === ws.id;
+                      selectedOrgId === org.documentId &&
+                      selectedWorkspaceId === String(ws.id);
+
+                    console.log({ ws });
                     return (
                       <DropdownMenu.Item
                         key={ws.id}
-                        onClick={() => handleSelectWorkspace(org.id, ws.id)}
+                        onClick={() =>
+                          handleSelectWorkspace(org.documentId, String(ws.id))
+                        }
                         selected={isSelected}
+                        startSlot={
+                          PROVIDER_LOGOS[ws.type.toLowerCase()] && (
+                            <img
+                              src={PROVIDER_LOGOS[ws.type.toLowerCase()]}
+                              alt={ws.type}
+                              className={styles.providerLogo}
+                            />
+                          )
+                        }
                       >
                         {ws.name}
                       </DropdownMenu.Item>

@@ -9,6 +9,9 @@ export interface Organization {
   id: string;
   name: string;
   logoIcon: IconNames;
+  logo?: {
+    url: string;
+  } | null;
   workspaces: Workspace[];
 }
 
