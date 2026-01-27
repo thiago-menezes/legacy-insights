@@ -22,7 +22,7 @@ export const WorkspaceSelector = () => {
     ? getMediaUrl(selectedOrg.logo.url)
     : null;
 
-  if (!workspaces.length) {
+  if (!workspaces.data.length) {
     return (
       <Link href="/workspaces">
         <Button
@@ -76,7 +76,7 @@ export const WorkspaceSelector = () => {
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content>
-          {workspaces.map((org) => (
+          {workspaces?.data.map((org) => (
             <DropdownMenu.Section key={org.documentId}>
               <DropdownMenu.SubMenu>
                 <DropdownMenu.SubTrigger

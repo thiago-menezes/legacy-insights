@@ -1,80 +1,89 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/features/auth/context';
+import { useState } from 'react';
+import { Workspace } from '@/libs/api/services/workspaces';
 import {
-  workspaceService,
-  StrapiWorkspace,
-  WorkspaceCreateInput,
-} from '@/libs/api/services/workspaces';
+  useCreateWorkspaceMutation,
+  useUpdateWorkspaceMutation,
+  useDeleteWorkspaceMutation,
+} from './api/mutation';
+import { useWorkspacesQuery } from './api/query';
+import { WORKSPACE_MESSAGES } from './constants';
+import { WorkspaceFormValues } from './types';
 
 export const useWorkspaces = () => {
-  const { user } = useAuth();
-  const [workspaces, setWorkspaces] = useState<StrapiWorkspace[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const createWorkspace = useCreateWorkspaceMutation();
+  const updateWorkspace = useUpdateWorkspaceMutation();
+  const deleteWorkspace = useDeleteWorkspaceMutation();
+  const getWorkspaces = useWorkspacesQuery();
+  const workspaces = getWorkspaces.data;
 
-  const fetchWorkspaces = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await workspaceService.list();
-      setWorkspaces(response.data);
-    } catch (err) {
-      setError('Falha ao carregar workspaces');
-      // eslint-disable-next-line no-console
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const error =
+    createWorkspace.error ||
+    updateWorkspace.error ||
+    deleteWorkspace.error ||
+    getWorkspaces.error;
 
-  const createWorkspace = async (data: WorkspaceCreateInput) => {
-    try {
-      const payload = { ...data };
-      if (user?.id && !payload.owner) {
-        payload.owner = user.id;
-      }
-      await workspaceService.create(payload);
-      await fetchWorkspaces();
-    } catch (err) {
-      setError('Falha ao criar workspace');
-      throw err;
-    }
+  const handleGetWorkspaces = () => getWorkspaces.refetch();
+
+  const [isModalActive, setIsModalActive] = useState(false);
+  const [isModalFirstWorkspaceActive, setIsModalFirstWorkspaceActive] =
+    useState(workspaces?.data.length === 0);
+
+  const [editingWorkspace, setEditingWorkspace] = useState<Workspace | null>(
+    null,
+  );
+
+  const handleOpenCreate = () => {
+    setEditingWorkspace(null);
+    setIsModalActive(true);
   };
 
-  const updateWorkspace = async (
-    id: string | number,
-    data: Partial<WorkspaceCreateInput>,
-  ) => {
-    try {
-      await workspaceService.update(id, data);
-      await fetchWorkspaces();
-    } catch (err) {
-      setError('Falha ao atualizar workspace');
-      throw err;
-    }
+  const handleOpenEdit = (workspace: Workspace) => {
+    setEditingWorkspace(workspace);
+    setIsModalActive(true);
   };
 
-  const deleteWorkspace = async (id: string | number) => {
-    try {
-      await workspaceService.delete(id);
-      await fetchWorkspaces();
-    } catch (err) {
-      setError('Falha ao excluir workspace');
-      throw err;
-    }
+  const handleCloseModal = () => {
+    setIsModalActive(false);
+    setEditingWorkspace(null);
   };
 
-  useEffect(() => {
-    fetchWorkspaces();
-  }, [fetchWorkspaces]);
+  const handleSubmit = (values: WorkspaceFormValues) => {
+    if (editingWorkspace) {
+      updateWorkspace.mutate({
+        id: editingWorkspace.documentId,
+        params: values,
+      });
+    } else {
+      createWorkspace.mutate(values);
+    }
+    getWorkspaces.refetch();
+    handleCloseModal();
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm(WORKSPACE_MESSAGES.DELETE_CONFIRM)) {
+      deleteWorkspace.mutate(id);
+      getWorkspaces.refetch();
+    }
+  };
 
   return {
-    workspaces,
-    isLoading,
+    handleGetWorkspaces,
+    workspaces: getWorkspaces.data || { data: [] },
     error,
-    refresh: fetchWorkspaces,
-    createWorkspace,
-    updateWorkspace,
-    deleteWorkspace,
+    isLoading:
+      getWorkspaces.isLoading ||
+      updateWorkspace.isPending ||
+      createWorkspace.isPending ||
+      deleteWorkspace.isPending,
+    isModalActive,
+    isModalFirstWorkspaceActive,
+    editingWorkspace,
+    handleOpenCreate,
+    handleOpenEdit,
+    handleCloseModal,
+    handleSubmit,
+    handleDelete,
+    setIsModalFirstWorkspaceActive,
   };
 };

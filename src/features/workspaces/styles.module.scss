@@ -2,30 +2,6 @@
   padding-bottom: 32px;
 }
 
-.workspaceCard {
-  background: var(--rs-color-background-surface);
-  border: 1px solid var(--rs-color-border-neutral-faded);
-  border-radius: var(--rs-radius-large);
-  padding: 24px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: var(--rs-color-foreground-primary);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
-}
-
-.workspaceIcon {
-  width: 48px;
-  height: 48px;
-  background: var(--rs-color-background-primary-faded);
-  color: var(--rs-color-foreground-primary);
-  border-radius: var(--rs-radius-medium);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .emptyState {
   padding: 64px 0;
   text-align: center;

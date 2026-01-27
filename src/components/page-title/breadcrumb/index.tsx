@@ -29,13 +29,7 @@ export const Breadcrumb = ({ items }: BreadcrumbProps) => {
 
 const BreadcrumbItem = ({ label, href, action }: BreadcrumbItem) => {
   if (href) {
-    return (
-      <Link href={href}>
-        <Breadcrumbs.Item key={label} href={href}>
-          {label}
-        </Breadcrumbs.Item>
-      </Link>
-    );
+    return <Link href={href}>{label}</Link>;
   }
 
   if (action) {

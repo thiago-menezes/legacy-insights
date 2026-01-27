@@ -1,4 +1,5 @@
 import { apiClient } from '../axios';
+import { createServiceKeys } from '../utils';
 
 export type IntegrationType = 'meta_ads' | 'google_ads';
 
@@ -43,15 +44,12 @@ export interface SingleIntegrationResponse {
 export interface IntegrationCreateInput {
   name: string;
   type: IntegrationType;
-  project: string | number; // documentId or ID
+  project: string | number;
   config?: Record<string, unknown>;
   status?: IntegrationStatus;
 }
 
-export const integrationService = {
-  /**
-   * List all integrations, optionally filtered by project
-   */
+const serviceMethods = {
   async list(projectId?: string | number): Promise<IntegrationResponse> {
     let url = '/api/integrations?populate=*';
     if (projectId) {
@@ -61,9 +59,6 @@ export const integrationService = {
     return data;
   },
 
-  /**
-   * Get a single integration
-   */
   async get(id: string | number): Promise<SingleIntegrationResponse> {
     const { data } = await apiClient.get<SingleIntegrationResponse>(
       `/api/integrations/${id}?populate=*`,
@@ -71,9 +66,6 @@ export const integrationService = {
     return data;
   },
 
-  /**
-   * Create a new integration
-   */
   async create(
     payload: IntegrationCreateInput,
   ): Promise<SingleIntegrationResponse> {
@@ -86,9 +78,6 @@ export const integrationService = {
     return data;
   },
 
-  /**
-   * Update an existing integration
-   */
   async update(
     id: string | number,
     payload: Partial<IntegrationCreateInput>,
@@ -100,10 +89,12 @@ export const integrationService = {
     return data;
   },
 
-  /**
-   * Delete an integration
-   */
   async delete(id: string | number): Promise<void> {
     await apiClient.delete(`/api/integrations/${id}`);
   },
+};
+
+export const integrationService = {
+  ...serviceMethods,
+  keys: createServiceKeys<typeof serviceMethods>(serviceMethods),
 };

@@ -1,4 +1,5 @@
 import { apiClient } from '../axios';
+import { createServiceKeys } from '../utils';
 import { IntegrationType } from './integrations';
 
 export interface StrapiProject {
@@ -47,10 +48,7 @@ export interface ProjectCreateInput {
   workspace: number | string;
 }
 
-export const projectService = {
-  /**
-   * List all projects
-   */
+const serviceMethods = {
   async list(workspaceId?: string): Promise<ProjectResponse> {
     const filter = workspaceId
       ? `&filters[workspace][documentId][$eq]=${workspaceId}`
@@ -61,9 +59,6 @@ export const projectService = {
     return data;
   },
 
-  /**
-   * Get a single project by documentId or slug
-   */
   async get(idOrSlug: string): Promise<SingleProjectResponse> {
     const { data } = await apiClient.get<SingleProjectResponse>(
       `/api/projects/${idOrSlug}?populate=*`,
@@ -71,9 +66,6 @@ export const projectService = {
     return data;
   },
 
-  /**
-   * Get a project by slug
-   */
   async getBySlug(slug: string): Promise<SingleProjectResponse> {
     const { data: listData } = await apiClient.get<ProjectResponse>(
       `/api/projects?filters[slug][$eq]=${slug}&populate=*`,
@@ -84,9 +76,6 @@ export const projectService = {
     return { data: listData.data[0] };
   },
 
-  /**
-   * Create a new project
-   */
   async create(payload: ProjectCreateInput): Promise<SingleProjectResponse> {
     const { data } = await apiClient.post<SingleProjectResponse>(
       '/api/projects',
@@ -95,9 +84,6 @@ export const projectService = {
     return data;
   },
 
-  /**
-   * Update an existing project by documentId
-   */
   async update(
     id: string,
     payload: Partial<ProjectCreateInput>,
@@ -109,10 +95,12 @@ export const projectService = {
     return data;
   },
 
-  /**
-   * Delete a project by documentId
-   */
   async delete(id: string): Promise<void> {
     await apiClient.delete(`/api/projects/${id}`);
   },
+};
+
+export const projectService = {
+  ...serviceMethods,
+  keys: createServiceKeys<typeof serviceMethods>(serviceMethods),
 };

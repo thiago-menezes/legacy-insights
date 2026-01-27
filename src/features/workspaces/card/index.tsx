@@ -2,31 +2,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { View, Text, Button, Card } from 'reshaped';
 import { Icon } from '@/components/icon';
-import { StrapiWorkspace } from '@/libs/api/services/workspaces';
 import { getMediaUrl } from '@/libs/api/strapi';
 import styles from './styles.module.scss';
+import { WorkspaceCardProps } from './types';
 
-/**
- * Interface for WorkspaceCard props.
- * Following AGENTS.md guidelines, always use interface for object definitions.
- */
-interface WorkspaceCardProps {
-  /** The workspace data from Strapi */
-  workspace: StrapiWorkspace;
-  /** Callback function when edit button is clicked */
-  onEdit: (workspace: StrapiWorkspace) => void;
-  /** Callback function when delete button is clicked */
-  onDelete: (id: string | number) => void;
-}
-
-/**
- * WorkspaceCard Component
- *
- * Displays a summary of a workspace and provides actions to edit or delete it.
- *
- * @param {WorkspaceCardProps} props - The component props.
- * @returns {JSX.Element} The rendered component.
- */
 export const WorkspaceCard = ({
   workspace,
   onEdit,

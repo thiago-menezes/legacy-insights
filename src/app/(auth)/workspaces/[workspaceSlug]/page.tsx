@@ -22,7 +22,7 @@ const WorkspaceDetailPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
-  const workspace = workspaces.find(
+  const workspace = workspaces?.data.find(
     (w) => w.slug === slug || w.documentId === slug,
   );
 

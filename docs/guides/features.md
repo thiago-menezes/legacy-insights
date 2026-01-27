@@ -17,36 +17,192 @@ A **feature** is a self-contained module that:
 
 ## 📁 Feature File Structure
 
+/features/workspaces
+├── index.tsx # Main component (entry point)
+├── card/ # Subcomponent (Inception)
+│ ├── index.tsx
+│ ├── types.ts
+│ └── styles.module.scss ...
+├── form/ # Subcomponent (Inception)
+│ ├── index.tsx
+│ ├── types.ts
+│ └── styles.module.scss ...
+├── form-skeleton.tsx # Form loading skeleton
+├── hooks.ts # Feature-specific hooks
+├── context.tsx # React Context (if needed)
+├── types.ts # TypeScript interfaces
+├── utils.ts # Utility functions
+├── constants.ts # Constants & configurations
+├── schema.ts # Zod validation schemas
+├── styles.module.scss # Scoped styles
+├── skeleton.tsx # Main skeleton
+├── spec.tsx # Component tests
+└── api/ # API layer
+├── query.ts # React Query queries
+├── mutation.ts # React Query mutations
+└── types.ts # API types
+
+````
+
+---
+
+## � Subcomponents (Inception Pattern)
+
+When a subcomponent grows beyond a simple single file, use the **Inception Pattern**: create a folder inside the feature with the same structure as a feature.
+
+### When to Create a Subcomponent Folder
+
+| Scenario                               | Approach                                |
+| -------------------------------------- | --------------------------------------- |
+| Simple component (~50 lines)           | Single file: `card.tsx`                 |
+| Component with own styles              | Folder: `card/index.tsx` + styles       |
+| Component with own types               | Folder: `card/index.tsx` + `types.ts`   |
+| Component with multiple sub-parts      | Folder with full structure              |
+| Component reused outside parent feature| Promote to `/components` or own feature |
+
+### Subcomponent Folder Structure
+
 ```
 /features/workspaces
-├── index.tsx              # Main component (entry point)
-├── card.tsx               # Subcomponent
-├── form.tsx               # Subcomponent
-├── form-skeleton.tsx      # Form loading skeleton
-├── hooks.ts               # Feature-specific hooks
-├── context.tsx            # React Context (if needed)
-├── types.ts               # TypeScript interfaces
-├── utils.ts               # Utility functions
-├── constants.ts           # Constants & configurations
-├── schema.ts              # Zod validation schemas
-├── styles.module.scss     # Scoped styles
-├── skeleton.tsx           # Main skeleton
-├── spec.tsx               # Component tests
-└── api/                   # API layer
-    ├── query.ts           # React Query queries
-    ├── mutation.ts        # React Query mutations
-    └── types.ts           # API types
+├── index.tsx                 # Main feature entry point
+├── card/                     # Subcomponent folder
+│   ├── index.tsx            # Card component
+│   ├── types.ts             # Card-specific types
+│   ├── styles.module.scss   # Card-specific styles
+│   ├── skeleton.tsx         # Card skeleton (optional)
+│   └── spec.tsx             # Card tests (optional)
+├── form/                     # Another subcomponent folder
+│   ├── index.tsx            # Form component
+│   ├── types.ts             # Form-specific types
+│   ├── schema.ts            # Form validation (optional)
+│   ├── styles.module.scss   # Form-specific styles
+│   └── spec.tsx             # Form tests (optional)
+├── hooks.ts                  # Feature-level hooks
+├── types.ts                  # Feature-level types
+└── styles.module.scss        # Feature-level styles
+```
+
+### Subcomponent Rules
+
+1. **Exports**: Always export from `index.tsx`
+2. **Types**: Keep subcomponent types in its own `types.ts`
+3. **Styles**: Keep subcomponent styles in its own `styles.module.scss`
+4. **Hooks**: Subcomponents can have local hooks, but shared hooks stay at feature level
+5. **Imports**: Parent imports subcomponents via `import { Card } from './card'`
+
+### Example: Card Subcomponent
+
+```tsx
+// features/workspaces/card/types.ts
+import { Workspace } from '../types';
+
+export interface WorkspaceCardProps {
+  workspace: Workspace;
+  onEdit: (workspace: Workspace) => void;
+  onDelete: (id: string) => void;
+  isSelected?: boolean;
+}
+```
+
+```tsx
+// features/workspaces/card/index.tsx
+import { View, Text, Button } from 'reshaped';
+import { WorkspaceCardProps } from './types';
+import styles from './styles.module.scss';
+
+export const WorkspaceCard = ({
+  workspace,
+  onEdit,
+  onDelete,
+  isSelected,
+}: WorkspaceCardProps) => {
+  return (
+    <View className={styles.card} data-selected={isSelected}>
+      <Text variant="body-1" weight="semibold">
+        {workspace.name}
+      </Text>
+      <View direction="row" gap={2}>
+        <Button variant="outline" size="small" onClick={() => onEdit(workspace)}>
+          Editar
+        </Button>
+        <Button
+          variant="ghost"
+          size="small"
+          color="critical"
+          onClick={() => onDelete(workspace.documentId)}
+        >
+          Excluir
+        </Button>
+      </View>
+    </View>
+  );
+};
+```
+
+```scss
+// features/workspaces/card/styles.module.scss
+.card {
+  padding: var(--rs-unit-x4);
+  background: var(--rs-color-background-elevated);
+  border-radius: var(--rs-radius-medium);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: var(--rs-shadow-overlay);
+  }
+
+  &[data-selected='true'] {
+    border: 2px solid var(--rs-color-border-primary);
+  }
+}
+```
+
+### Using Subcomponents in Parent Feature
+
+```tsx
+// features/workspaces/index.tsx
+import { WorkspaceCard } from './card';
+import { WorkspaceForm } from './form';
+
+export const WorkspaceList = () => {
+  // ...
+  return (
+    <View>
+      {workspaces.map((ws) => (
+        <WorkspaceCard
+          key={ws.id}
+          workspace={ws}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      ))}
+    </View>
+  );
+};
+```
+
+### Decision Tree
+
+```
+Is the component more than ~50 lines?
+├─ No  → Single file: `card.tsx`
+└─ Yes → Does it need its own styles?
+         ├─ No  → Single file: `card.tsx`
+         └─ Yes → Create folder: `card/`
+                  └─ Does it have specific types?
+                     ├─ No  → Import from parent `types.ts`
+                     └─ Yes → Create `card/types.ts`
 ```
 
 ---
 
-## 🚀 Creating a Feature: Complete Walkthrough
+## �🚀 Creating a Feature: Complete Walkthrough
 
 ### Step 1: Create the Feature Folder
 
 ```bash
 mkdir -p src/features/products
-```
+````
 
 ---
 

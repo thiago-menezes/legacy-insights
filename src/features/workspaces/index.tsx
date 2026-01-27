@@ -1,68 +1,26 @@
 'use client';
 
-import { useState } from 'react';
 import { View, Text, Button, Loader, Modal } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
-import { StrapiWorkspace } from '@/libs/api/services/workspaces';
 import { WorkspaceCard } from './card';
-import { useSelectedWorkspace } from './context';
 import { WorkspaceForm } from './form';
 import { useWorkspaces } from './hooks';
-import { WorkspaceFormValues } from './types';
 
 export const Workspaces = () => {
   const {
-    workspaces,
     isLoading,
-    error,
-    createWorkspace,
-    updateWorkspace,
-    deleteWorkspace,
+    workspaces,
+    isModalActive,
+    isModalFirstWorkspaceActive,
+    editingWorkspace,
+    handleOpenCreate,
+    handleOpenEdit,
+    handleCloseModal,
+    handleSubmit,
+    handleDelete,
+    setIsModalFirstWorkspaceActive,
   } = useWorkspaces();
-  const { refreshWorkspaces } = useSelectedWorkspace();
-
-  const [isModalActive, setIsModalActive] = useState(false);
-  const [isModalFirstWorkspaceActive, setIsModalFirstWorkspaceActive] =
-    useState(workspaces.length === 0);
-  const [editingWorkspace, setEditingWorkspace] =
-    useState<StrapiWorkspace | null>(null);
-
-  const handleOpenCreate = () => {
-    setEditingWorkspace(null);
-    setIsModalActive(true);
-  };
-
-  const handleOpenEdit = (workspace: StrapiWorkspace) => {
-    setEditingWorkspace(workspace);
-    setIsModalActive(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalActive(false);
-    setEditingWorkspace(null);
-  };
-
-  const handleSubmit = async (values: WorkspaceFormValues) => {
-    try {
-      if (editingWorkspace) {
-        await updateWorkspace(editingWorkspace.documentId, values);
-      } else {
-        await createWorkspace(values);
-      }
-      await refreshWorkspaces();
-      handleCloseModal();
-    } catch {
-      // Error is handled in hook
-    }
-  };
-
-  const handleDelete = async (id: string | number) => {
-    if (confirm('Tem certeza que deseja excluir este workspace?')) {
-      await deleteWorkspace(id);
-      await refreshWorkspaces();
-    }
-  };
 
   return (
     <>
@@ -79,21 +37,11 @@ export const Workspaces = () => {
         </Button>
       </PageTitle>
 
-      {error && (
-        <View
-          padding={4}
-          backgroundColor="critical-faded"
-          borderRadius="medium"
-        >
-          <Text color="critical">{error}</Text>
-        </View>
-      )}
-
       {isLoading ? (
         <View align="center" padding={10}>
           <Loader />
         </View>
-      ) : workspaces.length === 0 ? (
+      ) : workspaces?.data.length === 0 ? (
         <View
           gap={4}
           align="center"
@@ -150,7 +98,7 @@ export const Workspaces = () => {
         </View>
       ) : (
         <View gap={4} wrap direction={{ s: 'column', l: 'row' }}>
-          {workspaces.map((workspace) => (
+          {workspaces?.data.map((workspace) => (
             <WorkspaceCard
               key={workspace.id}
               workspace={workspace}
@@ -178,6 +126,7 @@ export const Workspaces = () => {
               : undefined
           }
           isModalActive={isModalActive}
+          isLoading={isLoading}
           onSubmit={handleSubmit}
           onCancel={handleCloseModal}
         />

@@ -1,76 +1,69 @@
 'use client';
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
   useMemo,
   useCallback,
-  useEffect,
-  type ReactNode,
+  PropsWithChildren,
 } from 'react';
-import type { StrapiWorkspace } from '@/libs/api/services/workspaces';
 import { useWorkspaces } from './hooks';
-
-// Derive project type from StrapiWorkspace
-type StrapiProject = NonNullable<StrapiWorkspace['projects']>[number];
-
-interface SelectedWorkspaceContextValue {
-  // IDs
-  selectedOrgId: string;
-  selectedProjectId: string;
-  // Full objects
-  selectedOrg: StrapiWorkspace | undefined;
-  selectedProject: StrapiProject | undefined;
-  // Loading state
-  isLoading: boolean;
-  // Actions
-  selectWorkspace: (orgId: string, projectId: string) => void;
-  refreshWorkspaces: () => Promise<void>;
-}
+import { SelectedWorkspaceContextValue } from './types';
 
 const SelectedWorkspaceContext = createContext<
   SelectedWorkspaceContextValue | undefined
 >(undefined);
 
-interface SelectedWorkspaceProviderProps {
-  children: ReactNode;
-}
+export const SelectedWorkspaceProvider = ({ children }: PropsWithChildren) => {
+  const { workspaces, isLoading, handleGetWorkspaces } = useWorkspaces();
+  const [userSelectedOrgId, setUserSelectedOrgId] = useState<string | null>(
+    null,
+  );
+  const [userSelectedProjectId, setUserSelectedProjectId] = useState<
+    string | null
+  >(null);
 
-export const SelectedWorkspaceProvider: React.FC<
-  SelectedWorkspaceProviderProps
-> = ({ children }) => {
-  const { workspaces, isLoading, refresh } = useWorkspaces();
-  const [selectedOrgId, setSelectedOrgId] = useState<string>('');
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const selectedOrgId = useMemo(() => {
+    if (userSelectedOrgId) return userSelectedOrgId;
 
-  // Initialize from localStorage or first available workspace
-  useEffect(() => {
-    if (!isLoading && workspaces.length > 0) {
+    if (!isLoading && workspaces?.data.length > 0) {
       const savedOrgId = localStorage.getItem('selectedOrgId');
-      const savedProjectId = localStorage.getItem('selectedWorkspaceId');
-
-      if (savedOrgId && workspaces.find((w) => w.documentId === savedOrgId)) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setSelectedOrgId(savedOrgId);
-        if (savedProjectId) {
-          setSelectedProjectId(savedProjectId);
-        }
-      } else {
-        const firstOrg = workspaces[0];
-
-        setSelectedOrgId(firstOrg.documentId);
-        if (firstOrg.projects && firstOrg.projects.length > 0) {
-          setSelectedProjectId(String(firstOrg.projects[0].id));
-        }
+      if (
+        savedOrgId &&
+        workspaces.data.some((w) => w.documentId === savedOrgId)
+      ) {
+        return savedOrgId;
       }
+      return workspaces.data[0].documentId;
     }
-  }, [isLoading, workspaces]);
+
+    return '';
+  }, [userSelectedOrgId, workspaces, isLoading]);
 
   const selectedOrg = useMemo(
-    () => workspaces.find((o) => o.documentId === selectedOrgId),
+    () => workspaces?.data.find((o) => o.documentId === selectedOrgId),
     [workspaces, selectedOrgId],
   );
+
+  const selectedProjectId = useMemo(() => {
+    if (userSelectedProjectId) return userSelectedProjectId;
+
+    if (!isLoading && selectedOrg) {
+      const savedProjectId = localStorage.getItem('selectedWorkspaceId');
+      if (
+        savedProjectId &&
+        selectedOrg.projects?.some((p) => String(p.id) === savedProjectId)
+      ) {
+        return savedProjectId;
+      }
+      return selectedOrg.projects?.[0]
+        ? String(selectedOrg.projects[0].id)
+        : '';
+    }
+
+    return '';
+  }, [userSelectedProjectId, selectedOrg, isLoading]);
 
   const selectedProject = useMemo(
     () =>
@@ -80,8 +73,8 @@ export const SelectedWorkspaceProvider: React.FC<
   );
 
   const selectWorkspace = useCallback((orgId: string, projectId: string) => {
-    setSelectedOrgId(orgId);
-    setSelectedProjectId(projectId);
+    setUserSelectedOrgId(orgId);
+    setUserSelectedProjectId(projectId);
     localStorage.setItem('selectedOrgId', orgId);
     localStorage.setItem('selectedWorkspaceId', projectId);
   }, []);
@@ -94,7 +87,7 @@ export const SelectedWorkspaceProvider: React.FC<
       selectedProject,
       isLoading,
       selectWorkspace,
-      refreshWorkspaces: refresh,
+      refreshWorkspaces: handleGetWorkspaces,
     }),
     [
       selectedOrgId,
@@ -103,7 +96,7 @@ export const SelectedWorkspaceProvider: React.FC<
       selectedProject,
       isLoading,
       selectWorkspace,
-      refresh,
+      handleGetWorkspaces,
     ],
   );
 
