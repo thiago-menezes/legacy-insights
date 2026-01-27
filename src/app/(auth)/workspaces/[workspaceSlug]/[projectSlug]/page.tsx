@@ -1,6 +1,7 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { View, Text, Loader } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
@@ -10,9 +11,22 @@ import { useSelectedWorkspace } from '@/features/workspaces/context';
 
 const ProjectDetailPage = () => {
   const params = useParams();
+  const router = useRouter();
   const slug = params.projectSlug as string;
-  const { project, isLoading } = useProjectBySlug(slug);
-  const { selectedOrg } = useSelectedWorkspace();
+  const { project, isLoading: isLoadingProject } = useProjectBySlug(slug);
+  const {
+    selectedOrg,
+    currentWorkspaceHasProjects,
+    isLoading: isLoadingWorkspace,
+  } = useSelectedWorkspace();
+
+  const isLoading = isLoadingProject || isLoadingWorkspace;
+
+  useEffect(() => {
+    if (!isLoadingWorkspace && !currentWorkspaceHasProjects && selectedOrg) {
+      router.push(`/workspaces/${selectedOrg.slug}`);
+    }
+  }, [isLoadingWorkspace, currentWorkspaceHasProjects, selectedOrg, router]);
 
   if (isLoading) {
     return (

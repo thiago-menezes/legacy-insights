@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import Link from 'next/link';
-import { Button } from 'reshaped';
+import { Button, View } from 'reshaped';
 import { Icon, IconProps } from '@/components/icon';
 import styles from './styles.module.scss';
 
@@ -11,6 +11,8 @@ interface SidebarItemProps {
   isActive: boolean;
   isMobile: boolean;
   onToggle: () => void;
+  disabled?: boolean;
+  disabledTooltip?: string;
 }
 
 export const SidebarItem = ({
@@ -20,20 +22,32 @@ export const SidebarItem = ({
   isActive,
   isMobile,
   onToggle,
+  disabled,
+  disabledTooltip,
 }: SidebarItemProps) => {
+  const content = (
+    <Button
+      variant="ghost"
+      color="neutral"
+      fullWidth
+      disabled={disabled}
+      attributes={{ title: disabled ? disabledTooltip : undefined }}
+      className={clsx(styles.navButton, {
+        [styles.navButtonActive]: isActive,
+      })}
+    >
+      {icon && <Icon name={icon} className={styles.navButtonIcon} />}
+      {label}
+    </Button>
+  );
+
+  if (disabled) {
+    return <View width="100%">{content}</View>;
+  }
+
   return (
     <Link href={href} onClick={isMobile ? onToggle : undefined}>
-      <Button
-        variant="ghost"
-        color="neutral"
-        fullWidth
-        className={clsx(styles.navButton, {
-          [styles.navButtonActive]: isActive,
-        })}
-      >
-        {icon && <Icon name={icon} className={styles.navButtonIcon} />}
-        {label}
-      </Button>
+      {content}
     </Link>
   );
 };

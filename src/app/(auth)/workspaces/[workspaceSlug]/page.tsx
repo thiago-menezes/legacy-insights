@@ -2,9 +2,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
-import { View, Text, Loader, Button, Modal, Card, Grid } from 'reshaped';
+import { useRouter, useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  Loader,
+  Button,
+  Modal,
+  Card,
+  Grid,
+  useToast,
+} from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { ProjectForm } from '@/features/projects/form';
@@ -16,11 +25,24 @@ import { getMediaUrl } from '@/libs/api/strapi';
 
 const WorkspaceDetailPage = () => {
   const params = useParams();
+  const router = useRouter();
+  const toast = useToast();
   const slug = params.workspaceSlug as string;
   const { workspaces, isLoading: isLoadingWorkspaces } = useWorkspaces();
-  const { refreshWorkspaces } = useSelectedWorkspace();
+  const { refreshWorkspaces, hasWorkspaces } = useSelectedWorkspace();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+
+  useEffect(() => {
+    if (!isLoadingWorkspaces && !hasWorkspaces) {
+      toast.show({
+        title: 'Acesso restrito',
+        text: 'Você não consegue visualizar projetos pois não tem nenhum workspace cadastrado.',
+        color: 'critical',
+      });
+      router.push('/workspaces');
+    }
+  }, [isLoadingWorkspaces, hasWorkspaces, router, toast]);
 
   const workspace = workspaces?.data.find(
     (w) => w.slug === slug || w.documentId === slug,

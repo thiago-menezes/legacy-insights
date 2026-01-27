@@ -72,6 +72,16 @@ export const SelectedWorkspaceProvider = ({ children }: PropsWithChildren) => {
     [selectedOrg, selectedProjectId],
   );
 
+  const hasWorkspaces = useMemo(
+    () => (workspaces?.data?.length || 0) > 0,
+    [workspaces],
+  );
+
+  const currentWorkspaceHasProjects = useMemo(
+    () => (selectedOrg?.projects?.length || 0) > 0,
+    [selectedOrg],
+  );
+
   const selectWorkspace = useCallback((orgId: string, projectId: string) => {
     setUserSelectedOrgId(orgId);
     setUserSelectedProjectId(projectId);
@@ -86,6 +96,8 @@ export const SelectedWorkspaceProvider = ({ children }: PropsWithChildren) => {
       selectedOrg,
       selectedProject,
       isLoading,
+      hasWorkspaces,
+      currentWorkspaceHasProjects,
       selectWorkspace,
       refreshWorkspaces: handleGetWorkspaces,
     }),
@@ -95,6 +107,8 @@ export const SelectedWorkspaceProvider = ({ children }: PropsWithChildren) => {
       selectedOrg,
       selectedProject,
       isLoading,
+      hasWorkspaces,
+      currentWorkspaceHasProjects,
       selectWorkspace,
       handleGetWorkspaces,
     ],

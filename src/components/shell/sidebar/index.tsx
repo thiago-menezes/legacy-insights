@@ -16,7 +16,12 @@ import { WorkspaceSelector } from './workspace-selector';
 export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
   const pathname = usePathname();
   const { colorMode } = useTheme();
-  const { selectedProject, selectedOrg } = useSelectedWorkspace();
+  const {
+    selectedProject,
+    selectedOrg,
+    hasWorkspaces,
+    currentWorkspaceHasProjects,
+  } = useSelectedWorkspace();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleExpand = (itemLabel: string) => {
@@ -65,116 +70,106 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
       </View>
 
       <View direction="column" gap={6} grow>
-        {buildNavigationSections(selectedOrg?.slug, selectedProject?.slug).map(
-          (section) => {
-            const items = section.items;
+        {buildNavigationSections(
+          selectedOrg?.slug,
+          selectedProject?.slug,
+          hasWorkspaces,
+          currentWorkspaceHasProjects,
+        ).map((section) => {
+          const items = section.items;
 
-            return (
-              <View key={section.title} direction="column" gap={1}>
-                {section.title && (
-                  <View
-                    key={`title-${section.title}`}
-                    paddingInline={2}
-                    paddingBlock={1}
-                  >
-                    <Text variant="caption-1" color="neutral">
-                      {section.title}
-                    </Text>
-                  </View>
-                )}
-                {items.map((item) => {
-                  const isActivePath = () => {
-                    const currentPathname =
-                      normalizeUrlPath(pathname).split('/');
-                    const hrefPathname = normalizeUrlPath(item.href).split('/');
+          return (
+            <View key={section.title} direction="column" gap={1}>
+              {section.title && (
+                <View
+                  key={`title-${section.title}`}
+                  paddingInline={2}
+                  paddingBlock={1}
+                >
+                  <Text variant="caption-1" color="neutral">
+                    {section.title}
+                  </Text>
+                </View>
+              )}
+              {items.map((item) => {
+                const isActive =
+                  normalizeUrlPath(pathname) === normalizeUrlPath(item.href);
 
-                    if (
-                      currentPathname.length >= 2 &&
-                      hrefPathname.length >= 2
-                    ) {
-                      return (
-                        currentPathname[1] === hrefPathname[1] &&
-                        currentPathname[2] === hrefPathname[2]
-                      );
-                    }
+                const isExpanded = expandedItems.includes(item.label);
+                const hasActiveSubItem =
+                  item.subItems?.some(
+                    (subItem) =>
+                      normalizeUrlPath(pathname) ===
+                      normalizeUrlPath(subItem.href),
+                  ) || false;
 
-                    return currentPathname[1] === hrefPathname[1];
-                  };
-
-                  const isActive = isActivePath();
-
-                  const isExpanded = expandedItems.includes(item.label);
-                  const hasActiveSubItem =
-                    item.subItems?.some(
-                      (subItem) => pathname === subItem.href,
-                    ) || false;
-
-                  if (item.expandable && item.subItems) {
-                    return (
-                      <View key={item.href} direction="column" gap={1}>
-                        <Button
-                          variant="ghost"
-                          color={'neutral'}
-                          icon={
-                            <Icon
-                              name={item.icon}
-                              className={styles.navButtonIcon}
-                            />
-                          }
-                          endIcon={
-                            <Icon
-                              className={styles.expandIcon}
-                              name={
-                                isExpanded ? 'chevron-down' : 'chevron-right'
-                              }
-                            />
-                          }
-                          className={clsx(styles.navButton, {
-                            [styles.navButtonActive]:
-                              isActive || hasActiveSubItem,
-                          })}
-                          onClick={() => toggleExpand(item.label)}
-                        >
-                          {item.label}
-                        </Button>
-
-                        {isExpanded && (
-                          <View direction="column" gap={1} paddingStart={8}>
-                            {item.subItems?.map((subItem) => {
-                              const isSubItemActive = pathname === subItem.href;
-                              return (
-                                <SidebarItem
-                                  key={subItem.href}
-                                  href={subItem.href}
-                                  label={subItem.label}
-                                  isActive={isSubItemActive}
-                                  isMobile={isMobile}
-                                  onToggle={onToggle}
-                                />
-                              );
-                            })}
-                          </View>
-                        )}
-                      </View>
-                    );
-                  }
-
+                if (item.expandable && item.subItems) {
                   return (
-                    <SidebarItem
-                      key={item.href}
-                      href={item.href}
-                      label={item.label}
-                      icon={item.icon}
-                      isActive={isActive}
-                      isMobile={isMobile}
-                      onToggle={onToggle}
-                    />
+                    <View key={item.href} direction="column" gap={1}>
+                      <Button
+                        variant="ghost"
+                        color={'neutral'}
+                        icon={
+                          <Icon
+                            name={item.icon}
+                            className={styles.navButtonIcon}
+                          />
+                        }
+                        endIcon={
+                          <Icon
+                            className={styles.expandIcon}
+                            name={isExpanded ? 'chevron-down' : 'chevron-right'}
+                          />
+                        }
+                        className={clsx(styles.navButton, {
+                          [styles.navButtonActive]:
+                            isActive || hasActiveSubItem,
+                        })}
+                        onClick={() => toggleExpand(item.label)}
+                      >
+                        {item.label}
+                      </Button>
+
+                      {isExpanded && (
+                        <View direction="column" gap={1} paddingStart={8}>
+                          {item.subItems?.map((subItem) => {
+                            const isSubItemActive =
+                              normalizeUrlPath(pathname) ===
+                              normalizeUrlPath(subItem.href);
+                            return (
+                              <SidebarItem
+                                key={subItem.href}
+                                href={subItem.href}
+                                label={subItem.label}
+                                isActive={isSubItemActive}
+                                isMobile={isMobile}
+                                onToggle={onToggle}
+                              />
+                            );
+                          })}
+                        </View>
+                      )}
+                    </View>
                   );
-                })}
-              </View>
-            );
-          },
-        )}
+                }
+
+                return (
+                  <SidebarItem
+                    key={item.href}
+                    href={item.href}
+                    label={item.label}
+                    icon={item.icon}
+                    isActive={isActive}
+                    isMobile={isMobile}
+                    onToggle={onToggle}
+                    disabled={item.disabled}
+                    disabledTooltip={item.disabledTooltip}
+                  />
+                );
+              })}
+            </View>
+          );
+        })}
       </View>
 
       <View paddingInline={2}>

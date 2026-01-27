@@ -17,6 +17,8 @@ export interface SelectedWorkspaceContextValue {
   selectedOrg: Workspace | undefined;
   selectedProject: Project | undefined;
   isLoading: boolean;
+  hasWorkspaces: boolean;
+  currentWorkspaceHasProjects: boolean;
   selectWorkspace: (orgId: string, projectId: string) => void;
   refreshWorkspaces: () => Promise<unknown>;
 }

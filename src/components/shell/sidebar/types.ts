@@ -11,6 +11,8 @@ export interface NavItem {
   icon: IconNames;
   expandable?: boolean;
   subItems?: NavSubItem[];
+  disabled?: boolean;
+  disabledTooltip?: string;
 }
 
 export interface SidebarProps {
