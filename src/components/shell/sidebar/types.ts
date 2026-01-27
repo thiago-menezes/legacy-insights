@@ -1,5 +1,4 @@
 import { IconNames } from '@/components/icon';
-import { StrapiWorkspace } from '@/libs/api/workspaces';
 
 export interface NavSubItem {
   label: string;
@@ -8,10 +7,10 @@ export interface NavSubItem {
 
 export interface NavItem {
   label: string;
-  href: ((projectId: string) => string) | string;
+  href: string;
   icon: IconNames;
   expandable?: boolean;
-  subItems?: ((workspaces: StrapiWorkspace[]) => NavSubItem[]) | NavSubItem[];
+  subItems?: NavSubItem[];
 }
 
 export interface SidebarProps {
@@ -22,5 +21,5 @@ export interface SidebarProps {
 
 export interface NavSection {
   title?: string;
-  items: ((workspaces: StrapiWorkspace[]) => NavItem[]) | NavItem[];
+  items: NavItem[];
 }

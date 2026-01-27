@@ -5,21 +5,18 @@ import { useState } from 'react';
 import { View, Text, Button, useTheme } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { useSelectedWorkspace } from '@/features/workspaces/context';
-import { useWorkspaces } from '@/features/workspaces/hooks';
 import { normalizeUrlPath } from '@/utils/sanitize-slug';
-import { NAVIGATION_SECTIONS } from './constants';
 import { SidebarItem } from './item';
 import styles from './styles.module.scss';
 import { SidebarProps } from './types';
 import { UserSelector } from './user-selector';
+import { buildNavigationSections } from './utils';
 import { WorkspaceSelector } from './workspace-selector';
 
 export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
   const pathname = usePathname();
   const { colorMode } = useTheme();
-  const { selectedProject } = useSelectedWorkspace();
-  const { workspaces } = useWorkspaces();
-
+  const { selectedProject, selectedOrg } = useSelectedWorkspace();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleExpand = (itemLabel: string) => {
@@ -68,108 +65,116 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
       </View>
 
       <View direction="column" gap={6} grow>
-        {NAVIGATION_SECTIONS.map((section) => {
-          const items =
-            typeof section.items === 'function'
-              ? section.items(workspaces)
-              : section.items;
+        {buildNavigationSections(selectedOrg?.slug, selectedProject?.slug).map(
+          (section) => {
+            const items = section.items;
 
-          return (
-            <View key={section.title} direction="column" gap={1}>
-              {section.title && (
-                <View
-                  key={`title-${section.title}`}
-                  paddingInline={2}
-                  paddingBlock={1}
-                >
-                  <Text variant="caption-1" color="neutral">
-                    {section.title}
-                  </Text>
-                </View>
-              )}
-              {items.map((item) => {
-                const href =
-                  typeof item.href === 'string'
-                    ? item.href
-                    : item.href(selectedProject?.slug ?? '');
+            return (
+              <View key={section.title} direction="column" gap={1}>
+                {section.title && (
+                  <View
+                    key={`title-${section.title}`}
+                    paddingInline={2}
+                    paddingBlock={1}
+                  >
+                    <Text variant="caption-1" color="neutral">
+                      {section.title}
+                    </Text>
+                  </View>
+                )}
+                {items.map((item) => {
+                  const isActivePath = () => {
+                    const currentPathname =
+                      normalizeUrlPath(pathname).split('/');
+                    const hrefPathname = normalizeUrlPath(item.href).split('/');
 
-                const subItems =
-                  typeof item.subItems === 'function'
-                    ? item.subItems(workspaces)
-                    : item.subItems;
+                    if (
+                      currentPathname.length >= 2 &&
+                      hrefPathname.length >= 2
+                    ) {
+                      return (
+                        currentPathname[1] === hrefPathname[1] &&
+                        currentPathname[2] === hrefPathname[2]
+                      );
+                    }
 
-                const isActive =
-                  normalizeUrlPath(pathname.split('/')[1]) ===
-                  normalizeUrlPath(href.split('/')[1]);
+                    return currentPathname[1] === hrefPathname[1];
+                  };
 
-                const isExpanded = expandedItems.includes(item.label);
-                const hasActiveSubItem =
-                  subItems?.some((subItem) => pathname === subItem.href) ||
-                  false;
+                  const isActive = isActivePath();
 
-                if (item.expandable && item.subItems) {
-                  return (
-                    <View key={href} direction="column" gap={1}>
-                      <Button
-                        variant="ghost"
-                        color={'neutral'}
-                        icon={
-                          <Icon
-                            name={item.icon}
-                            className={styles.navButtonIcon}
-                          />
-                        }
-                        endIcon={
-                          <Icon
-                            className={styles.expandIcon}
-                            name={isExpanded ? 'chevron-down' : 'chevron-right'}
-                          />
-                        }
-                        className={clsx(styles.navButton, {
-                          [styles.navButtonActive]:
-                            isActive || hasActiveSubItem,
-                        })}
-                        onClick={() => toggleExpand(item.label)}
-                      >
-                        {item.label}
-                      </Button>
+                  const isExpanded = expandedItems.includes(item.label);
+                  const hasActiveSubItem =
+                    item.subItems?.some(
+                      (subItem) => pathname === subItem.href,
+                    ) || false;
 
-                      {isExpanded && (
-                        <View direction="column" gap={1} paddingStart={8}>
-                          {subItems?.map((subItem) => {
-                            const isSubItemActive = pathname === subItem.href;
-                            return (
-                              <SidebarItem
-                                key={subItem.href}
-                                href={subItem.href}
-                                label={subItem.label}
-                                isActive={isSubItemActive}
-                                isMobile={isMobile}
-                                onToggle={onToggle}
-                              />
-                            );
+                  if (item.expandable && item.subItems) {
+                    return (
+                      <View key={item.href} direction="column" gap={1}>
+                        <Button
+                          variant="ghost"
+                          color={'neutral'}
+                          icon={
+                            <Icon
+                              name={item.icon}
+                              className={styles.navButtonIcon}
+                            />
+                          }
+                          endIcon={
+                            <Icon
+                              className={styles.expandIcon}
+                              name={
+                                isExpanded ? 'chevron-down' : 'chevron-right'
+                              }
+                            />
+                          }
+                          className={clsx(styles.navButton, {
+                            [styles.navButtonActive]:
+                              isActive || hasActiveSubItem,
                           })}
-                        </View>
-                      )}
-                    </View>
-                  );
-                }
+                          onClick={() => toggleExpand(item.label)}
+                        >
+                          {item.label}
+                        </Button>
 
-                return (
-                  <SidebarItem
-                    key={href}
-                    href={href}
-                    label={item.label}
-                    icon={item.icon}
-                    isActive={isActive}
-                    isMobile={isMobile}
-                    onToggle={onToggle}
-                  />
-                );
-              })}
-            </View>
-          );
-        })}
+                        {isExpanded && (
+                          <View direction="column" gap={1} paddingStart={8}>
+                            {item.subItems?.map((subItem) => {
+                              const isSubItemActive = pathname === subItem.href;
+                              return (
+                                <SidebarItem
+                                  key={subItem.href}
+                                  href={subItem.href}
+                                  label={subItem.label}
+                                  isActive={isSubItemActive}
+                                  isMobile={isMobile}
+                                  onToggle={onToggle}
+                                />
+                              );
+                            })}
+                          </View>
+                        )}
+                      </View>
+                    );
+                  }
+
+                  return (
+                    <SidebarItem
+                      key={item.href}
+                      href={item.href}
+                      label={item.label}
+                      icon={item.icon}
+                      isActive={isActive}
+                      isMobile={isMobile}
+                      onToggle={onToggle}
+                    />
+                  );
+                })}
+              </View>
+            );
+          },
+        )}
       </View>
 
       <View paddingInline={2}>

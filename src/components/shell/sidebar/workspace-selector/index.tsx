@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { View, Text, DropdownMenu } from 'reshaped';
+import { View, Text, DropdownMenu, Button } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { useWorkspaces } from '@/features/workspaces/hooks';
 import { getMediaUrl } from '@/libs/api/strapi';
@@ -21,6 +21,22 @@ export const WorkspaceSelector = () => {
   const currentOrgLogo = selectedOrg?.logo?.url
     ? getMediaUrl(selectedOrg.logo.url)
     : null;
+
+  if (!workspaces.length) {
+    return (
+      <Link href="/workspaces">
+        <Button
+          size="large"
+          fullWidth
+          variant="outline"
+          color="primary"
+          icon={<Icon name="plus" size={16} />}
+        >
+          Adicionar Workspace
+        </Button>
+      </Link>
+    );
+  }
 
   return (
     <div className={styles.container}>

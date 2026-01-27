@@ -205,8 +205,12 @@ export const Integrations = ({ projectId }: IntegrationsProps) => {
   }
 
   return (
-    <View gap={6} className={styles.integrations}>
-      <View>
+    <View>
+      <View gap={2}>
+        <Text variant="title-6" weight="medium">
+          Integrações
+        </Text>
+
         <Tabs variant="pills-elevated" defaultValue="all">
           <Tabs.List>
             {TABS.map((tab) => (
@@ -221,7 +225,7 @@ export const Integrations = ({ projectId }: IntegrationsProps) => {
         </Tabs>
       </View>
 
-      <View gap={4}>
+      <View gap={4} paddingTop={4}>
         <Text variant="featured-2" weight="medium">
           Anúncios
         </Text>

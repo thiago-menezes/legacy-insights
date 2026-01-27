@@ -16,7 +16,7 @@ import { getMediaUrl } from '@/libs/api/strapi';
 
 const WorkspaceDetailPage = () => {
   const params = useParams();
-  const slug = params.slug as string;
+  const slug = params.workspaceSlug as string;
   const { workspaces, isLoading: isLoadingWorkspaces } = useWorkspaces();
   const { refreshWorkspaces } = useSelectedWorkspace();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,24 +87,33 @@ const WorkspaceDetailPage = () => {
             />
           )
         }
-        title={workspace.name}
-        description="Gerencie os projetos deste workspace"
-      />
-      <View gap={4}>
-        <View direction="row" align="center" justify="space-between">
-          <Text variant="featured-2" weight="medium">
-            Projetos
-          </Text>
-          <Button
-            variant="solid"
-            color="primary"
-            icon={<Icon name="plus" />}
-            onClick={() => setIsModalOpen(true)}
-          >
-            Novo Projeto
-          </Button>
-        </View>
+        breadcrumbs={[
+          {
+            label: 'Lista de Workspaces',
+            href: '/workspaces',
+          },
+          {
+            label: `Workspace: ${workspace.name}`,
+          },
+        ]}
+        title="Projetos"
+        description={
+          <>
+            Gerencie os projetos do workspace <strong>{workspace.name}</strong>
+          </>
+        }
+      >
+        <Button
+          variant="solid"
+          color="primary"
+          icon={<Icon name="plus" />}
+          onClick={() => setIsModalOpen(true)}
+        >
+          Novo Projeto
+        </Button>
+      </PageTitle>
 
+      <View gap={4}>
         {projects.length === 0 ? (
           <View
             padding={8}
@@ -120,7 +129,7 @@ const WorkspaceDetailPage = () => {
             {projects.map((project) => (
               <Link
                 key={project.documentId}
-                href={`/integracoes/projetos/${project.slug}`}
+                href={`/workspaces/${workspace.slug}/${project.slug}`}
                 style={{ textDecoration: 'none' }}
               >
                 <Card
@@ -128,9 +137,10 @@ const WorkspaceDetailPage = () => {
                     style: {
                       cursor: 'pointer',
                       transition: 'background-color 0.2s',
+                      border:
+                        '1px solid var(--rs-color-background-neutral-faded)',
                     },
                   }}
-                  elevated
                 >
                   <View direction="row" align="center" gap={4}>
                     <Icon name="folder" size={24} />
@@ -149,18 +159,16 @@ const WorkspaceDetailPage = () => {
           </Grid>
         )}
       </View>
+
       <Modal active={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <View padding={6} gap={4}>
-          <Text variant="featured-3" weight="bold">
-            Novo Projeto
-          </Text>
-          <ProjectForm
-            workspaceId={workspace.documentId}
-            onSubmit={handleCreateProject}
-            onCancel={() => setIsModalOpen(false)}
-            isLoading={isCreating}
-          />
-        </View>
+        <Modal.Title>Novo Projeto</Modal.Title>
+
+        <ProjectForm
+          workspaceId={workspace.documentId}
+          onSubmit={handleCreateProject}
+          onCancel={() => setIsModalOpen(false)}
+          isLoading={isCreating}
+        />
       </Modal>
     </>
   );

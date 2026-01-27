@@ -178,12 +178,19 @@ export const WorkspaceForm = ({
         </FormControl>
 
         <FormControl>
-          <FormControl.Label>Slug</FormControl.Label>
+          <FormControl.Label>Identificador do Workspace</FormControl.Label>
           <TextField
             placeholder="ex-minha-empresa"
             {...register('slug', { required: true })}
             value={slugValue}
-            onChange={(e) => setValue('slug', e.value)}
+            onChange={(e) => {
+              const sanitized = e.value
+                .toLowerCase()
+                .replace(/ /g, '-')
+                .replace(/[^\w-]+/g, '');
+              setValue('slug', sanitized);
+            }}
+            disabled
           />
         </FormControl>
 

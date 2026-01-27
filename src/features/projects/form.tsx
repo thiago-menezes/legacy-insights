@@ -46,52 +46,56 @@ export const ProjectForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/* <View gap={4}> */}
-      <FormControl>
-        <FormControl.Label>Nome do Projeto</FormControl.Label>
-        <TextField
-          placeholder="Ex: Campanha de Verão 2024"
-          {...register('name', { required: true })}
-          value={nameValue}
-          onChange={(e) => handleNameChange(e.value)}
-        />
-      </FormControl>
+      <View gap={4} paddingTop={4}>
+        <FormControl>
+          <FormControl.Label>Nome do Projeto</FormControl.Label>
+          <TextField
+            placeholder="Ex: Campanha de Verão 2024"
+            {...register('name', { required: true })}
+            value={nameValue}
+            onChange={(e) => handleNameChange(e.value)}
+          />
+        </FormControl>
 
-      <FormControl>
-        <FormControl.Label>Slug (URL)</FormControl.Label>
-        <TextField
-          placeholder="ex: campanha-verao-2024"
-          {...register('slug', { required: true })}
-          onChange={(e) => setValue('slug', e.value)}
-        />
-        <FormControl.Helper>
-          Este será o identificador do projeto na URL
-        </FormControl.Helper>
-      </FormControl>
+        <FormControl>
+          <FormControl.Label>Identificador do Projeto (URL)</FormControl.Label>
+          <TextField
+            placeholder="ex: campanha-verao-2024"
+            {...register('slug', { required: true })}
+            onChange={(e) => {
+              const sanitized = e.value
+                .toLowerCase()
+                .replace(/ /g, '-')
+                .replace(/[^\w-]+/g, '');
+              setValue('slug', sanitized);
+            }}
+            disabled
+          />
+        </FormControl>
 
-      <FormControl>
-        <FormControl.Label>Descrição (opcional)</FormControl.Label>
-        <TextArea
-          placeholder="Descreva o objetivo deste projeto..."
-          {...register('description')}
-          onChange={(e) => setValue('description', e.value)}
-        />
-      </FormControl>
+        <FormControl>
+          <FormControl.Label>Descrição (opcional)</FormControl.Label>
+          <TextArea
+            placeholder="Descreva o objetivo deste projeto..."
+            {...register('description')}
+            onChange={(e) => setValue('description', e.value)}
+          />
+        </FormControl>
 
-      <View direction="row" gap={3} justify="end" paddingTop={4}>
-        <Button variant="outline" onClick={onCancel} disabled={isLoading}>
-          Cancelar
-        </Button>
-        <Button
-          type="submit"
-          color="primary"
-          loading={isLoading}
-          disabled={isLoading}
-        >
-          {initialValues?.name ? 'Salvar Alterações' : 'Criar Projeto'}
-        </Button>
+        <View direction="row" gap={3} justify="end" paddingTop={4}>
+          <Button variant="outline" onClick={onCancel} disabled={isLoading}>
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            color="primary"
+            loading={isLoading}
+            disabled={isLoading}
+          >
+            {initialValues?.name ? 'Salvar Alterações' : 'Criar Projeto'}
+          </Button>
+        </View>
       </View>
-      {/* </View> */}
     </form>
   );
 };

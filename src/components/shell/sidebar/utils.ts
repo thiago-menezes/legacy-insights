@@ -1,6 +1,9 @@
 import { NavSection } from './types';
 
-export const NAVIGATION_SECTIONS: NavSection[] = [
+export const buildNavigationSections = (
+  workspaceSlug?: string,
+  projectSlug?: string,
+): NavSection[] => [
   {
     title: 'Menu',
     items: [
@@ -15,11 +18,6 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
           { label: 'Google', href: '/campanhas/google' },
         ],
       },
-      {
-        label: 'Integrações',
-        href: (projectId) => `/integracoes/projetos/${projectId}`,
-        icon: 'arrows-exchange',
-      },
     ],
   },
   {
@@ -30,6 +28,16 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
         href: '/workspaces',
         icon: 'file-text',
         expandable: false,
+      },
+      {
+        label: 'Projetos',
+        href: `/workspaces/${workspaceSlug}`,
+        icon: 'folders',
+      },
+      {
+        label: 'Integrações',
+        href: `/workspaces/${workspaceSlug}/${projectSlug}`,
+        icon: 'arrows-exchange',
       },
     ],
   },

@@ -35,7 +35,7 @@ export const IntegrationForm = ({
       },
     });
 
-  // eslint--next-line react-hooks/incompatible-library
+  // eslint-disable-next-line react-hooks/incompatible-library
   const typeValue = watch('type');
 
   return (
