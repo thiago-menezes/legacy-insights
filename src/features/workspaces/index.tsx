@@ -4,10 +4,10 @@ import { View, Text, Button, Loader, Modal } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { WorkspaceCard } from './card';
-import { WorkspaceForm } from './form';
-import { SwitchWorkspaceModal } from './switch-modal';
-import { useWorkspaces } from './hooks';
 import { useSelectedWorkspace } from './context';
+import { WorkspaceForm } from './form';
+import { useWorkspaces } from './hooks';
+import { SwitchWorkspaceModal } from './switch-modal';
 
 export const Workspaces = () => {
   const {

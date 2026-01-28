@@ -1,10 +1,10 @@
 'use client';
 
-import { Modal, View, Text, Button } from 'reshaped';
 import Image from 'next/image';
+import { Modal, View, Text, Button } from 'reshaped';
 import { Icon } from '@/components/icon';
-import { getMediaUrl } from '@/libs/api/strapi';
 import { Workspace } from '@/libs/api/services/workspaces';
+import { getMediaUrl } from '@/libs/api/strapi';
 import styles from '../styles.module.scss';
 
 interface SwitchWorkspaceModalProps {
