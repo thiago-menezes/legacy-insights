@@ -21,6 +21,8 @@ export const Campaigns = () => {
 
   const { metrics, campaigns, totalPages, currentPage, totalItems } = data;
 
+  console.log({ data });
+
   return (
     <View gap={6} className={styles.campaigns}>
       <View gap={1}>

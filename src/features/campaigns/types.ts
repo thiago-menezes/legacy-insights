@@ -1,6 +1,11 @@
 import { IconProps } from '@/components/icon';
 
-export type CampaignStatus = 'active' | 'finished' | 'disabled';
+export type CampaignStatus =
+  | 'active'
+  | 'paused'
+  | 'archived'
+  | 'removed'
+  | 'deleted';
 
 export type CampaignTab = 'campaigns' | 'adsets' | 'ads';
 

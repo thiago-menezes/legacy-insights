@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchDashboardData } from '@/data/mock';
 import { DashboardData } from './types';
 
 interface UseDashboardDataResult {
@@ -15,7 +14,7 @@ export const useDashboardData = (_filters?: {
   context?: string;
 }): UseDashboardDataResult => {
   const [data, setData] = useState<DashboardData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -23,8 +22,7 @@ export const useDashboardData = (_filters?: {
     setError(null);
 
     try {
-      const result = await fetchDashboardData();
-      setData(result);
+      setData(null);
     } catch (err) {
       setError(
         err instanceof Error

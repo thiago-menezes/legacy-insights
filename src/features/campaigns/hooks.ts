@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { StrapiCampaignListResponse } from '@/libs/api/services/campaigns';
+import { buildCampaignRow } from './table/utils';
 import { useCampaignsQuery } from './api/query';
 import { CampaignsData, CampaignsFilters, CampaignStatus } from './types';
 import { formatCurrency, formatNumber } from './utils';
@@ -15,48 +16,14 @@ const mapStrapiToCampaignsData = (
   let totalConversions = 0;
 
   const campaignRows = data.map((campaign) => {
-    let campSpend = 0;
-    let campLeads = 0;
-    let campClicks = 0;
-    let campConversions = 0;
-    let campImpressions = 0;
-
     campaign.dailyMetrics?.forEach((m) => {
-      campSpend += Number(m.spend);
-      campLeads += Number(m.leads);
-      campClicks += Number(m.clicks);
-      campConversions += Number(m.conversions);
-      campImpressions += Number(m.impressions);
+      totalSpend += Number(m.spend);
+      totalLeads += Number(m.leads);
+      totalClicks += Number(m.clicks);
+      totalConversions += Number(m.conversions);
     });
 
-    totalSpend += campSpend;
-    totalLeads += campLeads;
-    totalClicks += campClicks;
-    totalConversions += campConversions;
-
-    return {
-      id: campaign.documentId,
-      name: campaign.name,
-      status: (campaign.status === 'active'
-        ? 'active'
-        : campaign.status === 'paused'
-          ? 'disabled'
-          : 'finished') as CampaignStatus,
-      budget: campaign.dailyBudget || 0,
-
-      clicks: campClicks,
-      clicksPrevious: 0, // TODO: Implement previous period
-      clicksChange: 0,
-      cpc: campClicks > 0 ? campSpend / campClicks : 0,
-      cpcPrevious: 0,
-      cpcChange: 0,
-      ctr: campImpressions > 0 ? (campClicks / campImpressions) * 100 : 0,
-      ctrPrevious: 0,
-      ctrChange: 0,
-      conversionRate: campClicks > 0 ? (campConversions / campClicks) * 100 : 0,
-      conversionRatePrevious: 0,
-      conversionRateChange: 0,
-    };
+    return buildCampaignRow(campaign);
   });
 
   const metrics = [

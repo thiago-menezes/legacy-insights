@@ -10,15 +10,25 @@ export const STATUS_CONFIG: Record<
     color: 'positive',
     icon: 'circle-check',
   },
-  finished: {
-    label: 'Finalizado',
+  paused: {
+    label: 'Pausado',
     color: 'neutral',
-    icon: 'circle-check',
+    icon: 'player-pause',
   },
-  disabled: {
-    label: 'Desativado',
+  archived: {
+    label: 'Arquivado',
     color: 'neutral',
-    icon: 'ban',
+    icon: 'archive',
+  },
+  removed: {
+    label: 'Removido',
+    color: 'critical',
+    icon: 'trash',
+  },
+  deleted: {
+    label: 'Excluído',
+    color: 'critical',
+    icon: 'trash',
   },
 };
 
@@ -27,7 +37,3 @@ export const TABS: { id: CampaignTab; label: string }[] = [
   { id: 'adsets', label: 'Conjuntos' },
   { id: 'ads', label: 'Anúncios' },
 ];
-
-export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
-
-export const DEFAULT_PAGE_SIZE = 10;

@@ -8,7 +8,7 @@ import { useTheme } from 'reshaped';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export const Table = (props: AgGridReactProps) => {
+export const Table = <T,>(props: AgGridReactProps<T>) => {
   const { colorMode } = useTheme();
 
   const legacyTheme = themeQuartz.withParams({
