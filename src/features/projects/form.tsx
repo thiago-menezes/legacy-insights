@@ -1,14 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Button, TextField, View, FormControl, TextArea } from 'reshaped';
 import { ProjectCreateInput } from '@/libs/api/services/projects';
-
-interface ProjectFormProps {
-  initialValues?: Partial<ProjectCreateInput>;
-  onSubmit: (values: ProjectCreateInput) => void;
-  onCancel: () => void;
-  isLoading?: boolean;
-  workspaceId: string;
-}
+import { ProjectFormProps } from './types';
 
 export const ProjectForm = ({
   initialValues,
@@ -52,6 +45,7 @@ export const ProjectForm = ({
           <TextField
             placeholder="Ex: Campanha de Verão 2024"
             {...register('name', { required: true })}
+            name="name"
             value={nameValue}
             onChange={(e) => handleNameChange(e.value)}
           />
@@ -62,6 +56,7 @@ export const ProjectForm = ({
           <TextField
             placeholder="ex: campanha-verao-2024"
             {...register('slug', { required: true })}
+            name="slug"
             onChange={(e) => {
               const sanitized = e.value
                 .toLowerCase()
@@ -78,6 +73,7 @@ export const ProjectForm = ({
           <TextArea
             placeholder="Descreva o objetivo deste projeto..."
             {...register('description')}
+            name="description"
             onChange={(e) => setValue('description', e.value)}
           />
         </FormControl>

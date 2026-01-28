@@ -28,7 +28,10 @@ export const SelectedWorkspaceProvider = ({ children }: PropsWithChildren) => {
     if (userSelectedOrgId) return userSelectedOrgId;
 
     if (!isLoading && workspaces?.data.length > 0) {
-      const savedOrgId = localStorage.getItem('selectedOrgId');
+      const savedOrgId =
+        typeof window !== 'undefined'
+          ? localStorage.getItem('selectedOrgId')
+          : null;
       if (
         savedOrgId &&
         workspaces.data.some((w) => w.documentId === savedOrgId)
@@ -50,7 +53,10 @@ export const SelectedWorkspaceProvider = ({ children }: PropsWithChildren) => {
     if (userSelectedProjectId) return userSelectedProjectId;
 
     if (!isLoading && selectedOrg) {
-      const savedProjectId = localStorage.getItem('selectedWorkspaceId');
+      const savedProjectId =
+        typeof window !== 'undefined'
+          ? localStorage.getItem('selectedWorkspaceId')
+          : null;
       if (
         savedProjectId &&
         selectedOrg.projects?.some((p) => String(p.id) === savedProjectId)

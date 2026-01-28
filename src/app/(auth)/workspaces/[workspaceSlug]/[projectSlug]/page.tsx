@@ -1,20 +1,20 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { View, Text, Loader } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { Integrations } from '@/features/integrations';
-import { useProjectBySlug } from '@/features/projects/hooks';
+import { useProject } from '@/features/projects/hooks';
 import { useSelectedWorkspace } from '@/features/workspaces/context';
 import { WorkspaceMembersList } from '@/features/workspaces/members/list';
 
-const ProjectDetailPage = () => {
+const Page = () => {
   const params = useParams();
   const router = useRouter();
   const slug = params.projectSlug as string;
-  const { project, isLoading: isLoadingProject } = useProjectBySlug(slug);
+  const { project, isLoading: isLoadingProject } = useProject({ slug });
   const {
     selectedOrg,
     currentWorkspaceHasProjects,
@@ -23,11 +23,12 @@ const ProjectDetailPage = () => {
 
   const isLoading = isLoadingProject || isLoadingWorkspace;
 
+
   useEffect(() => {
     if (!isLoadingWorkspace && !currentWorkspaceHasProjects && selectedOrg) {
       router.push(`/workspaces/${selectedOrg.slug}`);
     }
-  }, [isLoadingWorkspace, currentWorkspaceHasProjects, selectedOrg, router]);
+  }, []);
 
   if (isLoading) {
     return (
@@ -82,4 +83,4 @@ const ProjectDetailPage = () => {
   );
 };
 
-export default ProjectDetailPage;
+export default Page;

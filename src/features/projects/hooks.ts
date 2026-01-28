@@ -1,140 +1,99 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   ProjectCreateInput,
-  projectsService,
   StrapiProject,
 } from '@/libs/api/services/projects';
+import {
+  useCreateProjectMutation,
+  useUpdateProjectMutation,
+  useDeleteProjectMutation,
+} from './api/mutation';
+import {
+  useProjectsQuery,
+  useProjectQuery,
+  useProjectBySlugQuery,
+} from './api/query';
 
-export const useProjects = (workspaceId?: string) => {
-  const [projects, setProjects] = useState<StrapiProject[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface UseProjectParams {
+  workspaceId?: string;
+  id?: string;
+  slug?: string;
+}
 
-  const fetchProjects = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await projectsService.list(workspaceId);
-      setProjects(response.data);
-    } catch (err) {
-      setError('Falha ao carregar projetos');
-      // eslint-disable-next-line no-console
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [workspaceId]);
+export const useProject = (params: UseProjectParams = {}) => {
+  const { workspaceId, id, slug } = params;
 
-  const createProject = async (data: ProjectCreateInput) => {
-    try {
-      await projectsService.create(data);
-      await fetchProjects();
-    } catch (err) {
-      setError('Falha ao criar projeto');
-      throw err;
-    }
+  const projectsQuery = useProjectsQuery(workspaceId);
+  const projectQuery = useProjectQuery(id || '');
+  const projectBySlugQuery = useProjectBySlugQuery(slug || '');
+
+  const createMutation = useCreateProjectMutation(workspaceId);
+  const updateMutation = useUpdateProjectMutation(workspaceId);
+  const deleteMutation = useDeleteProjectMutation(workspaceId);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<StrapiProject | null>(
+    null,
+  );
+
+  const handleOpenCreate = () => {
+    setEditingProject(null);
+    setIsModalOpen(true);
   };
 
-  const updateProject = async (
-    id: string,
-    data: Partial<ProjectCreateInput>,
-  ) => {
-    try {
-      await projectsService.update(id, data);
-      await fetchProjects();
-    } catch (err) {
-      setError('Falha ao atualizar projeto');
-      throw err;
-    }
+  const handleOpenEdit = (project: StrapiProject) => {
+    setEditingProject(project);
+    setIsModalOpen(true);
   };
 
-  const deleteProject = async (id: string) => {
-    try {
-      await projectsService.deleteProject(id);
-      await fetchProjects();
-    } catch (err) {
-      setError('Falha ao excluir projeto');
-      throw err;
-    }
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingProject(null);
   };
 
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+  const projects = projectsQuery.data?.data || [];
+  const project = id
+    ? projectQuery.data?.data
+    : slug
+      ? projectBySlugQuery.data
+      : null;
 
   return {
     projects,
-    isLoading,
-    error,
-    refresh: fetchProjects,
-    createProject,
-    updateProject,
-    deleteProject,
-  };
-};
-
-export const useProjectBySlug = (slug: string) => {
-  const [project, setProject] = useState<StrapiProject | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchProject = useCallback(async () => {
-    if (!slug) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await projectsService.getBySlug(slug);
-      setProject(data);
-    } catch (err) {
-      setError('Projeto não encontrado');
-      // eslint-disable-next-line no-console
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [slug]);
-
-  useEffect(() => {
-    fetchProject();
-  }, [fetchProject]);
-
-  return {
     project,
-    isLoading,
-    error,
-    refresh: fetchProject,
+    isLoading:
+      projectsQuery.isLoading ||
+      projectQuery.isLoading ||
+      projectBySlugQuery.isLoading ||
+      createMutation.isPending ||
+      updateMutation.isPending ||
+      deleteMutation.isPending,
+    error:
+      (projectsQuery.error as Error)?.message ||
+      (projectQuery.error as Error)?.message ||
+      (projectBySlugQuery.error as Error)?.message ||
+      createMutation.error?.message ||
+      updateMutation.error?.message ||
+      deleteMutation.error?.message ||
+      null,
+    refresh: projectsQuery.refetch,
+    createProject: (data: ProjectCreateInput) =>
+      createMutation.mutateAsync(data),
+    updateProject: (id: string, data: Partial<ProjectCreateInput>) =>
+      updateMutation.mutateAsync({ id, params: data }),
+    deleteProject: (id: string) => deleteMutation.mutateAsync(id),
+
+    // Modal state
+    isModalOpen,
+    editingProject,
+    handleOpenCreate,
+    handleOpenEdit,
+    handleCloseModal,
   };
 };
 
-export const useProject = (id: string) => {
-  const [project, setProject] = useState<StrapiProject | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchProject = useCallback(async () => {
-    if (!id) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await projectsService.get(id);
-      setProject(response.data);
-    } catch (err) {
-      setError('Projeto não encontrado');
-      // eslint-disable-next-line no-console
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    fetchProject();
-  }, [fetchProject]);
-
-  return {
-    project,
-    isLoading,
-    error,
-    refresh: fetchProject,
-  };
-};
+/**
+ * @deprecated Use useProject instead. This is kept for backward compatibility during refactoring.
+ */
+export const useProjects = (workspaceId?: string) =>
+  useProject({ workspaceId });
