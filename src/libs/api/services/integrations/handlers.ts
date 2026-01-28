@@ -1,4 +1,5 @@
 import { apiClient } from '../../axios';
+import { ServiceConfig } from '../types';
 import {
   IntegrationResponse,
   IntegrationCreateInput,
@@ -7,13 +8,14 @@ import {
 
 export const list = async (
   projectId?: string | number,
-): Promise<IntegrationResponse> => {
-  let url = '/api/integrations?populate=*';
-  if (projectId) {
-    url += `&filters[project][documentId][$eq]=${projectId}`;
-  }
-  const { data } = await apiClient.get<IntegrationResponse>(url);
-  return data;
+): ServiceConfig<IntegrationResponse> => {
+  const filter = projectId
+    ? `&filters[project][documentId][$eq]=${projectId}`
+    : '';
+  const { data } = await apiClient.get<IntegrationResponse>(
+    `/api/integrations?populate=*${filter}`,
+  );
+  return { ...data, keys: ['integrations', projectId] };
 };
 
 export const get = async (

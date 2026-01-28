@@ -54,8 +54,10 @@ export const BREADCRUMBS: {
     href: (_?: StrapiProject) => '/workspaces',
   },
   {
-    label: (project?: StrapiProject) => `Workspace: ${project?.workspace}`,
-    href: (project?: StrapiProject) => `/workspaces/${project?.workspace}`,
+    label: (project?: StrapiProject) =>
+      `Workspace: ${project?.workspace?.slug}`,
+    href: (project?: StrapiProject) =>
+      `/workspaces/${project?.workspace?.slug}`,
   },
   {
     label: (project?: StrapiProject) => `Projeto: ${project?.name}`,

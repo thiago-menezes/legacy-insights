@@ -27,11 +27,11 @@ export const get = async (idOrSlug: string): Promise<SingleProjectResponse> => {
 };
 
 export const getBySlug = async (slug: string): Promise<StrapiProject> => {
-  const { data } = await apiClient.get<StrapiProject>(
+  const { data } = await apiClient.get<{ data: StrapiProject[] }>(
     `/api/projects?filters[slug][$eq]=${slug}&populate=*`,
   );
 
-  return data;
+  return data.data[0];
 };
 
 export const create = async (

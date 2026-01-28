@@ -20,16 +20,10 @@ export const useProjects = () => {
   const { hasWorkspaces, selectedOrg } = useSelectedWorkspace();
 
   const projectsQuery = useProjectsQuery(selectedOrg?.documentId);
-  const projectQuery = useProjectQuery(params.projectSlug);
   const projectBySlugQuery = useProjectBySlugQuery(params.projectSlug);
+  const project = projectBySlugQuery.data || null;
 
   const createMutation = useCreateProjectMutation(selectedOrg?.documentId);
-
-  const project = params.projectSlug
-    ? projectQuery.data?.data
-    : slug
-      ? projectBySlugQuery.data
-      : null;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
