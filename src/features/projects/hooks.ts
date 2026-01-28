@@ -5,11 +5,7 @@ import { ProjectCreateInput } from '@/libs/api/services/projects';
 import { useSelectedWorkspace } from '../workspaces/context';
 import { useWorkspaces } from '../workspaces/hooks';
 import { useCreateProjectMutation } from './api/mutation';
-import {
-  useProjectBySlugQuery,
-  useProjectQuery,
-  useProjectsQuery,
-} from './api/query';
+import { useProjectBySlugQuery, useProjectsQuery } from './api/query';
 
 export const useProjects = () => {
   const params = useParams<{ workspaceSlug: string; projectSlug: string }>();
