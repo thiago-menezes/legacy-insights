@@ -6,12 +6,11 @@ import {
   PaginationModule,
   ValidationModule,
 } from 'ag-grid-community';
-import { View, Button, Pagination, Text, Select } from 'reshaped';
+import { View, Pagination, Text, Select } from 'reshaped';
 import { Table } from '@/components/table';
-import { Icon } from '@/components/icon';
+import styles from '../styles.module.scss';
 import { CampaignsTableProps, CampaignRow } from '../types';
 import { COLUMN_DEFS, PAGE_SIZE_OPTIONS } from './constants';
-import styles from '../styles.module.scss';
 
 ModuleRegistry.registerModules([
   PaginationModule,

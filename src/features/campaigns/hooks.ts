@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { StrapiCampaignListResponse } from '@/libs/api/services/campaigns';
-import { buildCampaignRow } from './table/utils';
 import { useCampaignsQuery } from './api/query';
-import { CampaignsData, CampaignsFilters, CampaignStatus } from './types';
+import { buildCampaignRow } from './table/utils';
+import { CampaignsData, CampaignsFilters } from './types';
 import { formatCurrency, formatNumber } from './utils';
 
 const mapStrapiToCampaignsData = (
