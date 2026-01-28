@@ -1,7 +1,7 @@
-import WorkspaceDetailPage from '@/features/projects';
+import { WorkspaceDetail } from '@/features/projects';
 
-const Page = () => {
-  return <WorkspaceDetailPage />;
+const WorkspaceDetailPage = () => {
+  return <WorkspaceDetail />;
 };
 
-export default Page;
+export default WorkspaceDetailPage;

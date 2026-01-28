@@ -1,5 +1,5 @@
 import { Integrations } from '@/features/integrations';
 
-const Page = () => <Integrations />;
+const ProjectsPage = () => <Integrations />;
 
-export default Page;
+export default ProjectsPage;

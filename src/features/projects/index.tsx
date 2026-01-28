@@ -11,7 +11,7 @@ import { getMediaUrl } from '@/libs/api/strapi';
 import { ProjectForm } from './form';
 import { useProjects } from './hooks';
 
-const WorkspaceDetailPage = () => {
+export const WorkspaceDetail = () => {
   const {
     projects,
     isModalOpen,
@@ -144,5 +144,3 @@ const WorkspaceDetailPage = () => {
     </>
   );
 };
-
-export default WorkspaceDetailPage;
