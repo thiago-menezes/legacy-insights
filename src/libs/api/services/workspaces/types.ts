@@ -1,3 +1,5 @@
+import { StrapiProject } from '../projects';
+
 export type WorkspaceRole = 'owner' | 'admin' | 'member' | 'viewer';
 
 export interface WorkspaceMember {
@@ -33,14 +35,7 @@ export interface Workspace {
     email: string;
   } | null;
   members: WorkspaceMember[] | null;
-  projects:
-    | {
-        id: number;
-        documentId: string;
-        name: string;
-        slug: string;
-      }[]
-    | null;
+  projects: StrapiProject[] | null;
 }
 
 export interface StrapiWorkspaceListResponse {

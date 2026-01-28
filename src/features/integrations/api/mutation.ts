@@ -45,3 +45,14 @@ export const useDeleteIntegrationMutation = (projectId?: string | number) => {
     },
   });
 };
+
+export const useValidateIntegrationMutation = (projectId?: string | number) => {
+  const { refetch } = useIntegrationsQuery(projectId);
+
+  return useMutation({
+    mutationFn: (id: string | number) => integrationsService.validate(id),
+    onSuccess: () => {
+      refetch();
+    },
+  });
+};

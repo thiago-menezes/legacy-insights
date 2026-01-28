@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { ProjectCreateInput } from '@/libs/api/services/projects';
 import { ProjectFormProps } from '../types';
@@ -16,8 +15,6 @@ export const useProjectForm = ({
         workspace: workspaceId,
       },
     });
-
-  const values = useMemo(() => watch(), [watch]);
 
   const handleNameChange = (value: string) => {
     setValue('name', value);
@@ -37,6 +34,6 @@ export const useProjectForm = ({
     handleSubmit,
     setValue,
     handleNameChange,
-    nameValue: values.name,
+    watch,
   };
 };

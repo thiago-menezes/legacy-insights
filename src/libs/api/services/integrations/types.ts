@@ -42,6 +42,19 @@ export interface IntegrationCreateInput {
   name: string;
   type: IntegrationType;
   project: string | number;
-  config?: Record<string, unknown>;
+  accessToken?: string;
+  refreshToken?: string;
+  config?: {
+    // Meta Ads
+    appId?: string;
+    appSecret?: string;
+    adAccountIds?: string[];
+    // Google Ads
+    clientId?: string;
+    clientSecret?: string;
+    developerToken?: string;
+    customerIds?: string[];
+    loginCustomerId?: string;
+  };
   status?: IntegrationStatus;
 }

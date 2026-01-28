@@ -21,9 +21,11 @@ export const Integrations = () => {
     isLoading,
     isModalOpen,
     selectedType,
+    editingIntegration,
     handleDelete,
     handleAdd,
-    handleUpdate,
+    handleEdit,
+    handleValidate,
     handleFormSubmit,
     handleModalClose,
   } = useIntegrations(project?.documentId);
@@ -104,18 +106,21 @@ export const Integrations = () => {
                 platform={platform}
                 onDelete={handleDelete}
                 onAdd={handleAdd}
-                onUpdate={handleUpdate}
+                onEdit={handleEdit}
+                onValidate={handleValidate}
               />
             ))}
         </div>
       </View>
 
-      <Modal active={isModalOpen} onClose={handleModalClose}>
-        <Modal.Title>Nova Integração</Modal.Title>
+      <Modal active={isModalOpen} onClose={handleModalClose} size="m">
+        <Modal.Title>
+          {editingIntegration ? 'Editar Integração' : 'Nova Integração'}
+        </Modal.Title>
 
         <IntegrationForm
           projectId={project?.documentId}
-          initialValues={{ type: selectedType }}
+          initialValues={editingIntegration || { type: selectedType }}
           onSubmit={handleFormSubmit}
           onCancel={handleModalClose}
         />

@@ -9,7 +9,8 @@ export const PlatformCard = ({
   platform,
   onDelete,
   onAdd,
-  onUpdate,
+  onEdit,
+  onValidate,
 }: PlatformCardProps) => {
   return (
     <div className={styles.platformCard}>
@@ -45,7 +46,8 @@ export const PlatformCard = ({
             key={profile.id}
             profile={profile}
             onDelete={onDelete}
-            onUpdate={onUpdate}
+            onEdit={onEdit}
+            onValidate={onValidate}
           />
         ))}
 

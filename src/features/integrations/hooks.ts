@@ -1,24 +1,34 @@
 import { useState, useMemo } from 'react';
-import { IntegrationType } from '@/libs/api/services/integrations';
+import {
+  IntegrationCreateInput,
+  IntegrationType,
+  StrapiIntegration,
+} from '@/libs/api/services/integrations';
 import {
   useCreateIntegrationMutation,
   useDeleteIntegrationMutation,
+  useUpdateIntegrationMutation,
+  useValidateIntegrationMutation,
 } from './api/mutation';
 import { useIntegrationsQuery } from './api/query';
 import { PLATFORM_METADATA } from './constants';
-import { IntegrationPlatform } from './types';
 
 export const useIntegrations = (projectId?: string) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<IntegrationType>('meta_ads');
+  const [editingIntegration, setEditingIntegration] = useState<
+    StrapiIntegration | undefined
+  >(undefined);
 
   const { data: integrationsData, isLoading } = useIntegrationsQuery(projectId);
   const integrations = integrationsData?.data || [];
 
   const createMutation = useCreateIntegrationMutation(projectId);
+  const updateMutation = useUpdateIntegrationMutation(projectId);
   const deleteMutation = useDeleteIntegrationMutation(projectId);
+  const validateMutation = useValidateIntegrationMutation(projectId);
 
-  const platforms = useMemo<IntegrationPlatform[]>(() => {
+  const platforms = useMemo(() => {
     return PLATFORM_METADATA.map((platform) => ({
       ...platform,
       profiles: integrations
@@ -26,7 +36,8 @@ export const useIntegrations = (projectId?: string) => {
         .map((i) => ({
           id: i.documentId,
           name: i.name,
-          status: i.status === 'connected' ? 'connected' : 'disconnected',
+          status: i.status || 'disconnected',
+          integration: i,
         })),
     }));
   }, [integrations]);
@@ -37,21 +48,47 @@ export const useIntegrations = (projectId?: string) => {
     }
   };
 
-  const handleAdd = (type: string) => {
-    setSelectedType(type as IntegrationType);
+  const handleAdd = (type: IntegrationType) => {
+    setEditingIntegration(undefined);
+    setSelectedType(type);
     setIsModalOpen(true);
   };
 
-  const handleUpdate = (type: string) => {
-    setSelectedType(type as IntegrationType);
+  const handleEdit = (integration: StrapiIntegration) => {
+    setEditingIntegration(integration);
+    setSelectedType(integration.type);
     setIsModalOpen(true);
   };
 
-  const handleFormSubmit = async (values: unknown) => {
+  const handleValidate = async (id: string) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await createMutation.mutateAsync(values as any);
+      const result = await validateMutation.mutateAsync(id);
+      if (result.valid) {
+        alert('Integração validada com sucesso!');
+      } else {
+        alert(`Erro na validação: ${result.message}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Falha ao validar integração.');
+    }
+  };
+
+  const handleFormSubmit = async (values: IntegrationCreateInput) => {
+    try {
+      if (editingIntegration) {
+        await updateMutation.mutateAsync({
+          id: editingIntegration.documentId,
+          data: values,
+        });
+      } else {
+        await createMutation.mutateAsync({
+          ...values,
+          project: projectId as string,
+        });
+      }
       setIsModalOpen(false);
+      setEditingIntegration(undefined);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
@@ -60,6 +97,7 @@ export const useIntegrations = (projectId?: string) => {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
+    setEditingIntegration(undefined);
   };
 
   return {
@@ -67,9 +105,11 @@ export const useIntegrations = (projectId?: string) => {
     isLoading,
     isModalOpen,
     selectedType,
+    editingIntegration,
     handleDelete,
     handleAdd,
-    handleUpdate,
+    handleEdit,
+    handleValidate,
     handleFormSubmit,
     handleModalClose,
   };

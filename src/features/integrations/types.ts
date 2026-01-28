@@ -1,13 +1,22 @@
-import { IntegrationCreateInput } from '@/libs/api/services/integrations';
+import {
+  IntegrationCreateInput,
+  StrapiIntegration,
+} from '@/libs/api/services/integrations';
 
 export type IntegrationTab = 'all' | 'ads' | 'webhooks';
 
-export type ConnectionStatus = 'connected' | 'disconnected';
+export type ConnectionStatus =
+  | 'connected'
+  | 'disconnected'
+  | 'token_expired'
+  | 'error'
+  | 'processing';
 
 export interface IntegrationProfile {
   id: string;
   name: string;
   status: ConnectionStatus;
+  integration: StrapiIntegration;
 }
 
 export interface IntegrationPlatform {
@@ -21,7 +30,7 @@ export interface IntegrationPlatform {
 
 export interface StatusConfig {
   label: string;
-  color: 'positive' | 'neutral';
+  color: 'positive' | 'neutral' | 'critical';
 }
 
 export interface IntegrationsProps {
@@ -31,20 +40,22 @@ export interface IntegrationsProps {
 export interface ProfileItemProps {
   profile: IntegrationProfile;
   onDelete: (id: string) => void;
-  onUpdate: (id: string) => void;
+  onEdit: (integration: StrapiIntegration) => void;
+  onValidate: (id: string) => void;
 }
 
 export interface PlatformCardProps {
   platform: IntegrationPlatform;
   onDelete: (id: string) => void;
   onAdd: (type: string) => void;
-  onUpdate: (id: string) => void;
+  onEdit: (integration: StrapiIntegration) => void;
+  onValidate: (id: string) => void;
 }
 
 export interface IntegrationFormProps {
-  initialValues?: Partial<IntegrationCreateInput>;
+  initialValues?: StrapiIntegration | Partial<IntegrationCreateInput>;
   onSubmit: (values: IntegrationCreateInput) => void;
   onCancel: () => void;
   isLoading?: boolean;
-  projectId: string | number;
+  projectId: string | number | undefined;
 }

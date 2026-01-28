@@ -6,7 +6,9 @@ import { View, Button, Tabs } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { MetricCard } from '@/components/metric-card';
 import { PageTitle } from '@/components/page-title';
+import { useDataAccessStatus } from '@/hooks';
 import { PLATFORM_CONFIG, TABS } from './constants';
+import { CampaignsEmptyState } from './empty-states';
 import { useCampaignsData } from './hooks';
 import { CampaignsSkeleton } from './skeleton';
 import styles from './styles.module.scss';
@@ -15,24 +17,71 @@ import { UseParamsCampaigns } from './types';
 
 export const Campaigns = () => {
   const { client: platformParam } = useParams<UseParamsCampaigns>();
-  const { data, isLoading, filters, handlePageChange, handlePageSizeChange } =
-    useCampaignsData(platformParam);
+  const {
+    data,
+    isLoading: isLoadingData,
+    filters,
+    handlePageChange,
+    handlePageSizeChange,
+  } = useCampaignsData(platformParam);
 
-  if (isLoading || !data) {
-    return <CampaignsSkeleton />;
-  }
+  const integrationType =
+    platformParam === 'google' ? 'google_ads' : 'meta_ads';
 
-  const { metrics, campaigns, totalPages, currentPage, totalItems } = data;
+  const {
+    state: accessState,
+    isLoading: isLoadingAccess,
+    integrationsPageUrl,
+    projectsPageUrl,
+  } = useDataAccessStatus({
+    integrationType,
+    hasData: !!data && data.campaigns.length > 0,
+  });
+
+  const isLoading = isLoadingData || isLoadingAccess;
 
   if (!platformParam) return <></>;
-
-  const currentPlatform = PLATFORM_CONFIG[platformParam];
 
   if (isLoading) {
     return <CampaignsSkeleton />;
   }
 
-  console.log({ platformParam });
+  if (accessState === 'no-project') {
+    return (
+      <CampaignsEmptyState
+        state="no-project"
+        platform={platformParam}
+        projectsPageUrl={projectsPageUrl}
+        integrationsPageUrl={integrationsPageUrl}
+      />
+    );
+  }
+
+  if (accessState === 'no-integration') {
+    return (
+      <CampaignsEmptyState
+        state="no-integration"
+        platform={platformParam}
+        projectsPageUrl={projectsPageUrl}
+        integrationsPageUrl={integrationsPageUrl}
+      />
+    );
+  }
+
+  if (!data || data.campaigns.length === 0) {
+    return (
+      <CampaignsEmptyState
+        state="no-data"
+        platform={platformParam}
+        projectsPageUrl={projectsPageUrl}
+        integrationsPageUrl={integrationsPageUrl}
+      />
+    );
+  }
+
+  const { metrics, campaigns, totalPages, currentPage, totalItems } = data;
+
+  const currentPlatform = PLATFORM_CONFIG[platformParam];
 
   return (
     <View gap={4} className={styles.campaigns}>

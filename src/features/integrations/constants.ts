@@ -27,8 +27,8 @@ export const PLATFORM_METADATA = [
 ] as const;
 
 export const STATUS_CONFIG: Record<
-  'connected' | 'disconnected',
-  { label: string; color: 'positive' | 'neutral' }
+  string,
+  { label: string; color: 'positive' | 'neutral' | 'critical' }
 > = {
   connected: {
     label: 'Conectado',
@@ -36,6 +36,18 @@ export const STATUS_CONFIG: Record<
   },
   disconnected: {
     label: 'Desconectado',
+    color: 'neutral',
+  },
+  token_expired: {
+    label: 'Token Expirado',
+    color: 'critical',
+  },
+  error: {
+    label: 'Erro',
+    color: 'critical',
+  },
+  processing: {
+    label: 'Processando',
     color: 'neutral',
   },
 };

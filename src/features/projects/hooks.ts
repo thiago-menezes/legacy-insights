@@ -1,7 +1,10 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useToast } from 'reshaped';
-import { ProjectCreateInput } from '@/libs/api/services/projects';
+import {
+  ProjectCreateInput,
+  StrapiProject,
+} from '@/libs/api/services/projects';
 import { useSelectedWorkspace } from '../workspaces/context';
 import { useWorkspaces } from '../workspaces/hooks';
 import { useCreateProjectMutation } from './api/mutation';
@@ -13,7 +16,8 @@ export const useProjects = () => {
   const toast = useToast();
   const slug = params.workspaceSlug;
   const { workspaces, isLoading: isLoadingWorkspaces } = useWorkspaces();
-  const { hasWorkspaces, selectedOrg } = useSelectedWorkspace();
+  const { hasWorkspaces, selectedOrg, selectedProject } =
+    useSelectedWorkspace();
 
   const projectsQuery = useProjectsQuery(selectedOrg?.documentId);
   const projectBySlugQuery = useProjectBySlugQuery(params.projectSlug);
@@ -22,6 +26,10 @@ export const useProjects = () => {
   const createMutation = useCreateProjectMutation(selectedOrg?.documentId);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSwitchModalActive, setIsSwitchModalActive] = useState(false);
+  const [pendingProject, setPendingProject] = useState<
+    StrapiProject | undefined
+  >(undefined);
 
   const handleOpenCreate = () => {
     setIsModalOpen(true);
@@ -48,17 +56,50 @@ export const useProjects = () => {
     (w) => w.slug === slug || w.documentId === slug,
   );
 
+  const handleProjectClick = (project: StrapiProject) => {
+    if (project.documentId !== selectedProject?.documentId) {
+      setPendingProject(project);
+      setIsSwitchModalActive(true);
+    } else {
+      router.push(`/workspaces/${workspace?.slug}/${project.slug}`);
+    }
+  };
+
+  const handleConfirmSwitch = (
+    selectWorkspace: (orgId: string, projectId: string) => void,
+  ) => {
+    if (pendingProject && workspace) {
+      selectWorkspace(workspace.documentId, String(pendingProject.id));
+      router.push(`/workspaces/${workspace.slug}/${pendingProject.slug}`);
+      setIsSwitchModalActive(false);
+      setPendingProject(undefined);
+    }
+  };
+
+  const handleCloseSwitchModal = () => {
+    setIsSwitchModalActive(false);
+    setPendingProject(undefined);
+  };
+
   const isLoading = projectsQuery.isLoading;
 
   return {
     project,
     projects,
     isLoading,
-    handleCreateProject: (data: ProjectCreateInput) =>
-      createMutation.mutateAsync(data),
+    handleCreateProject: async (data: ProjectCreateInput) => {
+      await createMutation.mutateAsync(data);
+      handleCloseModal();
+    },
     isModalOpen,
     handleOpenCreate,
     handleCloseModal,
     workspace,
+    isSwitchModalActive,
+    pendingProject,
+    handleProjectClick,
+    handleConfirmSwitch,
+    handleCloseSwitchModal,
+    selectedProject,
   };
 };

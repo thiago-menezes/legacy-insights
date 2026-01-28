@@ -4,17 +4,61 @@ import { View, Button, Grid } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { MetricCard } from '@/components/metric-card';
 import { PageTitle } from '@/components/page-title';
+import { useDataAccessStatus } from '@/hooks';
 import { DashboardChart } from './dashboard-chart';
+import { DashboardEmptyState } from './empty-states';
 import { FunnelChart } from './funnel-chart';
 import { useDashboardData } from './hooks';
 import { DashboardSkeleton } from './skeleton';
 import styles from './styles.module.scss';
 
 export const Dashboard = () => {
-  const { data, isLoading } = useDashboardData();
+  const { data, isLoading: isLoadingData } = useDashboardData();
 
-  if (isLoading || !data) {
+  const {
+    state: accessState,
+    isLoading: isLoadingAccess,
+    integrationsPageUrl,
+    projectsPageUrl,
+  } = useDataAccessStatus({
+    integrationType: 'meta_ads',
+    hasData: !!data,
+  });
+
+  const isLoading = isLoadingData || isLoadingAccess;
+
+  if (isLoading) {
     return <DashboardSkeleton />;
+  }
+
+  if (accessState === 'no-project') {
+    return (
+      <DashboardEmptyState
+        state="no-project"
+        projectsPageUrl={projectsPageUrl}
+        integrationsPageUrl={integrationsPageUrl}
+      />
+    );
+  }
+
+  if (accessState === 'no-integration') {
+    return (
+      <DashboardEmptyState
+        state="no-integration"
+        projectsPageUrl={projectsPageUrl}
+        integrationsPageUrl={integrationsPageUrl}
+      />
+    );
+  }
+
+  if (!data) {
+    return (
+      <DashboardEmptyState
+        state="no-data"
+        projectsPageUrl={projectsPageUrl}
+        integrationsPageUrl={integrationsPageUrl}
+      />
+    );
   }
 
   const {

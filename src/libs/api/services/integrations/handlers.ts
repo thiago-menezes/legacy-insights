@@ -53,3 +53,10 @@ export const update = async (
 export const deleteIntegration = async (id: string | number): Promise<void> => {
   await apiClient.delete(`/api/integrations/${id}`);
 };
+
+export const validate = async (
+  id: string | number,
+): Promise<{ valid: boolean; message: string; status: string }> => {
+  const { data } = await apiClient.post(`/api/integrations/${id}/validate`);
+  return data;
+};

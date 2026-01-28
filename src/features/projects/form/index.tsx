@@ -9,7 +9,7 @@ export const ProjectForm = ({
   isLoading,
   workspaceId,
 }: ProjectFormProps) => {
-  const { register, handleSubmit, setValue, handleNameChange, nameValue } =
+  const { register, handleSubmit, setValue, handleNameChange, watch } =
     useProjectForm({
       initialValues,
       workspaceId,
@@ -22,9 +22,10 @@ export const ProjectForm = ({
           <FormControl.Label>Nome do Projeto</FormControl.Label>
           <TextField
             placeholder="Ex: Campanha de Verão 2024"
-            {...register('name', { required: true })}
-            name="name"
-            value={nameValue}
+            {...register('name', {
+              required: true,
+            })}
+            value={watch('name')}
             onChange={(e) => handleNameChange(e.value)}
           />
         </FormControl>
@@ -34,7 +35,7 @@ export const ProjectForm = ({
           <TextField
             placeholder="ex: campanha-verao-2024"
             {...register('slug', { required: true })}
-            name="slug"
+            value={watch('slug')}
             onChange={(e) => {
               const sanitized = e.value
                 .toLowerCase()
@@ -42,7 +43,6 @@ export const ProjectForm = ({
                 .replace(/[^\w-]+/g, '');
               setValue('slug', sanitized);
             }}
-            disabled
           />
         </FormControl>
 
@@ -52,6 +52,7 @@ export const ProjectForm = ({
             placeholder="Descreva o objetivo deste projeto..."
             {...register('description')}
             name="description"
+            value={watch('description')}
             onChange={(e) => setValue('description', e.value)}
           />
         </FormControl>

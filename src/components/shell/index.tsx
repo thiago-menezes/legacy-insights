@@ -2,6 +2,7 @@
 
 import { PropsWithChildren } from 'react';
 import { View } from 'reshaped';
+import { WorkspaceGuard } from '@/components/workspace-guard';
 import { Header } from './header';
 import { useShellState } from './hooks';
 import { Sidebar } from './sidebar';
@@ -52,7 +53,7 @@ export const Shell = ({ children }: PropsWithChildren) => {
             shadow="raised"
             className={styles.mainContainer}
           >
-            {children}
+            <WorkspaceGuard>{children}</WorkspaceGuard>
           </View>
         </View>
       </View>

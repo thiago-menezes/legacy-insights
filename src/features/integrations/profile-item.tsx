@@ -7,7 +7,8 @@ import { ProfileItemProps } from './types';
 export const ProfileItem = ({
   profile,
   onDelete,
-  onUpdate,
+  onEdit,
+  onValidate,
 }: ProfileItemProps) => {
   const statusConfig =
     STATUS_CONFIG[profile.status] || STATUS_CONFIG.disconnected;
@@ -39,10 +40,18 @@ export const ProfileItem = ({
       <div className={styles.profileActions}>
         <Button
           variant="outline"
-          aria-label="Configurações"
-          onClick={() => onUpdate(profile.id)}
+          aria-label="Verificar Status"
+          onClick={() => onValidate(profile.id)}
         >
-          <Icon name="settings" size={18} />
+          <Icon name="refresh" size={18} />
+        </Button>
+
+        <Button
+          variant="outline"
+          aria-label="Editar"
+          onClick={() => onEdit(profile.integration)}
+        >
+          <Icon name="edit" size={18} />
         </Button>
 
         <Button
