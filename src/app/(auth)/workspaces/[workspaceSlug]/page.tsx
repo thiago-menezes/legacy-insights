@@ -1,5 +1,3 @@
-'use client';
-
 import WorkspaceDetailPage from '@/features/projects';
 
 const Page = () => {

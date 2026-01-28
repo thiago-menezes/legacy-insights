@@ -1,5 +1,3 @@
-'use client';
-
 import { Dashboard } from '@/features/dashboard';
 
 const DashboardPage = () => {
