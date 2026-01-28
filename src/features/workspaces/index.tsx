@@ -75,7 +75,7 @@ export const Workspaces = () => {
           </Button>
         </View>
       ) : (
-        <View gap={4} wrap direction={{ s: 'column', l: 'row' }}>
+        <View gap={4} paddingTop={4} wrap direction={{ s: 'column', l: 'row' }}>
           {workspaces?.data.map((workspace) => (
             <WorkspaceCard
               key={workspace.id}

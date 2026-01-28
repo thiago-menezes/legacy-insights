@@ -82,7 +82,7 @@ export const WorkspaceDetail = () => {
         </Button>
       </PageTitle>
 
-      <View gap={4}>
+      <View gap={4} paddingTop={4}>
         {projects.length === 0 ? (
           <EmptyState
             icon="file-text"

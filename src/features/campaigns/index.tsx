@@ -35,25 +35,23 @@ export const Campaigns = () => {
   console.log({ platformParam });
 
   return (
-    <View gap={6} className={styles.campaigns}>
-      <View gap={1}>
-        <PageTitle
-          icon={
-            <div className={styles.iconContainer}>
-              <Image
-                src={currentPlatform.icon}
-                alt={platformParam}
-                width={32}
-                height={32}
-                priority
-                quality={80}
-              />
-            </div>
-          }
-          title={currentPlatform.title}
-          description={currentPlatform.description}
-        />
-      </View>
+    <View gap={4} className={styles.campaigns}>
+      <PageTitle
+        icon={
+          <div className={styles.iconContainer}>
+            <Image
+              src={currentPlatform.icon}
+              alt={platformParam}
+              width={32}
+              height={32}
+              priority
+              quality={80}
+            />
+          </div>
+        }
+        title={currentPlatform.title}
+        description={currentPlatform.description}
+      />
 
       <View
         direction="row"

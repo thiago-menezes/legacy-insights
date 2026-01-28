@@ -71,7 +71,7 @@ export const Integrations = () => {
         }))}
       />
 
-      <View gap={2}>
+      <View gap={2} paddingTop={4}>
         <Text variant="title-6" weight="medium">
           Integrações
         </Text>

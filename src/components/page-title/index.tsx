@@ -18,7 +18,7 @@ export const PageTitle = ({
   breadcrumbs,
 }: PageTitle) => {
   return (
-    <View gap={0} paddingBottom={4}>
+    <View>
       <Breadcrumb items={breadcrumbs} />
 
       <View
