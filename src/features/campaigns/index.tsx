@@ -5,14 +5,15 @@ import { View, Button, Tabs } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { MetricCard } from '@/components/metric-card';
 import { PageTitle } from '@/components/page-title';
-import { CampaignsTable } from './campaigns-table';
 import { TABS } from './constants';
 import { useCampaignsData } from './hooks';
 import { CampaignsSkeleton } from './skeleton';
 import styles from './styles.module.scss';
+import { CampaignsTable } from './table';
 
 export const Campaigns = () => {
-  const { data, isLoading } = useCampaignsData();
+  const { data, isLoading, filters, handlePageChange, handlePageSizeChange } =
+    useCampaignsData();
 
   if (isLoading || !data) {
     return <CampaignsSkeleton />;
@@ -102,13 +103,14 @@ export const Campaigns = () => {
         </Button>
       </View>
 
-      {/* Table */}
       <CampaignsTable
         data={campaigns}
         currentPage={currentPage}
         totalPages={totalPages}
         totalItems={totalItems}
-        pageSize={10}
+        pageSize={filters.pageSize || 10}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
       />
     </View>
   );

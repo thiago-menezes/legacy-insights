@@ -11,9 +11,9 @@ export const useCreateWorkspaceMutation = () => {
   return useMutation({
     mutationFn: (params: CreateWorkspacePayload) =>
       workspacesService.create(params),
-    onSuccess: () => {
+    onSuccess: (_, params) => {
       queryClient.invalidateQueries({
-        queryKey: workspacesService.keys('list'),
+        queryKey: workspacesService.keys('list', params),
       });
     },
   });
@@ -25,9 +25,9 @@ export const useUpdateWorkspaceMutation = () => {
   return useMutation({
     mutationFn: ({ id, params }: UpdateWorkspaceParams) =>
       workspacesService.update(id, params),
-    onSuccess: () => {
+    onSuccess: (_, params) => {
       queryClient.invalidateQueries({
-        queryKey: workspacesService.keys('list'),
+        queryKey: workspacesService.keys('list', params),
       });
     },
   });
@@ -38,9 +38,9 @@ export const useDeleteWorkspaceMutation = () => {
 
   return useMutation({
     mutationFn: (id: string) => workspacesService.delete(id),
-    onSuccess: () => {
+    onSuccess: (_, params) => {
       queryClient.invalidateQueries({
-        queryKey: workspacesService.keys('list'),
+        queryKey: workspacesService.keys('list', params),
       });
     },
   });
