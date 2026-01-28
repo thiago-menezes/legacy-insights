@@ -8,6 +8,7 @@ import { PageTitle } from '@/components/page-title';
 import { Integrations } from '@/features/integrations';
 import { useProjectBySlug } from '@/features/projects/hooks';
 import { useSelectedWorkspace } from '@/features/workspaces/context';
+import { WorkspaceMembersList } from '@/features/workspaces/members/list';
 
 const ProjectDetailPage = () => {
   const params = useParams();
@@ -68,6 +69,15 @@ const ProjectDetailPage = () => {
       />
 
       <Integrations projectId={project.documentId} />
+
+      {selectedOrg && (
+        <View paddingTop={10}>
+          <WorkspaceMembersList
+            workspaceId={selectedOrg.documentId}
+            workspaceOwnerId={selectedOrg.owner?.id}
+          />
+        </View>
+      )}
     </>
   );
 };

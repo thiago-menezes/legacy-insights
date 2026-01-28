@@ -2,6 +2,6 @@ import * as handlers from './handlers';
 
 export type * from './types';
 
-export const campaignsService = {
+export const integrationsService = {
   ...handlers,
 };

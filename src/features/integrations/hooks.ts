@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  integrationService,
   StrapiIntegration,
   IntegrationCreateInput,
+  integrationsService,
 } from '@/libs/api/services/integrations';
 
 export const useIntegrations = (projectId?: string | number) => {
@@ -14,7 +14,7 @@ export const useIntegrations = (projectId?: string | number) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await integrationService.list(projectId);
+      const response = await integrationsService.list(projectId);
       setIntegrations(response.data);
     } catch (err) {
       setError('Falha ao carregar integrações');
@@ -27,7 +27,7 @@ export const useIntegrations = (projectId?: string | number) => {
 
   const createIntegration = async (data: IntegrationCreateInput) => {
     try {
-      await integrationService.create(data);
+      await integrationsService.create(data);
       await fetchIntegrations();
     } catch (err) {
       setError('Falha ao criar integração');
@@ -40,7 +40,7 @@ export const useIntegrations = (projectId?: string | number) => {
     data: Partial<IntegrationCreateInput>,
   ) => {
     try {
-      await integrationService.update(id, data);
+      await integrationsService.update(id, data);
       await fetchIntegrations();
     } catch (err) {
       setError('Falha ao atualizar integração');
@@ -50,7 +50,7 @@ export const useIntegrations = (projectId?: string | number) => {
 
   const deleteIntegration = async (id: string | number) => {
     try {
-      await integrationService.delete(id);
+      await integrationsService.deleteIntegration(id);
       await fetchIntegrations();
     } catch (err) {
       setError('Falha ao excluir integração');

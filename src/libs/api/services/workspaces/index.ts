@@ -1,7 +1,7 @@
-import { createServiceKeys } from '../../utils';
-import { workspaceHandler } from './handlers';
+import * as handlers from './handlers';
 
-export const workspacesService =
-  createServiceKeys<typeof workspaceHandler>(workspaceHandler);
+export const workspacesService = {
+  ...handlers,
+};
 
 export type * from './types';

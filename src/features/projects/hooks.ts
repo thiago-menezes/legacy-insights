@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  projectService,
-  StrapiProject,
   ProjectCreateInput,
+  projectsService,
+  StrapiProject,
 } from '@/libs/api/services/projects';
 
 export const useProjects = (workspaceId?: string) => {
@@ -14,7 +14,7 @@ export const useProjects = (workspaceId?: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await projectService.list(workspaceId);
+      const response = await projectsService.list(workspaceId);
       setProjects(response.data);
     } catch (err) {
       setError('Falha ao carregar projetos');
@@ -27,7 +27,7 @@ export const useProjects = (workspaceId?: string) => {
 
   const createProject = async (data: ProjectCreateInput) => {
     try {
-      await projectService.create(data);
+      await projectsService.create(data);
       await fetchProjects();
     } catch (err) {
       setError('Falha ao criar projeto');
@@ -40,7 +40,7 @@ export const useProjects = (workspaceId?: string) => {
     data: Partial<ProjectCreateInput>,
   ) => {
     try {
-      await projectService.update(id, data);
+      await projectsService.update(id, data);
       await fetchProjects();
     } catch (err) {
       setError('Falha ao atualizar projeto');
@@ -50,7 +50,7 @@ export const useProjects = (workspaceId?: string) => {
 
   const deleteProject = async (id: string) => {
     try {
-      await projectService.delete(id);
+      await projectsService.deleteProject(id);
       await fetchProjects();
     } catch (err) {
       setError('Falha ao excluir projeto');
@@ -83,8 +83,8 @@ export const useProjectBySlug = (slug: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await projectService.getBySlug(slug);
-      setProject(response.data);
+      const data = await projectsService.getBySlug(slug);
+      setProject(data);
     } catch (err) {
       setError('Projeto não encontrado');
       // eslint-disable-next-line no-console
@@ -116,7 +116,7 @@ export const useProject = (id: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await projectService.get(id);
+      const response = await projectsService.get(id);
       setProject(response.data);
     } catch (err) {
       setError('Projeto não encontrado');

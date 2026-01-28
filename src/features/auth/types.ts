@@ -27,6 +27,7 @@ export interface AuthUser {
   confirmed?: boolean;
   blocked?: boolean;
   provider?: string;
+  paidAccount?: boolean;
 }
 
 export interface AuthResponse {

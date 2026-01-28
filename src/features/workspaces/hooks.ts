@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useAuth } from '@/features/auth/context';
 import { Workspace } from '@/libs/api/services/workspaces';
 import {
   useCreateWorkspaceMutation,
@@ -11,6 +12,7 @@ import { WORKSPACE_MESSAGES } from './constants';
 import { WorkspaceFormValues } from './types';
 
 export const useWorkspaces = () => {
+  const { user } = useAuth();
   const createWorkspace = useCreateWorkspaceMutation();
   const updateWorkspace = useUpdateWorkspaceMutation();
   const deleteWorkspace = useDeleteWorkspaceMutation();
@@ -62,7 +64,12 @@ export const useWorkspaces = () => {
         params: values,
       });
     } else {
-      createWorkspace.mutate(values);
+      if (user?.id) {
+        createWorkspace.mutate({
+          ...values,
+          owner: user.id,
+        });
+      }
     }
     getWorkspaces.refetch();
     handleCloseModal();

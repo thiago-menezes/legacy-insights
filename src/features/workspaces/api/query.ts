@@ -3,7 +3,7 @@ import { workspacesService } from '@/libs/api/services/workspaces';
 
 export const useWorkspacesQuery = () => {
   return useQuery({
-    queryKey: workspacesService.keys('list'),
+    queryKey: ['workspaces', 'list'],
     queryFn: () => workspacesService.list(),
   });
 };

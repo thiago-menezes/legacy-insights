@@ -1,35 +1,34 @@
 import { apiClient } from '../../axios';
 import { CampaignListParams, StrapiCampaignListResponse } from './types';
 
-export const campaignHandler = {
-  async list(
-    params: CampaignListParams = {},
-  ): Promise<StrapiCampaignListResponse> {
-    const {
-      platform = 'meta',
-      startDate,
-      endDate,
-      page = 1,
-      pageSize = 10,
-    } = params;
+export const list = async (
+  params: CampaignListParams = {},
+): Promise<StrapiCampaignListResponse> => {
+  const {
+    platform = 'meta',
+    startDate,
+    endDate,
+    page = 1,
+    pageSize = 10,
+  } = params;
 
-    const query = new URLSearchParams();
-    query.append('filters[platform][$eq]', platform);
-    query.append('populate', 'dailyMetrics');
-    query.append('pagination[page]', page.toString());
-    query.append('pagination[pageSize]', pageSize.toString());
+  const query = new URLSearchParams();
+  query.append('filters[platform][$eq]', platform);
+  query.append('populate', 'dailyMetrics');
+  query.append('pagination[page]', page.toString());
+  query.append('pagination[pageSize]', pageSize.toString());
 
-    if (startDate) {
-      query.append('filters[dailyMetrics][date][$gte]', startDate);
-    }
+  if (startDate) {
+    query.append('filters[dailyMetrics][date][$gte]', startDate);
+  }
 
-    if (endDate) {
-      query.append('filters[dailyMetrics][date][$lte]', endDate);
-    }
+  if (endDate) {
+    query.append('filters[dailyMetrics][date][$lte]', endDate);
+  }
 
-    const { data } = await apiClient.get<StrapiCampaignListResponse>(
-      `/api/campaigns?${query.toString()}`,
-    );
-    return data;
-  },
+  const { data } = await apiClient.get<StrapiCampaignListResponse>(
+    `/api/campaigns?${query.toString()}`,
+  );
+
+  return data;
 };
