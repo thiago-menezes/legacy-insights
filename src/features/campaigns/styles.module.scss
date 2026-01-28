@@ -30,6 +30,15 @@ $tablet: 1024px;
   height: 32px;
 }
 
+.iconContainer {
+  width: 32px;
+  height: 32px;
+
+  img {
+    object-fit: contain;
+  }
+}
+
 // Tabs
 .tabs {
   display: flex;

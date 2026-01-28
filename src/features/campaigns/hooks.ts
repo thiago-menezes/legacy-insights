@@ -3,14 +3,14 @@ import { useCampaignsQuery } from './api/query';
 import { CampaignsFilters } from './types';
 import { mapStrapiToCampaignsData } from './utils';
 
-export const useCampaignsData = () => {
+export const useCampaignsData = (platform: 'meta' | 'google' = 'meta') => {
   const [filters, setFilters] = useState<CampaignsFilters>({
     page: 1,
     pageSize: 10,
   });
 
   const { data, isLoading, error, refetch } = useCampaignsQuery({
-    platform: 'meta',
+    platform,
     startDate: filters?.startDate?.toISOString(),
     endDate: filters?.endDate?.toISOString(),
     page: filters?.page,

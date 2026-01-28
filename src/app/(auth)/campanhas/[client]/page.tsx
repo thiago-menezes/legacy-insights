@@ -1,9 +1,13 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { Campaigns } from '@/features/campaigns';
 
-const MetaCampaignsPage = () => {
-  return <Campaigns />;
+const CampaignsPage = () => {
+  const params = useParams();
+  const client = params?.client as 'meta' | 'google';
+
+  return <Campaigns platform={client} />;
 };
 
-export default MetaCampaignsPage;
+export default CampaignsPage;

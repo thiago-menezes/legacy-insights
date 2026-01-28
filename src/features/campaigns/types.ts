@@ -75,3 +75,7 @@ export interface CampaignsTableProps {
 export interface StatusBadgeProps {
   status: CampaignStatus;
 }
+
+export type UseParamsCampaigns = {
+  client: 'meta' | 'google';
+};

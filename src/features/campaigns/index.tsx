@@ -1,19 +1,22 @@
 'use client';
 
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { View, Button, Tabs } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { MetricCard } from '@/components/metric-card';
 import { PageTitle } from '@/components/page-title';
-import { TABS } from './constants';
+import { PLATFORM_CONFIG, TABS } from './constants';
 import { useCampaignsData } from './hooks';
 import { CampaignsSkeleton } from './skeleton';
 import styles from './styles.module.scss';
 import { CampaignsTable } from './table';
+import { UseParamsCampaigns } from './types';
 
 export const Campaigns = () => {
+  const { client: platformParam } = useParams<UseParamsCampaigns>();
   const { data, isLoading, filters, handlePageChange, handlePageSizeChange } =
-    useCampaignsData();
+    useCampaignsData(platformParam);
 
   if (isLoading || !data) {
     return <CampaignsSkeleton />;
@@ -21,22 +24,34 @@ export const Campaigns = () => {
 
   const { metrics, campaigns, totalPages, currentPage, totalItems } = data;
 
+  if (!platformParam) return <></>;
+
+  const currentPlatform = PLATFORM_CONFIG[platformParam];
+
+  if (isLoading) {
+    return <CampaignsSkeleton />;
+  }
+
+  console.log({ platformParam });
+
   return (
     <View gap={6} className={styles.campaigns}>
       <View gap={1}>
         <PageTitle
           icon={
-            <Image
-              src="/icon-meta.png"
-              alt="Meta"
-              width={24}
-              height={16}
-              priority
-              quality={80}
-            />
+            <div className={styles.iconContainer}>
+              <Image
+                src={currentPlatform.icon}
+                alt={platformParam}
+                width={32}
+                height={32}
+                priority
+                quality={80}
+              />
+            </div>
           }
-          title="Campanhas da Meta"
-          description=" Gestão de campanhas do Instagram, Facebook e outras ferramentas da Meta"
+          title={currentPlatform.title}
+          description={currentPlatform.description}
         />
       </View>
 
@@ -46,7 +61,7 @@ export const Campaigns = () => {
         justify="space-between"
         className={styles.header}
       >
-        <View gap={3}>
+        <View direction="row" gap={4} align="center">
           <Tabs variant="pills-elevated" defaultValue="campaigns">
             <Tabs.List>
               {TABS.map((tab) => (
