@@ -21,6 +21,15 @@ export const useIntegrations = (projectId?: string) => {
     StrapiIntegration | undefined
   >(undefined);
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [integrationToDelete, setIntegrationToDelete] = useState<
+    | {
+        id: string;
+        name: string;
+      }
+    | undefined
+  >(undefined);
+
   const { data: integrationsData, isLoading } = useIntegrationsQuery(projectId);
   const integrations = integrationsData?.data || [];
 
@@ -45,10 +54,28 @@ export const useIntegrations = (projectId?: string) => {
     }));
   }, [integrations]);
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Tem certeza que deseja remover esta integração?')) {
-      await deleteMutation.mutateAsync(id);
+  const handleDeleteClick = (id: string) => {
+    const integration = integrations.find((i) => i.documentId === id);
+    if (integration) {
+      setIntegrationToDelete({
+        id: integration.documentId,
+        name: integration.name,
+      });
+      setIsDeleteModalOpen(true);
     }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (integrationToDelete) {
+      await deleteMutation.mutateAsync(integrationToDelete.id);
+      setIsDeleteModalOpen(false);
+      setIntegrationToDelete(undefined);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false);
+    setIntegrationToDelete(undefined);
   };
 
   const handleAdd = (type: IntegrationType) => {
@@ -117,9 +144,13 @@ export const useIntegrations = (projectId?: string) => {
     platforms,
     isLoading,
     isModalOpen,
+    isDeleteModalOpen,
     selectedType,
     editingIntegration,
-    handleDelete,
+    integrationToDelete,
+    handleDelete: handleDeleteClick,
+    handleDeleteConfirm,
+    handleDeleteCancel,
     handleAdd,
     handleEdit,
     handleValidate,

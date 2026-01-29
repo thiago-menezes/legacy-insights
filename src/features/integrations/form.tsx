@@ -310,6 +310,19 @@ export const IntegrationForm = ({
                 disabled={isEditMode}
               />
             </FormControl>
+            <FormControl>
+              <FormControl.Label>Login Customer ID (MCC)</FormControl.Label>
+              <TextField
+                placeholder="Ex: 3127..."
+                name="config.loginCustomerId"
+                value={(watch('config.loginCustomerId') as string) || ''}
+                onChange={(e) => setValue('config.loginCustomerId', e.value)}
+                disabled={isEditMode}
+              />
+              <FormControl.Helper>
+                Necessário se você estiver acessando contas via MCC
+              </FormControl.Helper>
+            </FormControl>
           </View>
         )}
 

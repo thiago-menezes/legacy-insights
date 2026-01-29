@@ -1,14 +1,6 @@
-import { useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  Modal,
-  Select,
-  TextField,
-  View,
-} from 'reshaped';
-import styles from './styles.module.scss';
+import { useState, useEffect } from 'react';
+import { Button, FormControl, Modal, Select, TextField, View } from 'reshaped';
+import { useSearchUser } from './api/query';
 import { InviteFormData, MemberRole } from './types';
 
 interface InviteModalProps {
@@ -27,25 +19,52 @@ export const InviteModal = ({
   scope,
 }: InviteModalProps) => {
   const [email, setEmail] = useState('');
+  const [debouncedEmail, setDebouncedEmail] = useState('');
   const [role, setRole] = useState<MemberRole>('member');
-  const [createUser, setCreateUser] = useState(false);
   const [password, setPassword] = useState('');
+
+  // Debounce email
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedEmail(email);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [email]);
+
+  const {
+    data: users,
+    isLoading: isSearching,
+    isError,
+  } = useSearchUser(debouncedEmail);
+
+  // Derive state
+  // Search is complete only if we have data and no errors
+  const isSearchComplete =
+    !isSearching &&
+    !isError &&
+    users !== undefined &&
+    debouncedEmail !== '' &&
+    debouncedEmail === email;
+
+  const userExists = users && users.length > 0;
+  const shouldCreateUser = isSearchComplete && !userExists;
+
+  const resetForm = () => {
+    setEmail('');
+    setDebouncedEmail('');
+    setRole('member');
+    setPassword('');
+  };
 
   const handleSubmit = async () => {
     await onSubmit({
       email,
       role,
-      password: createUser ? password : undefined,
-      createUser,
+      password: shouldCreateUser ? password : undefined,
+      createUser: shouldCreateUser,
     });
     resetForm();
-  };
-
-  const resetForm = () => {
-    setEmail('');
-    setRole('member');
-    setCreateUser(false);
-    setPassword('');
   };
 
   const handleClose = () => {
@@ -55,10 +74,19 @@ export const InviteModal = ({
 
   const scopeLabel = scope === 'workspace' ? 'Workspace' : 'Projeto';
 
+  const getHelperText = () => {
+    if (isSearching) return 'Verificando usuário...';
+    if (isError) return 'Erro ao verificar usuário. Verifique permissões.';
+    if (debouncedEmail && debouncedEmail === email && !userExists) {
+      return 'Usuário não encontrado. Digite uma senha para criar a conta.';
+    }
+    return 'Se o usuário não existir, solicitaremos uma senha';
+  };
+
   return (
     <Modal active={active} onClose={handleClose}>
       <Modal.Title>Convidar para {scopeLabel}</Modal.Title>
-      <View className={styles.modalContent}>
+      <View gap={3} paddingTop={4} paddingBottom={4}>
         <FormControl>
           <FormControl.Label>Email</FormControl.Label>
           <TextField
@@ -69,7 +97,13 @@ export const InviteModal = ({
             inputAttributes={{ type: 'email' }}
           />
           <FormControl.Helper>
-            Se o usuário não existir, ele será criado automaticamente
+            <span
+              style={{
+                color: isError ? 'var(--rs-color-critical)' : undefined,
+              }}
+            >
+              {getHelperText()}
+            </span>
           </FormControl.Helper>
         </FormControl>
 
@@ -87,14 +121,7 @@ export const InviteModal = ({
           />
         </FormControl>
 
-        <Checkbox
-          checked={createUser}
-          onChange={({ checked }) => setCreateUser(checked)}
-        >
-          Definir senha manualmente (se o usuário não existir)
-        </Checkbox>
-
-        {createUser && (
+        {shouldCreateUser && (
           <View paddingTop={2}>
             <FormControl>
               <FormControl.Label>Senha</FormControl.Label>
@@ -113,15 +140,15 @@ export const InviteModal = ({
         )}
       </View>
 
-      <View className={styles.modalActions}>
+      <View gap={3} direction="row" justify="end">
         <Button onClick={handleClose}>Cancelar</Button>
         <Button
           color="primary"
           onClick={handleSubmit}
           loading={isPending}
-          disabled={!email}
+          disabled={!isSearchComplete}
         >
-          Enviar Convite
+          {shouldCreateUser ? 'Criar e Convidar' : 'Enviar Convite'}
         </Button>
       </View>
     </Modal>

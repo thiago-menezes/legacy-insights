@@ -15,6 +15,7 @@ export interface StrapiIntegration {
   type: IntegrationType;
   status: IntegrationStatus;
   processStatus: ProcessStatus;
+  errorMessage?: string;
   accessToken?: string;
   refreshToken?: string;
   tokenExpiresAt?: string | null;

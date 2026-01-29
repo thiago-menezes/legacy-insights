@@ -1,5 +1,4 @@
 import { Button, Modal, Text, View } from 'reshaped';
-import styles from './styles.module.scss';
 import { WorkspaceMemberItem } from './types';
 
 interface RemoveModalProps {
@@ -24,7 +23,7 @@ export const RemoveModal = ({
   return (
     <Modal active={active} onClose={onClose}>
       <Modal.Title>Remover Membro</Modal.Title>
-      <View className={styles.modalContent}>
+      <View gap={3} paddingTop={4} paddingBottom={4}>
         <Text>
           Tem certeza que deseja remover <strong>{member?.username}</strong>{' '}
           deste {scopeLabel}?
@@ -35,7 +34,7 @@ export const RemoveModal = ({
         </Text>
       </View>
 
-      <View className={styles.modalActions}>
+      <View gap={3} direction="row" justify="end">
         <Button onClick={onClose}>Cancelar</Button>
         <Button color="critical" onClick={onConfirm} loading={isPending}>
           Remover

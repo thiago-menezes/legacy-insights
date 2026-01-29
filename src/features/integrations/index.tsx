@@ -8,6 +8,7 @@ import { PageTitle } from '@/components/page-title';
 import { useProjects } from '../projects/hooks';
 import { useSelectedWorkspace } from '../workspaces/context';
 import { BREADCRUMBS, TABS } from './constants';
+import { DeleteModal } from './delete-modal';
 import { IntegrationForm } from './form';
 import { useIntegrations } from './hooks';
 import { PlatformCard } from './platform-card';
@@ -19,9 +20,13 @@ export const Integrations = () => {
     platforms,
     isLoading,
     isModalOpen,
+    isDeleteModalOpen,
     selectedType,
     editingIntegration,
+    integrationToDelete,
     handleDelete,
+    handleDeleteConfirm,
+    handleDeleteCancel,
     handleAdd,
     handleEdit,
     handleValidate,
@@ -128,6 +133,13 @@ export const Integrations = () => {
           onCancel={handleModalClose}
         />
       </Modal>
+
+      <DeleteModal
+        active={isDeleteModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        integrationName={integrationToDelete?.name || ''}
+      />
     </View>
   );
 };

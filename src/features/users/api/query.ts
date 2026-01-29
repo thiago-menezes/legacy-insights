@@ -15,3 +15,17 @@ export const useProjectMembers = (projectId?: string) => {
     enabled: !!projectId,
   });
 };
+
+export const useSearchUser = (email: string) => {
+  return useQuery({
+    queryKey: ['users', 'search', email],
+    queryFn: async () => {
+      const { data } = await apiClient.get<
+        { id: number; email: string; username: string }[]
+      >(`/api/users?filters[email][$eq]=${email}`);
+      return data;
+    },
+    enabled: !!email && email.length > 5,
+    retry: false,
+  });
+};

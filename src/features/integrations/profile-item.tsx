@@ -44,9 +44,21 @@ export const ProfileItem = ({
           </div>
 
           {processStatusConfig && (
-            <Badge variant="outline" color={processStatusConfig.color}>
-              {processStatusConfig.label}
-            </Badge>
+            <Tooltip
+              text={
+                profile.processStatus === 'erro'
+                  ? profile.integration.errorMessage
+                  : null
+              }
+            >
+              {(props) => (
+                <View {...props}>
+                  <Badge variant="outline" color={processStatusConfig.color}>
+                    {processStatusConfig.label}
+                  </Badge>
+                </View>
+              )}
+            </Tooltip>
           )}
         </View>
       </div>
