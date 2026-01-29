@@ -1,0 +1,21 @@
+.container {
+  padding: var(--rs-unit-x6);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.section {
+  background-color: var(--rs-color-background-elevated);
+  border-radius: var(--rs-radius-large);
+  padding: var(--rs-unit-x6);
+  border: 1px solid var(--rs-color-border-subtle);
+}
+
+.logItem {
+  padding: var(--rs-unit-x3);
+  border-bottom: 1px solid var(--rs-color-border-subtle);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}

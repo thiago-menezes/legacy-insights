@@ -52,12 +52,6 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
             className={styles.logo}
           />
         </View>
-      </View>
-
-      <View gap={2} direction="row" align="center">
-        <View grow>
-          <WorkspaceSelector />
-        </View>
 
         {isMobile && (
           <Button
@@ -67,6 +61,12 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
             aria-label="Close sidebar"
           />
         )}
+      </View>
+
+      <View gap={2} direction="row" align="center">
+        <View grow>
+          <WorkspaceSelector />
+        </View>
       </View>
 
       <View direction="column" gap={6} grow>

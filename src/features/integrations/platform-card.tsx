@@ -13,6 +13,7 @@ export const PlatformCard = ({
   onEdit,
   onValidate,
   onProcess,
+  onDetails,
 }: PlatformCardProps) => {
   return (
     <div className={styles.platformCard}>
@@ -51,6 +52,7 @@ export const PlatformCard = ({
             onEdit={onEdit}
             onValidate={onValidate}
             onProcess={onProcess}
+            onDetails={onDetails}
           />
         ))}
 

@@ -31,13 +31,17 @@ export const useIntegrations = (projectId?: string) => {
   >(undefined);
 
   const { data: integrationsData, isLoading } = useIntegrationsQuery(projectId);
-  const integrations = integrationsData?.data || [];
 
   const createMutation = useCreateIntegrationMutation(projectId);
   const updateMutation = useUpdateIntegrationMutation(projectId);
   const deleteMutation = useDeleteIntegrationMutation(projectId);
   const validateMutation = useValidateIntegrationMutation(projectId);
   const processMutation = useProcessIntegrationMutation(projectId);
+
+  const integrations = useMemo(
+    () => integrationsData?.data || [],
+    [integrationsData?.data],
+  );
 
   const platforms = useMemo(() => {
     return PLATFORM_METADATA.map((platform) => ({
@@ -99,6 +103,7 @@ export const useIntegrations = (projectId?: string) => {
         alert(`Erro na validação: ${result.message}`);
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err);
       alert('Falha ao validar integração.');
     }
@@ -109,6 +114,7 @@ export const useIntegrations = (projectId?: string) => {
       await processMutation.mutateAsync(id);
       alert('Processamento iniciado!');
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err);
       alert('Falha ao iniciar processamento.');
     }

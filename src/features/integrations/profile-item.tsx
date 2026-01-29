@@ -10,6 +10,7 @@ export const ProfileItem = ({
   onEdit,
   onValidate,
   onProcess,
+  onDetails,
 }: ProfileItemProps) => {
   const statusConfig =
     STATUS_CONFIG[profile.status] || STATUS_CONFIG.disconnected;
@@ -64,6 +65,19 @@ export const ProfileItem = ({
       </div>
 
       <div className={styles.profileActions}>
+        <Tooltip text="Ver Detalhes">
+          {(props) => (
+            <Button
+              {...props}
+              variant="outline"
+              aria-label="Detalhes"
+              onClick={() => onDetails(profile.id)}
+            >
+              <Icon name="file-text" size={18} />
+            </Button>
+          )}
+        </Tooltip>
+
         <Tooltip text="Processar Campanhas">
           {(props) => (
             <Button

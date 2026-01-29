@@ -45,6 +45,7 @@ export interface ProfileItemProps {
   onEdit: (integration: StrapiIntegration) => void;
   onValidate: (id: string) => void;
   onProcess: (id: string) => void;
+  onDetails: (id: string) => void;
 }
 
 export interface PlatformCardProps {
@@ -54,6 +55,7 @@ export interface PlatformCardProps {
   onEdit: (integration: StrapiIntegration) => void;
   onValidate: (id: string) => void;
   onProcess: (id: string) => void;
+  onDetails: (id: string) => void;
 }
 
 export interface IntegrationFormProps {

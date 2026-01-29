@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button, FormControl, Modal, Select, Text, View } from 'reshaped';
-import styles from './styles.module.scss';
 import { MemberRole, WorkspaceMemberItem } from './types';
 
 interface EditRoleModalProps {
@@ -34,7 +33,7 @@ const EditRoleForm = ({
 
   return (
     <>
-      <View className={styles.modalContent}>
+      <View gap={3} paddingTop={4} paddingBottom={4}>
         <Text>
           Alterar função de <strong>{memberUsername}</strong>
         </Text>
@@ -54,7 +53,7 @@ const EditRoleForm = ({
         </FormControl>
       </View>
 
-      <View className={styles.modalActions}>
+      <View gap={3} direction="row" justify="end">
         <Button onClick={onClose}>Cancelar</Button>
         <Button color="primary" onClick={handleSubmit} loading={isPending}>
           Salvar

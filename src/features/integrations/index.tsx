@@ -46,7 +46,15 @@ export const Integrations = () => {
     if (!isLoadingWorkspace && !currentWorkspaceHasProjects && selectedOrg) {
       router.push(`/workspaces/${selectedOrg.slug}`);
     }
-  }, [isLoadingWorkspace, currentWorkspaceHasProjects, selectedOrg]);
+  }, [isLoadingWorkspace, currentWorkspaceHasProjects, selectedOrg, router]);
+
+  const handleDetails = (id: string) => {
+    if (selectedOrg && project) {
+      router.push(
+        `/workspaces/${selectedOrg.slug}/${project.slug}/integrations/${id}`,
+      );
+    }
+  };
 
   if (isLoading) {
     return (
@@ -116,6 +124,7 @@ export const Integrations = () => {
                 onEdit={handleEdit}
                 onValidate={handleValidate}
                 onProcess={handleProcess}
+                onDetails={handleDetails}
               />
             ))}
         </div>

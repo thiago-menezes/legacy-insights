@@ -199,16 +199,15 @@ export const IntegrationForm = ({
             </FormControl>
             <FormControl>
               <FormControl.Label>
-                Ad Account IDs (Separados por vírgula)
+                Lista AccountIDs (Separados por vírgula)
               </FormControl.Label>
               <TextField
                 name="config.adAccountIds"
+                inputAttributes={{ autoComplete: 'off' }}
                 placeholder="Ex: act_123, act_456"
-                value={
-                  (watch('config.adAccountIds') as string[] | undefined)?.join(
-                    ', ',
-                  ) || ''
-                }
+                value={(
+                  watch('config.adAccountIds') as string[] | undefined
+                )?.join(', ')}
                 onChange={(e) => {
                   const ids = e.value
                     .split(',')

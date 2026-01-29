@@ -1,5 +1,3 @@
-'use client';
-
 import { Card, View, Text, Badge } from 'reshaped';
 import { Icon } from '@/components/icon';
 import styles from './styles.module.scss';

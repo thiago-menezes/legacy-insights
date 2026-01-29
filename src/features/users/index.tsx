@@ -155,7 +155,7 @@ export const UsersManagement = () => {
   return (
     <>
       <PageTitle
-        icon={<Icon name="users" size={24} />}
+        icon={<Icon name="users" size={32} />}
         title="Gerenciamento de Usuários"
         description="Gerencie os membros do workspace e projetos"
       >

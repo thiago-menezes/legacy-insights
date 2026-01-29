@@ -21,6 +21,21 @@ export const list = async (
 export const get = async (
   id: string | number,
 ): Promise<SingleIntegrationResponse> => {
+  // Try to find by documentId first using the list endpoint
+  // This helps avoid issues if findOne permissions are distinct or if ID format varies
+  try {
+    const { data: listData } = await apiClient.get<IntegrationResponse>(
+      `/api/integrations?filters[documentId][$eq]=${id}&populate=*`,
+    );
+
+    if (listData.data && listData.data.length > 0) {
+      return { data: listData.data[0] };
+    }
+  } catch {
+    // console.warn('Failed to fetch by documentId filter, trying direct ID...');
+  }
+
+  // Fallback to direct ID fetch
   const { data } = await apiClient.get<SingleIntegrationResponse>(
     `/api/integrations/${id}?populate=*`,
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useSearchParams } from 'next/navigation';
-import { View, Button, Tabs } from 'reshaped';
+import { View, Button, Tabs, Grid } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { MetricCard } from '@/components/metric-card';
 import { useDataAccessStatus } from '@/hooks';
@@ -114,7 +114,7 @@ export const Campaigns = () => {
         </Button>
       </View>
 
-      <div className={styles.metricsGrid}>
+      <Grid gap={4} columns={{ s: 1, m: 2, xl: 4 }}>
         {metrics.map((metric) => (
           <MetricCard
             key={metric.title}
@@ -125,12 +125,12 @@ export const Campaigns = () => {
             icon={metric.icon}
           />
         ))}
-      </div>
+      </Grid>
 
       <View className={styles.filterBar}>
         <div className={styles.filterBarLeft}>
           <Button variant="outline" icon={<Icon name="calendar" size={18} />}>
-            01 Dez, 2025 - 31 Dez, 2025
+            Últimos 90 dias
           </Button>
           <Button
             variant="outline"
