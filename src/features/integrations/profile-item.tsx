@@ -8,7 +8,6 @@ export const ProfileItem = ({
   profile,
   onDelete,
   onEdit,
-  onValidate,
   onProcess,
   onDetails,
 }: ProfileItemProps) => {
@@ -91,19 +90,6 @@ export const ProfileItem = ({
               loading={profile.processStatus === 'processando'}
             >
               <Icon name="player-play" size={18} />
-            </Button>
-          )}
-        </Tooltip>
-
-        <Tooltip text="Verificar Status">
-          {(props) => (
-            <Button
-              {...props}
-              variant="outline"
-              aria-label="Verificar Status"
-              onClick={() => onValidate(profile.id)}
-            >
-              <Icon name="refresh" size={18} />
             </Button>
           )}
         </Tooltip>

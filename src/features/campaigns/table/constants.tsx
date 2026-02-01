@@ -15,12 +15,12 @@ export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100].map((size) => ({
 
 export const COLUMN_DEFS: ColDef<CampaignRow>[] = [
   {
-    headerName: 'Página',
+    headerName: 'Nome da campanha',
     field: 'name',
-    flex: 1,
-    minWidth: 240,
     checkboxSelection: true,
     headerCheckboxSelection: true,
+    minWidth: 320,
+    sortable: false,
     cellRenderer: (params: ICellRendererParams<CampaignRow>) => (
       <Link href="#" className={styles.campaignName}>
         {params.value}
@@ -51,7 +51,7 @@ export const COLUMN_DEFS: ColDef<CampaignRow>[] = [
   {
     headerName: 'Orçamento',
     field: 'budget',
-    sortable: true,
+    sortable: false,
     cellRenderer: (params: ICellRendererParams<CampaignRow>) => (
       <div className={styles.budgetCell}>
         <span>{formatCurrency(params.value as number)}</span>
@@ -62,7 +62,7 @@ export const COLUMN_DEFS: ColDef<CampaignRow>[] = [
   {
     headerName: 'Cliques no link',
     field: 'clicks',
-    sortable: true,
+    sortable: false,
     cellRenderer: (params: ICellRendererParams<CampaignRow>) => {
       const row = params.data as CampaignRow;
       return (
@@ -77,7 +77,7 @@ export const COLUMN_DEFS: ColDef<CampaignRow>[] = [
   {
     headerName: 'CPC',
     field: 'cpc',
-    sortable: true,
+    sortable: false,
     cellRenderer: (params: ICellRendererParams<CampaignRow>) => {
       const row = params.data as CampaignRow;
       return (
@@ -93,7 +93,7 @@ export const COLUMN_DEFS: ColDef<CampaignRow>[] = [
   {
     headerName: 'CTR',
     field: 'ctr',
-    sortable: true,
+    sortable: false,
     cellRenderer: (params: ICellRendererParams<CampaignRow>) => {
       const row = params.data as CampaignRow;
       return (
@@ -109,7 +109,7 @@ export const COLUMN_DEFS: ColDef<CampaignRow>[] = [
   {
     headerName: 'Tx. de conversão',
     field: 'conversionRate',
-    sortable: true,
+    sortable: false,
     cellRenderer: (params: ICellRendererParams<CampaignRow>) => {
       const row = params.data as CampaignRow;
       return (

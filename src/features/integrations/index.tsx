@@ -29,7 +29,6 @@ export const Integrations = () => {
     handleDeleteCancel,
     handleAdd,
     handleEdit,
-    handleValidate,
     handleProcess,
     handleFormSubmit,
     handleModalClose,
@@ -120,7 +119,6 @@ export const Integrations = () => {
                 onDelete={handleDelete}
                 onAdd={handleAdd}
                 onEdit={handleEdit}
-                onValidate={handleValidate}
                 onProcess={handleProcess}
                 onDetails={handleDetails}
               />

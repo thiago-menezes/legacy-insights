@@ -43,7 +43,6 @@ export interface ProfileItemProps {
   profile: IntegrationProfile;
   onDelete: (id: string) => void;
   onEdit: (integration: StrapiIntegration) => void;
-  onValidate: (id: string) => void;
   onProcess: (id: string) => void;
   onDetails: (id: string) => void;
 }
@@ -53,7 +52,6 @@ export interface PlatformCardProps {
   onDelete: (id: string) => void;
   onAdd: (type: IntegrationType) => void;
   onEdit: (integration: StrapiIntegration) => void;
-  onValidate: (id: string) => void;
   onProcess: (id: string) => void;
   onDetails: (id: string) => void;
 }

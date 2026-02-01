@@ -9,6 +9,11 @@ export const list = async (
     integrationId,
     startDate,
     endDate,
+    search,
+    sortBy,
+    sortOrder,
+    showOnlyActive,
+    status,
     page = 1,
     pageSize = 10,
   } = params;
@@ -20,11 +25,11 @@ export const list = async (
   query.append('pagination[pageSize]', pageSize.toString());
 
   if (startDate) {
-    query.append('filters[dailyMetrics][date][$gte]', startDate);
+    query.append('startDate', startDate);
   }
 
   if (endDate) {
-    query.append('filters[dailyMetrics][date][$lte]', endDate);
+    query.append('endDate', endDate);
   }
 
   if (integrationId) {
@@ -32,6 +37,28 @@ export const list = async (
       'filters[integration][documentId][$eq]',
       integrationId.toString(),
     );
+  }
+
+  if (search) {
+    query.append('search', search);
+  }
+
+  if (sortBy) {
+    query.append('sortBy', sortBy);
+  }
+
+  if (sortOrder) {
+    query.append('sortOrder', sortOrder);
+  }
+
+  if (showOnlyActive) {
+    query.append('showOnlyActive', 'true');
+  }
+
+  if (status && status.length > 0) {
+    status.forEach((s) => {
+      query.append('status[]', s);
+    });
   }
 
   const { data } = await apiClient.get<StrapiCampaignListResponse>(

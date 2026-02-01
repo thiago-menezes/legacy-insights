@@ -1,8 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { View } from 'reshaped';
 import { EmptyState } from '@/components/empty-state';
-import { CampaignsHeader } from '../header';
-import styles from './styles.module.scss';
 import { CampaignsEmptyStateProps } from './types';
 
 const getEmptyStateConfig = (platform: 'meta' | 'google') => {
@@ -27,7 +24,7 @@ const getEmptyStateConfig = (platform: 'meta' | 'google') => {
     'no-data': {
       icon: 'speakerphone' as const,
       title: 'Nenhuma campanha encontrada',
-      description: `Ainda não há campanhas sincronizadas do ${platformName}. Os dados aparecerão aqui após a sincronização com sua conta de anúncios.`,
+      description: `Nenhum resultado encontrado para ${platformName}.`,
       actionLabel: undefined,
       getUrl: () => '',
     },
@@ -49,18 +46,12 @@ export const CampaignsEmptyState = (props: CampaignsEmptyStateProps) => {
   };
 
   return (
-    <View gap={6}>
-      <CampaignsHeader />
-
-      <View className={styles.container}>
-        <EmptyState
-          icon={config.icon}
-          title={config.title}
-          description={config.description}
-          actionLabel={config.actionLabel}
-          onAction={config.actionLabel ? handleAction : undefined}
-        />
-      </View>
-    </View>
+    <EmptyState
+      icon={config.icon}
+      title={config.title}
+      description={config.description}
+      actionLabel={config.actionLabel}
+      onAction={config.actionLabel ? handleAction : undefined}
+    />
   );
 };

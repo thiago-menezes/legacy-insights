@@ -16,7 +16,7 @@ export const useProjectMembers = (projectId?: string) => {
   });
 };
 
-export const useSearchUser = (email: string) => {
+export const useSearchUser = (email: string, isValidEmail: boolean) => {
   return useQuery({
     queryKey: ['users', 'search', email],
     queryFn: async () => {
@@ -25,7 +25,7 @@ export const useSearchUser = (email: string) => {
       >(`/api/users?filters[email][$eq]=${email}`);
       return data;
     },
-    enabled: !!email && email.length > 5,
+    enabled: !!email && isValidEmail,
     retry: false,
   });
 };

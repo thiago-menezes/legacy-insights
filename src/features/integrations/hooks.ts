@@ -11,7 +11,6 @@ import {
   useCreateIntegrationMutation,
   useDeleteIntegrationMutation,
   useUpdateIntegrationMutation,
-  useValidateIntegrationMutation,
   useProcessIntegrationMutation,
 } from './api/mutation';
 import { useIntegrationsQuery } from './api/query';
@@ -94,7 +93,6 @@ export const useIntegrations = (projectId?: string) => {
   const createMutation = useCreateIntegrationMutation(projectId);
   const updateMutation = useUpdateIntegrationMutation(projectId);
   const deleteMutation = useDeleteIntegrationMutation(projectId);
-  const validateMutation = useValidateIntegrationMutation(projectId);
   const processMutation = useProcessIntegrationMutation(projectId);
 
   const platforms = useMemo(() => {
@@ -146,33 +144,6 @@ export const useIntegrations = (projectId?: string) => {
     setEditingIntegration(integration);
     setSelectedType(integration.type);
     setIsModalOpen(true);
-  };
-
-  const handleValidate = async (id: string) => {
-    try {
-      const result = await validateMutation.mutateAsync(id);
-      if (result.valid) {
-        show({
-          title: 'Sucesso',
-          text: 'Integração validada com sucesso!',
-          color: 'positive',
-        });
-      } else {
-        show({
-          title: 'Erro na Validação',
-          text: `Erro na validação: ${result.message}`,
-          color: 'critical',
-        });
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
-      show({
-        title: 'Erro',
-        text: 'Falha ao validar integração.',
-        color: 'critical',
-      });
-    }
   };
 
   const handleProcess = async (id: string) => {
@@ -233,7 +204,6 @@ export const useIntegrations = (projectId?: string) => {
     handleDeleteCancel,
     handleAdd,
     handleEdit,
-    handleValidate,
     handleProcess,
     handleFormSubmit,
     handleModalClose,

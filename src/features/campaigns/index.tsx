@@ -1,12 +1,17 @@
 'use client';
 
 import { useParams, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { View, Button, Tabs, Grid } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { MetricCard } from '@/components/metric-card';
 import { useDataAccessStatus } from '@/hooks';
+import { AdvancedFilters } from './advanced-filters';
+import { CampaignSearch } from './campaign-search';
 import { TABS } from './constants';
+import { DateRangeFilter } from './date-range-filter';
 import { CampaignsEmptyState } from './empty-states';
+import { FilterBadges } from './filter-badges';
 import { CampaignsHeader } from './header';
 import { useCampaignsData } from './hooks';
 import { CampaignsSkeleton } from './skeleton';
@@ -18,6 +23,8 @@ export const Campaigns = () => {
   const { client: platformParam } = useParams<UseParamsCampaigns>();
   const searchParams = useSearchParams();
   const integrationId = searchParams.get('integrationId');
+  const [dateRange, setDateRange] = useState(90);
+  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
 
   const {
     data,
@@ -25,6 +32,11 @@ export const Campaigns = () => {
     filters,
     handlePageChange,
     handlePageSizeChange,
+    handleSearchChange,
+    handleDateRangeChange,
+    handleAdvancedFiltersChange,
+    handleRemoveFilter,
+    handleClearAllFilters,
   } = useCampaignsData(platformParam, integrationId || undefined);
 
   const integrationType =
@@ -70,18 +82,14 @@ export const Campaigns = () => {
     );
   }
 
-  if (!data || data.campaigns.length === 0) {
-    return (
-      <CampaignsEmptyState
-        state="no-data"
-        platform={platformParam}
-        projectsPageUrl={projectsPageUrl}
-        integrationsPageUrl={integrationsPageUrl}
-      />
-    );
-  }
-
-  const { metrics, campaigns, totalPages, currentPage, totalItems } = data;
+  const hasData = data && data.campaigns.length > 0;
+  const { metrics, campaigns, totalPages, currentPage, totalItems } = data || {
+    metrics: [],
+    campaigns: [],
+    totalPages: 0,
+    currentPage: 1,
+    totalItems: 0,
+  };
 
   return (
     <View gap={4} className={styles.campaigns}>
@@ -104,59 +112,82 @@ export const Campaigns = () => {
             </Tabs.List>
           </Tabs>
         </View>
-
-        <Button
-          variant="outline"
-          icon={<Icon name="chart-bar" size={18} />}
-          endIcon={<Icon name="chevron-down" size={16} />}
-        >
-          Editar gráficos
-        </Button>
       </View>
 
-      <Grid gap={4} columns={{ s: 1, m: 2, xl: 4 }}>
-        {metrics.map((metric) => (
-          <MetricCard
-            key={metric.title}
-            title={metric.title}
-            value={metric.value}
-            previousValue={metric.previousValue}
-            percentageChange={metric.percentageChange}
-            icon={metric.icon}
-          />
-        ))}
-      </Grid>
+      {hasData && (
+        <Grid gap={4} columns={{ s: 1, m: 2, xl: 4 }}>
+          {metrics.map((metric) => (
+            <MetricCard
+              key={metric.title}
+              title={metric.title}
+              value={metric.value}
+              previousValue={metric.previousValue}
+              percentageChange={metric.percentageChange}
+              icon={metric.icon}
+            />
+          ))}
+        </Grid>
+      )}
 
       <View className={styles.filterBar}>
         <div className={styles.filterBarLeft}>
-          <Button variant="outline" icon={<Icon name="calendar" size={18} />}>
-            Últimos 90 dias
-          </Button>
+          <CampaignSearch
+            value={filters.search || ''}
+            onChange={handleSearchChange}
+          />
+
+          <DateRangeFilter
+            value={dateRange}
+            onChange={(days) => {
+              setDateRange(days);
+              handleDateRangeChange(days);
+            }}
+          />
+
           <Button
             variant="outline"
             icon={<Icon name="adjustments-horizontal" size={18} />}
+            onClick={() => setIsFiltersModalOpen(true)}
           >
             Filtros
           </Button>
         </div>
-
-        <Button
-          variant="outline"
-          icon={<Icon name="table" size={18} />}
-          endIcon={<Icon name="chevron-down" size={16} />}
-        >
-          Editar tabela
-        </Button>
       </View>
 
-      <CampaignsTable
-        data={campaigns}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        totalItems={totalItems}
-        pageSize={filters.pageSize || 10}
-        onPageChange={handlePageChange}
-        onPageSizeChange={handlePageSizeChange}
+      <FilterBadges
+        filters={filters}
+        onClearAll={handleClearAllFilters}
+        onRemoveFilter={handleRemoveFilter}
+      />
+
+      {!hasData ? (
+        <CampaignsEmptyState
+          state="no-data"
+          platform={platformParam}
+          projectsPageUrl={projectsPageUrl}
+          integrationsPageUrl={integrationsPageUrl}
+        />
+      ) : (
+        <CampaignsTable
+          data={campaigns}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          pageSize={filters.pageSize || 10}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      )}
+
+      <AdvancedFilters
+        key={isFiltersModalOpen ? 'open' : 'closed'}
+        active={isFiltersModalOpen}
+        onClose={() => setIsFiltersModalOpen(false)}
+        onApply={handleAdvancedFiltersChange}
+        currentFilters={{
+          status: filters.status,
+          showOnlyActive: filters.showOnlyActive,
+        }}
       />
     </View>
   );

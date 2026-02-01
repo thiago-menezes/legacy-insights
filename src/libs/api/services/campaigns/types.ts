@@ -48,6 +48,11 @@ export interface CampaignListParams {
   integrationId?: string | number;
   startDate?: string;
   endDate?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  showOnlyActive?: boolean;
+  status?: ('active' | 'paused' | 'archived' | 'removed' | 'deleted')[];
   page?: number;
   pageSize?: number;
 }

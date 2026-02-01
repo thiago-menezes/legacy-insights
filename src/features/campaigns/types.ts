@@ -50,6 +50,9 @@ export interface CampaignsFilters {
   endDate?: Date;
   status?: CampaignStatus[];
   search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  showOnlyActive?: boolean;
   page?: number;
   pageSize?: number;
 }

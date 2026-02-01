@@ -85,10 +85,10 @@ export const CampaignsTable = ({
 
           <Pagination
             total={totalPages}
-            defaultPage={currentPage}
             previousAriaLabel="Previous page"
             nextAriaLabel="Next page"
             onChange={({ page }) => onPageChange?.(page)}
+            page={currentPage}
           />
         </View>
       </View>

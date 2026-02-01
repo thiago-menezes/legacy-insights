@@ -170,6 +170,7 @@ export const ProjectMembers = () => {
         isPending={isMutating}
         scope="project"
         workspaceId={workspaceId}
+        currentMembers={currentMembers}
       />
 
       <EditRoleModal

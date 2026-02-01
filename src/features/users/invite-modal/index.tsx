@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
 import { Button, FormControl, Modal, Select, TextField, View } from 'reshaped';
-import { useSearchUser, useWorkspaceProjects } from './api/query';
-import { ProjectSelector } from './project-selector';
-import { InviteFormData, MemberRole } from './types';
+import { ProjectSelector } from '../project-selector';
+import { InviteFormData, MemberRole, WorkspaceMemberItem } from '../types';
+import { useInviteModal } from './hooks';
 
-interface InviteModalProps {
+export interface InviteModalProps {
   active: boolean;
   onClose: () => void;
   onSubmit: (data: InviteFormData) => Promise<void>;
   isPending: boolean;
   scope: 'workspace' | 'project';
-  workspaceId?: string; // Required when scope is 'workspace'
+  workspaceId?: string;
+  currentMembers?: WorkspaceMemberItem[];
 }
 
 export const InviteModal = ({
@@ -20,77 +20,34 @@ export const InviteModal = ({
   isPending,
   scope,
   workspaceId,
+  currentMembers = [],
 }: InviteModalProps) => {
-  const [email, setEmail] = useState('');
-  const [debouncedEmail, setDebouncedEmail] = useState('');
-  const [role, setRole] = useState<MemberRole>('member');
-  const [password, setPassword] = useState('');
-  const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
-
-  // Debounce email
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedEmail(email);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [email]);
-
   const {
-    data: users,
-    isLoading: isSearching,
+    scopeLabel,
+    email,
+    setEmail,
     isError,
-  } = useSearchUser(debouncedEmail);
-
-  const { data: projects = [], isLoading: isLoadingProjects } =
-    useWorkspaceProjects(scope === 'workspace' ? workspaceId : undefined);
-
-  // Derive state
-  // Search is complete only if we have data and no errors
-  const isSearchComplete =
-    !isSearching &&
-    !isError &&
-    users !== undefined &&
-    debouncedEmail !== '' &&
-    debouncedEmail === email;
-
-  const userExists = users && users.length > 0;
-  const shouldCreateUser = isSearchComplete && !userExists;
-
-  const resetForm = () => {
-    setEmail('');
-    setDebouncedEmail('');
-    setRole('member');
-    setPassword('');
-    setSelectedProjects([]);
-  };
-
-  const handleSubmit = async () => {
-    await onSubmit({
-      email,
-      role,
-      password: shouldCreateUser ? password : undefined,
-      createUser: shouldCreateUser,
-      projects: scope === 'workspace' ? selectedProjects : undefined,
-    });
-    resetForm();
-  };
-
-  const handleClose = () => {
-    resetForm();
-    onClose();
-  };
-
-  const scopeLabel = scope === 'workspace' ? 'Workspace' : 'Projeto';
-
-  const getHelperText = () => {
-    if (isSearching) return 'Verificando usuário...';
-    if (isError) return 'Erro ao verificar usuário. Verifique permissões.';
-    if (debouncedEmail && debouncedEmail === email && !userExists) {
-      return 'Usuário não encontrado. Digite uma senha para criar a conta.';
-    }
-    return 'Se o usuário não existir, solicitaremos uma senha';
-  };
+    getHelperText,
+    role,
+    setRole,
+    projects,
+    setSelectedProjects,
+    isLoadingProjects,
+    setPassword,
+    handleClose,
+    handleSubmit,
+    isSearchComplete,
+    selectedProjects,
+    password,
+    shouldCreateUser,
+    isAlreadyMember,
+  } = useInviteModal({
+    scope,
+    workspaceId,
+    onSubmit,
+    onClose,
+    currentMembers,
+  });
 
   return (
     <Modal active={active} onClose={handleClose}>
@@ -108,7 +65,10 @@ export const InviteModal = ({
           <FormControl.Helper>
             <span
               style={{
-                color: isError ? 'var(--rs-color-critical)' : undefined,
+                color:
+                  isError || isAlreadyMember
+                    ? 'var(--rs-color-critical)'
+                    : undefined,
               }}
             >
               {getHelperText()}
@@ -166,6 +126,7 @@ export const InviteModal = ({
           loading={isPending}
           disabled={
             !isSearchComplete ||
+            isAlreadyMember ||
             (scope === 'workspace' && selectedProjects.length === 0) ||
             (shouldCreateUser && !password.trim())
           }

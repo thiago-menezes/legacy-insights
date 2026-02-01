@@ -11,7 +11,6 @@ export const PlatformCard = ({
   onDelete,
   onAdd,
   onEdit,
-  onValidate,
   onProcess,
   onDetails,
 }: PlatformCardProps) => {
@@ -50,7 +49,6 @@ export const PlatformCard = ({
             profile={profile}
             onDelete={onDelete}
             onEdit={onEdit}
-            onValidate={onValidate}
             onProcess={onProcess}
             onDetails={onDetails}
           />
