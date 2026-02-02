@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Button, Divider, Text, TextField, View, useToast } from 'reshaped';
 import { Icon } from '@/components/icon';
+import { SingleIntegrationResponse } from '@/libs/api/services/integrations';
 
 interface KiwifyConfigProps {
   webhookUrl: string;
-  onUpdateSecret: (secret: string) => Promise<void>;
+  onUpdateSecret: (secret: string) => Promise<SingleIntegrationResponse>;
   initialSecret?: string;
 }
 

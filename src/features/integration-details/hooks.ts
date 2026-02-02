@@ -12,6 +12,5 @@ export const useIntegrationDetails = (
     isLoading,
     error: error ? String(error) : null,
     updateIntegration: updateMutation.mutateAsync,
-    isUpdating: updateMutation.isPending,
   };
 };

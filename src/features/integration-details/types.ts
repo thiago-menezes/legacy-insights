@@ -1,4 +1,7 @@
-import { StrapiIntegration } from '@/libs/api/services/integrations';
+import {
+  SingleIntegrationResponse,
+  StrapiIntegration,
+} from '@/libs/api/services/integrations';
 
 export interface UseIntegrationDetailsResult {
   data: StrapiIntegration | null;
@@ -7,5 +10,5 @@ export interface UseIntegrationDetailsResult {
   updateIntegration: (data: {
     id: string | number;
     [key: string]: unknown;
-  }) => Promise<void>;
+  }) => Promise<SingleIntegrationResponse>;
 }
