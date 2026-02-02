@@ -1,12 +1,32 @@
 'use client';
 
 import Link from 'next/link';
-import { Button, Checkbox, Text, TextField, View } from 'reshaped';
+import { Button, Checkbox, FormControl, Text, TextField, View } from 'reshaped';
 import { useRegisterForm } from '@/features/auth/hooks';
 import styles from '@/features/auth/styles.module.scss';
+import { Icon } from '@/components/icon';
+
+import { useEffect, useState } from 'react';
 
 const CreateAccountPage = () => {
   const { form, isLoading, error, onSubmit } = useRegisterForm();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const {
+    formState: { errors, isSubmitted },
+    setValue,
+    trigger,
+    register,
+  } = form;
+
+  useEffect(() => {
+    register('username');
+    register('email');
+    register('password');
+    register('passwordConfirmation');
+    register('terms');
+  }, [register]);
 
   return (
     <>
@@ -33,58 +53,198 @@ const CreateAccountPage = () => {
 
       <form className={styles.form} onSubmit={onSubmit}>
         <div className={styles.inputGroup}>
-          <TextField
-            name="username"
-            placeholder="Seu nome de usuário"
-            size="large"
-            value={form.watch('username')}
-            onChange={(e) => form.setValue('username', e.value)}
-            inputAttributes={{
-              type: 'text',
-              autoComplete: 'username',
-            }}
-          />
+          <FormControl hasError={!!errors.username}>
+            <TextField
+              name="username"
+              placeholder="Seu nome de usuário"
+              size="large"
+              value={form.watch('username')}
+              onChange={({ value }) => {
+                setValue('username', value);
+                if (isSubmitted) trigger('username');
+              }}
+              inputAttributes={{
+                type: 'text',
+                autoComplete: 'username',
+              }}
+            />
+            {errors.username?.message && (
+              <FormControl.Error>{errors.username.message}</FormControl.Error>
+            )}
+          </FormControl>
         </div>
 
         <div className={styles.inputGroup}>
-          <TextField
-            name="email"
-            placeholder="seu@email.com"
-            size="large"
-            value={form.watch('email')}
-            onChange={(e) => form.setValue('email', e.value)}
-            inputAttributes={{
-              type: 'email',
-            }}
-          />
+          <FormControl hasError={!!errors.email}>
+            <TextField
+              name="email"
+              placeholder="seu@email.com"
+              size="large"
+              value={form.watch('email')}
+              onChange={({ value }) => {
+                setValue('email', value);
+                if (isSubmitted) trigger('email');
+              }}
+              inputAttributes={{
+                type: 'email',
+              }}
+            />
+            {errors.email?.message && (
+              <FormControl.Error>{errors.email.message}</FormControl.Error>
+            )}
+          </FormControl>
         </div>
 
         <div className={styles.inputGroup}>
-          <TextField
-            name="password"
-            placeholder="Crie uma senha"
-            size="large"
-            value={form.watch('password')}
-            onChange={(e) => form.setValue('password', e.value)}
-            inputAttributes={{
-              type: 'password',
-              autoComplete: 'new-password',
-            }}
-          />
+          <FormControl hasError={!!errors.password}>
+            <TextField
+              name="password"
+              placeholder="Crie uma senha"
+              size="large"
+              value={form.watch('password')}
+              onChange={({ value }) => {
+                setValue('password', value);
+                if (isSubmitted) trigger('password');
+              }}
+              endSlot={
+                <Button
+                  variant="ghost"
+                  icon={<Icon name={showPassword ? 'eye' : 'eye-off'} />}
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              }
+              inputAttributes={{
+                type: showPassword ? 'text' : 'password',
+                autoComplete: 'new-password',
+              }}
+            />
+
+            <View gap={1} paddingTop={2}>
+              <View direction="row" align="center" gap={2}>
+                <Text
+                  variant="caption-1"
+                  color={
+                    /[A-Z]/.test(form.watch('password') || '')
+                      ? 'positive'
+                      : 'neutral-faded'
+                  }
+                >
+                  <Icon name="check" />
+                </Text>
+                <Text
+                  variant="caption-1"
+                  color={
+                    /[A-Z]/.test(form.watch('password') || '')
+                      ? 'positive'
+                      : 'neutral-faded'
+                  }
+                >
+                  Pelo menos uma letra maiúscula
+                </Text>
+              </View>
+              <View direction="row" align="center" gap={2}>
+                <Text
+                  variant="caption-1"
+                  color={
+                    /[a-zA-Z]/.test(form.watch('password') || '')
+                      ? 'positive'
+                      : 'neutral-faded'
+                  }
+                >
+                  <Icon name="check" />
+                </Text>
+                <Text
+                  variant="caption-1"
+                  color={
+                    /[a-zA-Z]/.test(form.watch('password') || '')
+                      ? 'positive'
+                      : 'neutral-faded'
+                  }
+                >
+                  Pelo menos uma letra
+                </Text>
+              </View>
+              <View direction="row" align="center" gap={2}>
+                <Text
+                  variant="caption-1"
+                  color={
+                    /[0-9]/.test(form.watch('password') || '')
+                      ? 'positive'
+                      : 'neutral-faded'
+                  }
+                >
+                  <Icon name="check" />
+                </Text>
+                <Text
+                  variant="caption-1"
+                  color={
+                    /[0-9]/.test(form.watch('password') || '')
+                      ? 'positive'
+                      : 'neutral-faded'
+                  }
+                >
+                  Pelo menos um número
+                </Text>
+              </View>
+              <View direction="row" align="center" gap={2}>
+                <Text
+                  variant="caption-1"
+                  color={
+                    (form.watch('password') || '').length >= 8
+                      ? 'positive'
+                      : 'neutral-faded'
+                  }
+                >
+                  <Icon name="check" />
+                </Text>
+                <Text
+                  variant="caption-1"
+                  color={
+                    (form.watch('password') || '').length >= 8
+                      ? 'positive'
+                      : 'neutral-faded'
+                  }
+                >
+                  Pelo menos 8 caracteres
+                </Text>
+              </View>
+            </View>
+
+            {errors.password?.message && (
+              <FormControl.Error>{errors.password.message}</FormControl.Error>
+            )}
+          </FormControl>
         </div>
 
         <div className={styles.inputGroup}>
-          <TextField
-            name="passwordConfirmation"
-            placeholder="Confirme sua senha"
-            size="large"
-            value={form.watch('passwordConfirmation')}
-            onChange={(e) => form.setValue('passwordConfirmation', e.value)}
-            inputAttributes={{
-              type: 'password',
-              autoComplete: 'new-password',
-            }}
-          />
+          <FormControl hasError={!!errors.passwordConfirmation}>
+            <TextField
+              name="passwordConfirmation"
+              placeholder="Confirme sua senha"
+              size="large"
+              value={form.watch('passwordConfirmation')}
+              onChange={({ value }) => {
+                setValue('passwordConfirmation', value);
+                if (isSubmitted) trigger('passwordConfirmation');
+              }}
+              endSlot={
+                <Button
+                  variant="ghost"
+                  icon={<Icon name={showConfirmPassword ? 'eye' : 'eye-off'} />}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                />
+              }
+              inputAttributes={{
+                type: showConfirmPassword ? 'text' : 'password',
+                autoComplete: 'new-password',
+              }}
+            />
+            {errors.passwordConfirmation?.message && (
+              <FormControl.Error>
+                {errors.passwordConfirmation.message}
+              </FormControl.Error>
+            )}
+          </FormControl>
         </div>
 
         <div className={styles.termsCheckbox}>

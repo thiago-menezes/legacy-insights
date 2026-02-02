@@ -19,7 +19,7 @@ export interface LoginFormData {
 
 const loginSchema = z.object({
   identifier: z.string().email('Por favor, insira um e-mail válido'),
-  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
+  password: z.string().min(1, 'A senha é obrigatória'),
 });
 
 const registerSchema = z
@@ -28,7 +28,21 @@ const registerSchema = z
       .string()
       .min(3, 'Nome de usuário deve ter no mínimo 3 caracteres'),
     email: z.string().email('Email inválido'),
-    password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+    password: z
+      .string()
+      .min(8, 'A senha deve ter no mínimo 8 caracteres')
+      .refine(
+        (val) => /[A-Z]/.test(val),
+        'A senha deve conter pelo menos uma letra maiúscula',
+      )
+      .refine(
+        (val) => /[0-9]/.test(val),
+        'A senha deve conter pelo menos um número',
+      )
+      .refine(
+        (val) => /[a-zA-Z]/.test(val),
+        'A senha deve conter pelo menos uma letra',
+      ),
     passwordConfirmation: z.string(),
     terms: z.boolean().refine((val) => val, 'Você deve aceitar os termos'),
   })
@@ -43,7 +57,21 @@ const forgotPasswordSchema = z.object({
 
 const resetPasswordSchema = z
   .object({
-    password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+    password: z
+      .string()
+      .min(8, 'A senha deve ter no mínimo 8 caracteres')
+      .refine(
+        (val) => /[A-Z]/.test(val),
+        'A senha deve conter pelo menos uma letra maiúscula',
+      )
+      .refine(
+        (val) => /[0-9]/.test(val),
+        'A senha deve conter pelo menos um número',
+      )
+      .refine(
+        (val) => /[a-zA-Z]/.test(val),
+        'A senha deve conter pelo menos uma letra',
+      ),
     passwordConfirmation: z.string(),
   })
   .refine((data) => data.password === data.passwordConfirmation, {

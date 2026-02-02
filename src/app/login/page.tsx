@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Button,
   Checkbox,
@@ -21,10 +21,17 @@ export default function LoginV2Page() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const {
-    formState: { errors },
+    formState: { errors, isSubmitted },
     setValue,
     watch,
+    register,
+    trigger,
   } = form;
+
+  useEffect(() => {
+    register('identifier');
+    register('password');
+  }, [register]);
 
   const identifier = watch('identifier');
   const password = watch('password');
@@ -50,7 +57,10 @@ export default function LoginV2Page() {
                 name="identifier"
                 placeholder="exemplo@legacy.com"
                 value={identifier || ''}
-                onChange={({ value }) => setValue('identifier', value)}
+                onChange={({ value }) => {
+                  setValue('identifier', value);
+                  if (isSubmitted) trigger('identifier');
+                }}
                 startSlot={<Icon name="mail" />}
                 inputAttributes={{
                   required: true,
@@ -71,7 +81,10 @@ export default function LoginV2Page() {
                 name="password"
                 placeholder="••••••••"
                 value={password || ''}
-                onChange={({ value }) => setValue('password', value)}
+                onChange={({ value }) => {
+                  setValue('password', value);
+                  if (isSubmitted) trigger('password');
+                }}
                 startSlot={<Icon name="key" />}
                 endSlot={
                   <Button
@@ -86,96 +99,7 @@ export default function LoginV2Page() {
                   autoComplete: 'current-password',
                 }}
               />
-              <View gap={1} paddingTop={2}>
-                <View direction="row" align="center" gap={2}>
-                  <Text
-                    variant="caption-1"
-                    color={
-                      /[A-Z]/.test(password || '')
-                        ? 'positive'
-                        : 'neutral-faded'
-                    }
-                  >
-                    <Icon name="check" />
-                  </Text>
-                  <Text
-                    variant="caption-1"
-                    color={
-                      /[A-Z]/.test(password || '')
-                        ? 'positive'
-                        : 'neutral-faded'
-                    }
-                  >
-                    Pelo menos uma letra maiúscula
-                  </Text>
-                </View>
-                <View direction="row" align="center" gap={2}>
-                  <Text
-                    variant="caption-1"
-                    color={
-                      /[a-zA-Z]/.test(password || '')
-                        ? 'positive'
-                        : 'neutral-faded'
-                    }
-                  >
-                    <Icon name="check" />
-                  </Text>
-                  <Text
-                    variant="caption-1"
-                    color={
-                      /[a-zA-Z]/.test(password || '')
-                        ? 'positive'
-                        : 'neutral-faded'
-                    }
-                  >
-                    Pelo menos uma letra
-                  </Text>
-                </View>
-                <View direction="row" align="center" gap={2}>
-                  <Text
-                    variant="caption-1"
-                    color={
-                      /[0-9]/.test(password || '')
-                        ? 'positive'
-                        : 'neutral-faded'
-                    }
-                  >
-                    <Icon name="check" />
-                  </Text>
-                  <Text
-                    variant="caption-1"
-                    color={
-                      /[0-9]/.test(password || '')
-                        ? 'positive'
-                        : 'neutral-faded'
-                    }
-                  >
-                    Pelo menos um número
-                  </Text>
-                </View>
-                <View direction="row" align="center" gap={2}>
-                  <Text
-                    variant="caption-1"
-                    color={
-                      (password || '').length >= 8
-                        ? 'positive'
-                        : 'neutral-faded'
-                    }
-                  >
-                    <Icon name="check" />
-                  </Text>
-                  <Text
-                    variant="caption-1"
-                    color={
-                      (password || '').length >= 8
-                        ? 'positive'
-                        : 'neutral-faded'
-                    }
-                  >
-                    Pelo menos 8 caracteres
-                  </Text>
-                </View>
-              </View>
+
               {errors.password?.message && (
                 <FormControl.Error>{errors.password.message}</FormControl.Error>
               )}
