@@ -16,7 +16,7 @@ import styles from './styles.module.scss';
 import { Icon } from '@/components/icon';
 
 export default function LoginV2Page() {
-  const { form, isLoading, onSubmit } = useLoginForm();
+  const { form, isLoading, onSubmit, error } = useLoginForm();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -43,7 +43,7 @@ export default function LoginV2Page() {
       <View gap={4} width="100%">
         <form onSubmit={onSubmit}>
           <View gap={6}>
-            <FormControl>
+            <FormControl hasError={!!errors.identifier}>
               <FormControl.Label>Endereço de E-mail</FormControl.Label>
               <TextField
                 size="large"
@@ -58,17 +58,13 @@ export default function LoginV2Page() {
                 }}
               />
               {errors.identifier?.message && (
-                <Text
-                  color="critical"
-                  variant="caption-1"
-                  attributes={{ className: styles.errorMessage }}
-                >
+                <FormControl.Error>
                   {errors.identifier.message}
-                </Text>
+                </FormControl.Error>
               )}
             </FormControl>
 
-            <FormControl>
+            <FormControl hasError={!!errors.password}>
               <FormControl.Label>Sua Senha</FormControl.Label>
               <TextField
                 size="large"
@@ -90,14 +86,98 @@ export default function LoginV2Page() {
                   autoComplete: 'current-password',
                 }}
               />
+              <View gap={1} paddingTop={2}>
+                <View direction="row" align="center" gap={2}>
+                  <Text
+                    variant="caption-1"
+                    color={
+                      /[A-Z]/.test(password || '')
+                        ? 'positive'
+                        : 'neutral-faded'
+                    }
+                  >
+                    <Icon name="check" />
+                  </Text>
+                  <Text
+                    variant="caption-1"
+                    color={
+                      /[A-Z]/.test(password || '')
+                        ? 'positive'
+                        : 'neutral-faded'
+                    }
+                  >
+                    Pelo menos uma letra maiúscula
+                  </Text>
+                </View>
+                <View direction="row" align="center" gap={2}>
+                  <Text
+                    variant="caption-1"
+                    color={
+                      /[a-zA-Z]/.test(password || '')
+                        ? 'positive'
+                        : 'neutral-faded'
+                    }
+                  >
+                    <Icon name="check" />
+                  </Text>
+                  <Text
+                    variant="caption-1"
+                    color={
+                      /[a-zA-Z]/.test(password || '')
+                        ? 'positive'
+                        : 'neutral-faded'
+                    }
+                  >
+                    Pelo menos uma letra
+                  </Text>
+                </View>
+                <View direction="row" align="center" gap={2}>
+                  <Text
+                    variant="caption-1"
+                    color={
+                      /[0-9]/.test(password || '')
+                        ? 'positive'
+                        : 'neutral-faded'
+                    }
+                  >
+                    <Icon name="check" />
+                  </Text>
+                  <Text
+                    variant="caption-1"
+                    color={
+                      /[0-9]/.test(password || '')
+                        ? 'positive'
+                        : 'neutral-faded'
+                    }
+                  >
+                    Pelo menos um número
+                  </Text>
+                </View>
+                <View direction="row" align="center" gap={2}>
+                  <Text
+                    variant="caption-1"
+                    color={
+                      (password || '').length >= 8
+                        ? 'positive'
+                        : 'neutral-faded'
+                    }
+                  >
+                    <Icon name="check" />
+                  </Text>
+                  <Text
+                    variant="caption-1"
+                    color={
+                      (password || '').length >= 8
+                        ? 'positive'
+                        : 'neutral-faded'
+                    }
+                  >
+                    Pelo menos 8 caracteres
+                  </Text>
+                </View>
+              </View>
               {errors.password?.message && (
-                <Text
-                  color="critical"
-                  variant="caption-1"
-                  attributes={{ className: styles.errorMessage }}
-                >
-                  {errors.password.message}
-                </Text>
+                <FormControl.Error>{errors.password.message}</FormControl.Error>
               )}
             </FormControl>
 
@@ -135,6 +215,16 @@ export default function LoginV2Page() {
             </Button>
           </View>
         </form>
+
+        {error && (
+          <Text
+            color="critical"
+            variant="caption-1"
+            attributes={{ className: styles.errorMessage }}
+          >
+            {error}
+          </Text>
+        )}
 
         <View position="relative" gap={4}>
           <View

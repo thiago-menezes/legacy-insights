@@ -10,12 +10,17 @@ import {
   strapiResetPassword,
 } from '@/libs/api/strapi';
 import { useAuth } from './context';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-// Types
 export interface LoginFormData {
   identifier: string;
   password: string;
 }
+
+const loginSchema = z.object({
+  identifier: z.string().email('Por favor, insira um e-mail válido'),
+  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
+});
 
 const registerSchema = z
   .object({
@@ -56,6 +61,7 @@ export function useLoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
     defaultValues: { identifier: '', password: '' },
   });
 
@@ -83,7 +89,6 @@ export function useLoginForm() {
   };
 }
 
-// Register hook
 export function useRegisterForm() {
   const { register: authRegister } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -120,7 +125,6 @@ export function useRegisterForm() {
   };
 }
 
-// Forgot password hook
 export function useForgotPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -159,7 +163,6 @@ export function useForgotPasswordForm() {
   };
 }
 
-// Reset password hook
 export function useResetPasswordForm(code: string) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
