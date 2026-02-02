@@ -61,7 +61,7 @@ export default function LoginV2Page() {
                   setValue('identifier', value);
                   if (isSubmitted) trigger('identifier');
                 }}
-                startSlot={<Icon name="mail" />}
+                startSlot={<Icon name="mail" size={18} />}
                 inputAttributes={{
                   required: true,
                   autoComplete: 'email',
@@ -85,7 +85,7 @@ export default function LoginV2Page() {
                   setValue('password', value);
                   if (isSubmitted) trigger('password');
                 }}
-                startSlot={<Icon name="key" />}
+                startSlot={<Icon name="key" size={18} />}
                 endSlot={
                   <Button
                     variant="ghost"
