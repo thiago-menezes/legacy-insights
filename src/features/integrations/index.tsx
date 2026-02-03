@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader, Modal, Tabs, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
@@ -43,6 +43,11 @@ export const Integrations = () => {
     currentWorkspaceHasProjects,
     isLoading: isLoadingWorkspace,
   } = useSelectedWorkspace();
+
+  const initialValues = useMemo(
+    () => editingIntegration || { type: selectedType },
+    [editingIntegration, selectedType],
+  );
 
   const router = useRouter();
 
@@ -246,14 +251,14 @@ export const Integrations = () => {
         {isWebhookIntegration ? (
           <WebhookForm
             projectId={project?.documentId}
-            initialValues={editingIntegration || { type: selectedType }}
+            initialValues={initialValues}
             onSubmit={handleFormSubmit}
             onCancel={handleModalClose}
           />
         ) : (
           <IntegrationForm
             projectId={project?.documentId}
-            initialValues={editingIntegration || { type: selectedType }}
+            initialValues={initialValues}
             onSubmit={handleFormSubmit}
             onCancel={handleModalClose}
           />

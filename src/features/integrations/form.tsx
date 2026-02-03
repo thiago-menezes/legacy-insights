@@ -25,6 +25,8 @@ export const IntegrationForm = ({
   const [accessTokenTouched, setAccessTokenTouched] = useState(false);
   const [refreshTokenTouched, setRefreshTokenTouched] = useState(false);
   const [clientSecretTouched, setClientSecretTouched] = useState(false);
+  const [adAccountIdsRaw, setAdAccountIdsRaw] = useState('');
+  const [customerIdsRaw, setCustomerIdsRaw] = useState('');
 
   const { handleSubmit, setValue, watch, reset } =
     useForm<IntegrationCreateInput>({
@@ -42,6 +44,8 @@ export const IntegrationForm = ({
       const isStrapi = 'documentId' in initialValues;
       const strapiData = initialValues as StrapiIntegration;
       const createData = initialValues as IntegrationCreateInput;
+      const config = strapiData?.config || createData?.config;
+
       reset({
         name: initialValues?.name || '',
         type: initialValues?.type || 'meta_ads',
@@ -53,6 +57,10 @@ export const IntegrationForm = ({
         refreshToken: isStrapi ? MASKED_TOKEN : createData.refreshToken || '',
         config: strapiData?.config || {},
       });
+
+      setAdAccountIdsRaw((config?.adAccountIds as string[])?.join(', ') || '');
+      setCustomerIdsRaw((config?.customerIds as string[])?.join(', ') || '');
+
       setAccessTokenTouched(false);
       setRefreshTokenTouched(false);
       setClientSecretTouched(false);
@@ -86,6 +94,20 @@ export const IntegrationForm = ({
 
   const handleFormSubmit = (values: IntegrationCreateInput) => {
     const payload = { ...values };
+
+    if (payload.config) {
+      if (typeValue === 'meta_ads') {
+        payload.config.adAccountIds = adAccountIdsRaw
+          .split(',')
+          .map((id) => id.trim())
+          .filter(Boolean);
+      } else if (typeValue === 'google_ads') {
+        payload.config.customerIds = customerIdsRaw
+          .split(',')
+          .map((id) => id.trim())
+          .filter(Boolean);
+      }
+    }
 
     if (isEditMode) {
       if (!accessTokenTouched || payload.accessToken === MASKED_TOKEN) {
@@ -207,16 +229,8 @@ export const IntegrationForm = ({
                 name="config.adAccountIds"
                 inputAttributes={{ autoComplete: 'off' }}
                 placeholder="Ex: act_123, act_456"
-                value={(
-                  watch('config.adAccountIds') as string[] | undefined
-                )?.join(', ')}
-                onChange={(e) => {
-                  const ids = e.value
-                    .split(',')
-                    .map((id) => id.trim())
-                    .filter(Boolean);
-                  setValue('config.adAccountIds', ids);
-                }}
+                value={adAccountIdsRaw}
+                onChange={(e) => setAdAccountIdsRaw(e.value)}
                 disabled={isEditMode}
               />
             </FormControl>
@@ -296,18 +310,8 @@ export const IntegrationForm = ({
               <TextField
                 name="config.customerIds"
                 placeholder="Ex: 5559111179, 6421607101"
-                value={
-                  (watch('config.customerIds') as string[] | undefined)?.join(
-                    ', ',
-                  ) || ''
-                }
-                onChange={(e) => {
-                  const ids = e.value
-                    .split(',')
-                    .map((id) => id.trim())
-                    .filter(Boolean);
-                  setValue('config.customerIds', ids);
-                }}
+                value={customerIdsRaw}
+                onChange={(e) => setCustomerIdsRaw(e.value)}
                 disabled={isEditMode}
               />
             </FormControl>
