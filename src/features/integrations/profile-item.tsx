@@ -10,6 +10,7 @@ export const ProfileItem = ({
   onEdit,
   onProcess,
   onDetails,
+  canManage,
 }: ProfileItemProps) => {
   const statusConfig =
     STATUS_CONFIG[profile.status] || STATUS_CONFIG.disconnected;
@@ -80,36 +81,40 @@ export const ProfileItem = ({
           )}
         </Tooltip>
 
-        <Tooltip text="Processar Campanhas">
-          {(props) => (
+        {canManage && (
+          <>
+            <Tooltip text="Processar Campanhas">
+              {(props) => (
+                <Button
+                  {...props}
+                  variant="outline"
+                  aria-label="Processar"
+                  onClick={() => onProcess(profile.id)}
+                  loading={profile.processStatus === 'processando'}
+                >
+                  <Icon name="player-play" size={18} />
+                </Button>
+              )}
+            </Tooltip>
+
             <Button
-              {...props}
               variant="outline"
-              aria-label="Processar"
-              onClick={() => onProcess(profile.id)}
-              loading={profile.processStatus === 'processando'}
+              aria-label="Atualizar Token"
+              onClick={() => onEdit(profile.integration)}
             >
-              <Icon name="player-play" size={18} />
+              <Icon name="key" size={18} />
             </Button>
-          )}
-        </Tooltip>
 
-        <Button
-          variant="outline"
-          aria-label="Atualizar Token"
-          onClick={() => onEdit(profile.integration)}
-        >
-          <Icon name="key" size={18} />
-        </Button>
-
-        <Button
-          variant="outline"
-          aria-label="Remover"
-          color="critical"
-          onClick={() => onDelete(profile.id)}
-        >
-          <Icon name="trash" size={18} />
-        </Button>
+            <Button
+              variant="outline"
+              aria-label="Remover"
+              color="critical"
+              onClick={() => onDelete(profile.id)}
+            >
+              <Icon name="trash" size={18} />
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

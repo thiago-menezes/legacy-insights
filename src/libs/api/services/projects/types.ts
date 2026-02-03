@@ -1,5 +1,16 @@
 import { IntegrationType } from '../integrations';
 
+export interface ProjectMember {
+  id: number;
+  documentId: string;
+  role: 'admin' | 'editor' | 'viewer';
+  user?: {
+    id: number;
+    username: string;
+    email: string;
+  } | null;
+}
+
 export interface StrapiProject {
   id: number;
   documentId: string;
@@ -21,6 +32,7 @@ export interface StrapiProject {
     type: IntegrationType;
     status: 'connected' | 'disconnected' | 'token_expired';
   }[];
+  projectMembers?: ProjectMember[];
 }
 
 export interface ProjectResponse {

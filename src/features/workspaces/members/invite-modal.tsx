@@ -15,14 +15,14 @@ export const InviteMemberModal = ({
   workspaceId,
 }: InviteMemberModalProps) => {
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState<WorkspaceRole>('member');
+  const [role, setRole] = useState<WorkspaceRole>('editor');
   const { mutateAsync: inviteMember, isPending } = useInviteMember(workspaceId);
 
   const handleSubmit = async () => {
     await inviteMember({ email, role });
     onClose();
     setEmail('');
-    setRole('member');
+    setRole('editor');
   };
 
   return (
@@ -46,7 +46,7 @@ export const InviteMemberModal = ({
             onChange={({ value }) => setRole(value as WorkspaceRole)}
             options={[
               { value: 'admin', label: 'Admin' },
-              { value: 'member', label: 'Membro' },
+              { value: 'editor', label: 'Editor' },
               { value: 'viewer', label: 'Visualizador' },
             ]}
           />

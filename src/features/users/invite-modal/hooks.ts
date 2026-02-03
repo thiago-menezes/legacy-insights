@@ -15,7 +15,7 @@ export const useInviteModal = ({
 >) => {
   const [email, setEmail] = useState('');
   const [debouncedEmail, setDebouncedEmail] = useState('');
-  const [role, setRole] = useState<MemberRole>('member');
+  const [role, setRole] = useState<MemberRole>('editor');
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
 
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -59,7 +59,7 @@ export const useInviteModal = ({
   const resetForm = () => {
     setEmail('');
     setDebouncedEmail('');
-    setRole('member');
+    setRole('editor');
     setSelectedProjects([]);
   };
 

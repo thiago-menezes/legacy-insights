@@ -13,6 +13,7 @@ export const PlatformCard = ({
   onEdit,
   onProcess,
   onDetails,
+  canManage,
 }: PlatformCardProps) => {
   return (
     <div className={styles.platformCard}>
@@ -51,16 +52,19 @@ export const PlatformCard = ({
             onEdit={onEdit}
             onProcess={onProcess}
             onDetails={onDetails}
+            canManage={canManage}
           />
         ))}
 
-        <Button
-          className={styles.addProfileButton}
-          onClick={() => onAdd(platform.id as IntegrationType)}
-        >
-          <Icon name="plus" size={18} />
-          Adicionar novo perfil
-        </Button>
+        {canManage && (
+          <Button
+            className={styles.addProfileButton}
+            onClick={() => onAdd(platform.id as IntegrationType)}
+          >
+            <Icon name="plus" size={18} />
+            Adicionar novo perfil
+          </Button>
+        )}
       </div>
     </div>
   );

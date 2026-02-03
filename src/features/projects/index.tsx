@@ -32,6 +32,7 @@ export const WorkspaceDetail = () => {
     handleCloseDelete,
     handleConfirmDelete,
     isDeleting,
+    canCreateProject,
   } = useProjects();
 
   const { selectWorkspace } = useSelectedWorkspace();
@@ -82,14 +83,16 @@ export const WorkspaceDetail = () => {
         title={`Workspace: ${workspace.name}`}
         description="Gerencie seu workspace"
       >
-        <Button
-          variant="solid"
-          color="primary"
-          icon={<Icon name="plus" />}
-          onClick={handleOpenCreate}
-        >
-          Novo Projeto
-        </Button>
+        {canCreateProject && (
+          <Button
+            variant="solid"
+            color="primary"
+            icon={<Icon name="plus" />}
+            onClick={handleOpenCreate}
+          >
+            Novo Projeto
+          </Button>
+        )}
       </PageTitle>
 
       <View gap={4} paddingTop={4}>
@@ -134,7 +137,7 @@ export const WorkspaceDetail = () => {
                       /{project.slug}
                     </Text>
                   </View>
-                  {project.integrations?.length === 0 && (
+                  {project.integrations?.length === 0 && canCreateProject && (
                     <Button
                       icon={<Icon name="trash" size={16} />}
                       variant="ghost"

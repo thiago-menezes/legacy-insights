@@ -6,10 +6,12 @@ import {
   useUpdateProjectMemberRole,
 } from './api/mutation';
 import { useProjectMembers } from './api/query';
+import { useUserRole } from '@/features/workspaces/use-user-role';
 import { InviteFormData, MemberRole, WorkspaceMemberItem } from './types';
 
 export const useUsersManagement = () => {
   const { selectedOrg, selectedProject } = useSelectedWorkspace();
+  const { isAdmin, isOwner, isEditor, canInviteMembers } = useUserRole();
 
   const workspaceId = selectedOrg?.documentId;
 
@@ -165,5 +167,11 @@ export const useUsersManagement = () => {
     handleInvite,
     handleUpdateRole,
     handleRemoveMember,
+
+    // Permissions
+    isAdmin,
+    isOwner,
+    isEditor,
+    canInviteMembers,
   };
 };

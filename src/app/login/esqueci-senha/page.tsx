@@ -69,18 +69,6 @@ const ForgotPasswordPage = () => {
         </Text>
       </View>
 
-      {error && (
-        <View
-          padding={3}
-          backgroundColor="critical-faded"
-          borderRadius="medium"
-        >
-          <Text variant="body-3" color="critical">
-            {error}
-          </Text>
-        </View>
-      )}
-
       <form className={styles.form} onSubmit={onSubmit}>
         <div className={styles.inputGroup}>
           <TextField
@@ -95,6 +83,18 @@ const ForgotPasswordPage = () => {
             }}
           />
         </div>
+
+        {error && (
+          <View
+            padding={3}
+            backgroundColor="critical-faded"
+            borderRadius="medium"
+          >
+            <Text variant="body-3" color="critical">
+              {error}
+            </Text>
+          </View>
+        )}
 
         <div className={styles.submitButton}>
           <Button

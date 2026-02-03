@@ -19,6 +19,7 @@ export interface InviteModalProps {
   scope: 'workspace' | 'project';
   workspaceId?: string;
   currentMembers?: WorkspaceMemberItem[];
+  currentUserRole?: string;
 }
 
 export const InviteModal = ({
@@ -29,6 +30,7 @@ export const InviteModal = ({
   scope,
   workspaceId,
   currentMembers = [],
+  currentUserRole,
 }: InviteModalProps) => {
   const {
     scopeLabel,
@@ -53,6 +55,17 @@ export const InviteModal = ({
     onSubmit,
     onClose,
     currentMembers,
+  });
+
+  const availableRoles = [
+    { value: 'admin', label: 'Admin' },
+    { value: 'editor', label: 'Editor' },
+    { value: 'viewer', label: 'Visualizador' },
+  ].filter((r) => {
+    if (currentUserRole === 'editor') {
+      return r.value !== 'admin';
+    }
+    return true;
   });
 
   return (
@@ -88,11 +101,7 @@ export const InviteModal = ({
             name="role"
             value={role}
             onChange={({ value }) => setRole(value as MemberRole)}
-            options={[
-              { value: 'admin', label: 'Admin' },
-              { value: 'member', label: 'Membro' },
-              { value: 'viewer', label: 'Visualizador' },
-            ]}
+            options={availableRoles}
           />
         </FormControl>
 

@@ -12,6 +12,7 @@ import {
   useDeleteProjectMutation,
 } from './api/mutation';
 import { useProjectBySlugQuery, useProjectsQuery } from './api/query';
+import { useUserRole } from '../workspaces/use-user-role';
 
 export const useProjects = () => {
   const params = useParams<{ workspaceSlug: string; projectSlug: string }>();
@@ -23,6 +24,8 @@ export const useProjects = () => {
   const workspace = workspaces?.data.find(
     (w) => w.slug === slug || w.documentId === slug,
   );
+
+  const { canCreateProject, canDeleteWorkspace } = useUserRole();
 
   const { hasWorkspaces, selectedProject, selectWorkspace, refreshWorkspaces } =
     useSelectedWorkspace();
@@ -153,5 +156,7 @@ export const useProjects = () => {
     handleCloseDelete,
     handleConfirmDelete,
     isDeleting: deleteMutation.isPending,
+    canCreateProject,
+    canDeleteWorkspace,
   };
 };

@@ -1,6 +1,6 @@
 import { WorkspaceRole } from '@/libs/api/services/workspaces/types';
 
-export type MemberRole = 'admin' | 'member' | 'viewer';
+export type MemberRole = 'admin' | 'editor' | 'viewer';
 
 export interface WorkspaceMemberItem {
   id: number;

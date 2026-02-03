@@ -1,6 +1,6 @@
 import { StrapiProject } from '../projects';
 
-export type WorkspaceRole = 'owner' | 'admin' | 'member' | 'viewer';
+export type WorkspaceRole = 'owner' | 'admin' | 'editor' | 'viewer';
 
 export interface WorkspaceMember {
   id: number;

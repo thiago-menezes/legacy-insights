@@ -8,6 +8,7 @@ interface EditRoleModalProps {
   onSubmit: (role: MemberRole) => Promise<void>;
   member: WorkspaceMemberItem | null;
   isPending: boolean;
+  currentUserRole?: string;
 }
 
 interface EditRoleFormProps {
@@ -16,6 +17,7 @@ interface EditRoleFormProps {
   onSubmit: (role: MemberRole) => Promise<void>;
   onClose: () => void;
   isPending: boolean;
+  currentUserRole?: string;
 }
 
 const EditRoleForm = ({
@@ -24,12 +26,24 @@ const EditRoleForm = ({
   onSubmit,
   onClose,
   isPending,
+  currentUserRole,
 }: EditRoleFormProps) => {
   const [role, setRole] = useState<MemberRole>(initialRole);
 
   const handleSubmit = async () => {
     await onSubmit(role);
   };
+
+  const availableRoles = [
+    { value: 'admin', label: 'Admin' },
+    { value: 'editor', label: 'Editor' },
+    { value: 'viewer', label: 'Visualizador' },
+  ].filter((r) => {
+    if (currentUserRole === 'editor') {
+      return r.value !== 'admin';
+    }
+    return true;
+  });
 
   return (
     <>
@@ -44,11 +58,7 @@ const EditRoleForm = ({
             name="role"
             value={role}
             onChange={({ value }) => setRole(value as MemberRole)}
-            options={[
-              { value: 'admin', label: 'Admin' },
-              { value: 'member', label: 'Membro' },
-              { value: 'viewer', label: 'Visualizador' },
-            ]}
+            options={availableRoles}
           />
         </FormControl>
       </View>
@@ -69,21 +79,26 @@ export const EditRoleModal = ({
   onSubmit,
   member,
   isPending,
+  currentUserRole,
 }: EditRoleModalProps) => {
-  const initialRole =
-    member?.role !== 'owner' ? (member?.role as MemberRole) : 'member';
+  const roleStr = member?.role as string;
+  const initialRole: MemberRole =
+    roleStr !== 'owner' && roleStr !== 'member'
+      ? (roleStr as MemberRole)
+      : 'editor';
 
   return (
     <Modal active={active} onClose={onClose}>
       <Modal.Title>Alterar Função</Modal.Title>
-      {member && (
+      {member && member?.email && (
         <EditRoleForm
           key={member.id}
           initialRole={initialRole}
-          memberUsername={member.username}
+          memberUsername={member?.email}
           onSubmit={onSubmit}
           onClose={onClose}
           isPending={isPending}
+          currentUserRole={currentUserRole}
         />
       )}
     </Modal>

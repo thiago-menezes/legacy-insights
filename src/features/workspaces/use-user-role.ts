@@ -7,8 +7,13 @@ interface UseUserRoleResult {
   role: WorkspaceRole | null;
   isOwner: boolean;
   isAdmin: boolean;
+  isEditor: boolean;
   isViewer: boolean;
   canManage: boolean;
+  canCreateProject: boolean;
+  canCreateIntegration: boolean;
+  canInviteMembers: boolean;
+  canDeleteWorkspace: boolean;
   isLoading: boolean;
 }
 
@@ -25,40 +30,86 @@ export function useUserRole(): UseUserRoleResult {
       return null;
     }
 
-    // Check if user is the owner
+    // 1. Check if user is the owner
     if (selectedOrg.owner?.id === user.id) {
       return 'owner';
     }
 
-    // Find user in workspace members list
-    const member = selectedOrg.workspaceMembers?.find(
-      (m) => m.user?.id === user.id,
+    // 2. Find user in workspace members list
+    const workspaceMember = selectedOrg.workspaceMembers?.find(
+      (m) => String(m.user?.id) === String(user.id),
     );
-    return member?.role || null;
+    if (workspaceMember) {
+      console.log('Found workspace member:', workspaceMember);
+      return workspaceMember.role;
+    }
+
+    // 3. Fallback: Find user in project members list
+    // Check all projects in the workspace and take the highest role
+    const roles: WorkspaceRole[] = [];
+    console.log('useUserRole Debug:', {
+      userId: user.id,
+      orgName: selectedOrg.name,
+      workspaceMembers: selectedOrg.workspaceMembers,
+      projects: selectedOrg.projects?.map((p) => ({
+        name: p.name,
+        members: p.projectMembers,
+      })),
+    });
+
+    selectedOrg.projects?.forEach((project) => {
+      const projectMember = project.projectMembers?.find(
+        (pm) => String(pm.user?.id) === String(user.id),
+      );
+      if (projectMember) {
+        console.log(`Found member in project ${project.name}:`, projectMember);
+        roles.push(projectMember.role as WorkspaceRole);
+      }
+    });
+
+    if (roles.length > 0) {
+      const hierarchy: WorkspaceRole[] = ['admin', 'editor', 'viewer'];
+      for (const r of hierarchy) {
+        if (roles.includes(r)) {
+          console.log('Final calculated role from projects:', r);
+          return r;
+        }
+      }
+    }
+
+    console.log('No role found for user');
+    return null;
   }, [user, selectedOrg]);
 
   const isOwner = role === 'owner';
   const isAdmin = role === 'admin';
+  // Treat 'member' as 'editor' for backward compatibility
+  const isEditor = role === 'editor' || (role as string) === 'member';
   const isViewer = role === 'viewer';
 
   // Allow management access if:
   // - Still loading (prevent premature blocking)
   // - No workspace selected yet (allow access to create/select workspace)
-  // - User is owner, admin, or member
+  // - User is owner, admin, or editor
   // Block only if: we have a workspace AND user is explicitly a viewer
-  const canManage =
-    isLoading ||
-    !selectedOrg ||
-    role === 'owner' ||
-    role === 'admin' ||
-    role === 'member';
+  const canManage = isLoading || !selectedOrg || isOwner || isAdmin || isEditor;
+
+  const canCreateProject = isOwner || isAdmin || isEditor;
+  const canCreateIntegration = isOwner || isAdmin || isEditor;
+  const canInviteMembers = isOwner || isAdmin || isEditor;
+  const canDeleteWorkspace = isOwner || isAdmin;
 
   return {
     role,
     isOwner,
     isAdmin,
+    isEditor,
     isViewer,
     canManage,
+    canCreateProject,
+    canCreateIntegration,
+    canInviteMembers,
+    canDeleteWorkspace,
     isLoading,
   };
 }

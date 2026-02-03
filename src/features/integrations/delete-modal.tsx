@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Button, Modal, Text, TextField, View } from 'reshaped';
 

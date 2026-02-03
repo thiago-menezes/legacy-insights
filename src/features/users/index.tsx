@@ -34,6 +34,10 @@ export const ProjectMembers = () => {
     handleInvite,
     handleUpdateRole,
     handleRemoveMember,
+    isAdmin,
+    isOwner,
+    isEditor,
+    canInviteMembers,
   } = useUsersManagement();
 
   const columnDefs = useMemo<ColDef<WorkspaceMemberItem>[]>(
@@ -65,7 +69,10 @@ export const ProjectMembers = () => {
                 ? 'Admin'
                 : params.data?.role === 'viewer'
                   ? 'Visualizador'
-                  : 'Membro';
+                  : params.data?.role === 'editor' ||
+                      params.data?.role === 'member'
+                    ? 'Editor'
+                    : 'Membro';
 
           return (
             <View className={styles.roleCell}>
@@ -90,6 +97,11 @@ export const ProjectMembers = () => {
           if (params.data?.role === 'owner') return null;
           if (!params.data?.documentId) return null;
 
+          const canEditThisMember =
+            isOwner || isAdmin || (isEditor && params.data?.role !== 'admin');
+
+          if (!canEditThisMember) return null;
+
           return (
             <View className={styles.actionsCell}>
               <Button
@@ -108,7 +120,13 @@ export const ProjectMembers = () => {
         },
       },
     ],
-    [handleOpenEditRoleModal, handleOpenRemoveModal],
+    [
+      handleOpenEditRoleModal,
+      handleOpenRemoveModal,
+      isOwner,
+      isAdmin,
+      isEditor,
+    ],
   );
 
   if (!selectedWorkspace || !selectedProjectId) {
@@ -127,13 +145,15 @@ export const ProjectMembers = () => {
           </Text>
         </View>
 
-        <Button
-          color="primary"
-          icon={<Icon name="plus" size={18} />}
-          onClick={handleOpenInviteModal}
-        >
-          Convidar
-        </Button>
+        {canInviteMembers && (
+          <Button
+            color="primary"
+            icon={<Icon name="plus" size={18} />}
+            onClick={handleOpenInviteModal}
+          >
+            Convidar
+          </Button>
+        )}
       </View>
 
       <View className={styles.container}>
@@ -171,6 +191,7 @@ export const ProjectMembers = () => {
         scope="project"
         workspaceId={workspaceId}
         currentMembers={currentMembers}
+        currentUserRole={isOwner ? 'owner' : isAdmin ? 'admin' : 'editor'}
       />
 
       <EditRoleModal
@@ -179,6 +200,7 @@ export const ProjectMembers = () => {
         onSubmit={handleUpdateRole}
         member={selectedMember}
         isPending={isMutating}
+        currentUserRole={isOwner ? 'owner' : isAdmin ? 'admin' : 'editor'}
       />
 
       <RemoveModal

@@ -15,6 +15,7 @@ import {
 } from './api/mutation';
 import { useIntegrationsQuery } from './api/query';
 import { PLATFORM_METADATA } from './constants';
+import { useUserRole } from '../workspaces/use-user-role';
 
 export const useIntegrations = (projectId?: string) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +36,7 @@ export const useIntegrations = (projectId?: string) => {
   const { data: integrationsData, isLoading } = useIntegrationsQuery(projectId);
   const queryClient = useQueryClient();
   const { show } = useToast();
+  const { canCreateIntegration } = useUserRole();
 
   const integrations = useMemo(
     () => integrationsData?.data || [],
@@ -207,5 +209,6 @@ export const useIntegrations = (projectId?: string) => {
     handleProcess,
     handleFormSubmit,
     handleModalClose,
+    canCreateIntegration,
   };
 };

@@ -57,11 +57,10 @@ export async function strapiRegister(
   username: string,
   email: string,
   password: string,
-  name?: string,
 ): Promise<StrapiAuthResponse> {
   const { data } = await strapiClient.post<StrapiAuthResponse>(
     '/api/auth/local/register',
-    { username, email, password, name },
+    { username, email, password },
   );
   return data;
 }
@@ -126,7 +125,26 @@ export function getStrapiErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
     const strapiError = error.response?.data as StrapiError | undefined;
     if (strapiError?.error?.message) {
-      return strapiError.error.message;
+      const msg = strapiError.error.message;
+
+      // Traduções de erros comuns do Strapi
+      if (msg === 'Invalid parameters: name') {
+        return 'O parâmetro name não é permitido pelo servidor.';
+      }
+      if (
+        msg === 'Email or Username are already taken' ||
+        msg === 'Auth.form.error.email.taken'
+      ) {
+        return 'Este e-mail já está sendo utilizado.';
+      }
+      if (
+        msg === 'Invalid identifier or password' ||
+        msg === 'identifier or password invalid'
+      ) {
+        return 'E-mail ou senha incorretos.';
+      }
+
+      return msg;
     }
     if (error.response?.status === 400) {
       return 'Credenciais inválidas. Verifique seu email e senha.';

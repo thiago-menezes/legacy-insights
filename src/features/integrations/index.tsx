@@ -36,6 +36,7 @@ export const Integrations = () => {
     handleProcess,
     handleFormSubmit,
     handleModalClose,
+    canCreateIntegration,
   } = useIntegrations(project?.documentId);
   const {
     selectedOrg,
@@ -153,6 +154,7 @@ export const Integrations = () => {
                         onEdit={handleEdit}
                         onProcess={handleProcess}
                         onDetails={handleDetails}
+                        canManage={canCreateIntegration}
                       />
                     ))}
                 </div>
@@ -174,6 +176,7 @@ export const Integrations = () => {
                         onEdit={handleEdit}
                         onProcess={handleProcess}
                         onDetails={handleDetails}
+                        canManage={canCreateIntegration}
                       />
                     ))}
                 </div>
@@ -196,6 +199,7 @@ export const Integrations = () => {
                     onEdit={handleEdit}
                     onProcess={handleProcess}
                     onDetails={handleDetails}
+                    canManage={canCreateIntegration}
                   />
                 ))}
               </div>
@@ -217,6 +221,7 @@ export const Integrations = () => {
                     onEdit={handleEdit}
                     onProcess={handleProcess}
                     onDetails={handleDetails}
+                    canManage={canCreateIntegration}
                   />
                 ))}
               </div>
