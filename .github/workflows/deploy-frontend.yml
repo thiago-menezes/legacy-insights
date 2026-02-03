@@ -7,12 +7,6 @@ on:
       - '**'
       - '.github/workflows/deploy-frontend.yml'
 
-env:
-  PROJECT_ID: perfect-embassy-485121-b8
-  GCE_INSTANCE: instance-20260202-003037
-  GCE_ZONE: us-central1-c
-  IMAGE_NAME: legacy-insights-next
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -35,7 +29,7 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: ${{ env.PROJECT_ID }}
+          project_id: ${{ vars.PROJECT_ID }}
 
       - name: Configure Docker
         run: gcloud auth configure-docker us-central1-docker.pkg.dev
@@ -44,15 +38,15 @@ jobs:
         run: |
           docker build \
             --build-arg STRAPI_URL="${{ vars.STRAPI_URL }}" \
-            -t us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/legacy-insights/${{ env.IMAGE_NAME }}:latest .
-          docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/legacy-insights/${{ env.IMAGE_NAME }}:latest
+            -t us-central1-docker.pkg.dev/${{ vars.PROJECT_ID }}/legacy-insights/${{ vars.IMAGE_NAME }}:latest .
+          docker push us-central1-docker.pkg.dev/${{ vars.PROJECT_ID }}/legacy-insights/${{ vars.IMAGE_NAME }}:latest
 
       - name: Deploy to VM
         run: |
-          # Copy docker-compose.prod.yml to the VM
-          gcloud compute scp docker-compose.prod.yml ${{ env.GCE_INSTANCE }}:~/docker-compose.prod.yml --zone=${{ env.GCE_ZONE }}
+          # Copy docker-compose.yml to the VM
+          gcloud compute scp docker-compose.yml ${{ vars.GCE_INSTANCE }}:~/docker-compose.yml --zone=${{ vars.GCE_ZONE }}
 
-          gcloud compute ssh ${{ env.GCE_INSTANCE }} --zone=${{ env.GCE_ZONE }} --command="
+          gcloud compute ssh ${{ vars.GCE_INSTANCE }} --zone=${{ vars.GCE_ZONE }} --command="
             # Install Docker and Docker Compose if not found
             if ! command -v docker &> /dev/null; then
               echo 'Docker not found. Installing...'
@@ -68,13 +62,16 @@ jobs:
             sudo gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
             # Deployment using Docker Compose
-            export PROJECT_ID=${{ env.PROJECT_ID }}
+            export PROJECT_ID=${{ vars.PROJECT_ID }}
             export STRAPI_URL=${{ vars.STRAPI_URL }}
+            export AUTH_SECRET='${{ secrets.AUTH_SECRET }}'
+            export STRAPI_API_KEY='${{ secrets.STRAPI_API_KEY }}'
+            export AUTH_URL=${{ vars.AUTH_URL }}
             
             # Pull image with explicit env vars for the registry path
-            sudo PROJECT_ID=$PROJECT_ID docker pull us-central1-docker.pkg.dev/$PROJECT_ID/legacy-insights/${{ env.IMAGE_NAME }}:latest
+            sudo PROJECT_ID=\$PROJECT_ID docker pull us-central1-docker.pkg.dev/\$PROJECT_ID/legacy-insights/${{ vars.IMAGE_NAME }}:latest
             
             # Run docker compose with explicit env vars
-            sudo PROJECT_ID=$PROJECT_ID STRAPI_URL=$STRAPI_URL \
-              docker compose -f ~/docker-compose.prod.yml up -d --force-recreate legacy-insights-next
+            sudo PROJECT_ID=\$PROJECT_ID STRAPI_URL=\$STRAPI_URL AUTH_SECRET=\$AUTH_SECRET STRAPI_API_KEY=\$STRAPI_API_KEY AUTH_URL=\$AUTH_URL \
+              docker compose -f ~/docker-compose.yml up -d --force-recreate legacy-insights-next
           "
