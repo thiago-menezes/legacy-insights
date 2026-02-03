@@ -14,7 +14,6 @@ export const useInviteWorkspaceMember = (workspaceId?: string) => {
         {
           email: data.email,
           role: data.role,
-          password: data.password,
         },
       );
       return response.data;
@@ -42,7 +41,6 @@ export const useInviteToProjects = (workspaceId?: string) => {
         {
           email: data.email,
           role: data.role,
-          password: data.password,
           projects: data.projects,
         },
       );
@@ -115,7 +113,6 @@ export const useInviteProjectMember = (projectId?: string) => {
         {
           email: data.email,
           role: data.role,
-          password: data.password,
         },
       );
       return response.data;
