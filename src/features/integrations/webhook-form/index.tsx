@@ -12,13 +12,11 @@ export const WebhookForm = ({
   isLoading,
   projectId,
 }: WebhookFormProps) => {
-  const { form, handleSubmit } = useWebhookForm({
+  const { form, handleSubmit, errors, isEditMode } = useWebhookForm({
     initialValues,
     onSubmit,
     projectId,
   });
-
-  const location = document.location;
 
   const { setValue, watch } = form;
 
@@ -35,28 +33,39 @@ export const WebhookForm = ({
     const newEvents = checked
       ? [...currentEvents, eventType]
       : currentEvents.filter((e) => e !== eventType);
-    setValue('eventTypes', newEvents);
+    setValue('eventTypes', newEvents, { shouldValidate: true });
   };
 
-  const url = `${location.protocol}//${location.host}/api/webhooks/${selectedType}/[integrationId]`;
+  const integrationId =
+    initialValues && 'documentId' in initialValues
+      ? initialValues.documentId
+      : '[integrationId]';
+
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+  const url = `${baseUrl}/api/webhooks/${selectedType}/${integrationId}`;
 
   return (
     <form onSubmit={handleSubmit} className={styles.formContainer}>
       <View gap={4}>
         {/* Name Field */}
-        <FormControl>
+        <FormControl hasError={!!errors.name}>
           <FormControl.Label>Nome da Integração</FormControl.Label>
           <TextField
             name="name"
             placeholder="Ex: Hotmart - Produto Principal"
             value={nameValue || ''}
-            onChange={(e) => setValue('name', e.value)}
+            onChange={(e) =>
+              setValue('name', e.value, { shouldValidate: true })
+            }
           />
+          {errors.name && (
+            <FormControl.Error>{errors.name.message}</FormControl.Error>
+          )}
         </FormControl>
 
         {/* Event Types */}
         {eventTypes.length > 0 && (
-          <FormControl>
+          <FormControl hasError={!!errors.eventTypes}>
             <FormControl.Label>Tipos de Eventos</FormControl.Label>
             <div className={styles.eventTypesList}>
               {eventTypes.map((eventType) => (
@@ -70,6 +79,9 @@ export const WebhookForm = ({
                 </Checkbox>
               ))}
             </div>
+            {errors.eventTypes && (
+              <FormControl.Error>{errors.eventTypes.message}</FormControl.Error>
+            )}
           </FormControl>
         )}
 
@@ -108,7 +120,7 @@ export const WebhookForm = ({
           Cancelar
         </Button>
         <Button type="submit" color="primary" loading={isLoading}>
-          {initialValues ? 'Atualizar' : 'Criar Integração'}
+          {isEditMode ? 'Atualizar' : 'Criar Integração'}
         </Button>
       </View>
     </form>

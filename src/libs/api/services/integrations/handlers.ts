@@ -24,7 +24,7 @@ export const get = async (id: string | number) => {
 export const create = async (payload: IntegrationCreateInput) => {
   const { data } = await apiClient.post<SingleIntegrationResponse>(
     '/api/integrations',
-    payload,
+    { data: payload },
   );
   return data;
 };
@@ -33,7 +33,9 @@ export const update = async (
   id: string | number,
   payload: Partial<IntegrationCreateInput>,
 ) => {
-  const { data } = await apiClient.put(`/api/integrations/${id}`, payload);
+  const { data } = await apiClient.put(`/api/integrations/${id}`, {
+    data: payload,
+  });
   return data;
 };
 

@@ -6,7 +6,7 @@ export const get = async (
   params?: WebhookEventsParams,
 ): Promise<WebhookEventsResponse> => {
   const response = await apiClient.get(
-    `/integrations/${integrationId}/webhook-events`,
+    `/api/integrations/${integrationId}/webhook-events`,
     { params },
   );
   return response.data;

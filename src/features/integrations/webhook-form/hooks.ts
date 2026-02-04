@@ -9,6 +9,8 @@ export const useWebhookForm = ({
   onSubmit,
   projectId,
 }: Pick<WebhookFormProps, 'initialValues' | 'onSubmit' | 'projectId'>) => {
+  const isEditMode = !!initialValues && 'documentId' in initialValues;
+
   // Extract config values from initial values
   const config =
     initialValues && 'config' in initialValues
@@ -20,7 +22,7 @@ export const useWebhookForm = ({
     initialValues?.type === 'kiwify' ||
     initialValues?.type === 'kirvano' ||
     initialValues?.type === 'custom_webhook'
-      ? initialValues.type
+      ? (initialValues.type as WebhookFormSchema['type'])
       : 'hotmart';
 
   const form = useForm<WebhookFormSchema>({
@@ -34,6 +36,10 @@ export const useWebhookForm = ({
       allowedOrigins: (config.allowedOrigins as string[]) || [],
     },
   });
+
+  const {
+    formState: { errors },
+  } = form;
 
   const handleSubmit = form.handleSubmit((data: WebhookFormSchema) => {
     // Convert WebhookFormSchema to IntegrationCreateInput
@@ -54,6 +60,8 @@ export const useWebhookForm = ({
   return {
     form,
     handleSubmit,
+    errors,
+    isEditMode,
   };
 };
 
