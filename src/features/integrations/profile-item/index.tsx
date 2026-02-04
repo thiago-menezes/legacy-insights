@@ -1,6 +1,6 @@
 import { Badge, Button, Text, Tooltip, View } from 'reshaped';
 import { Icon } from '@/components/icon';
-import { PROCESS_STATUS_CONFIG, STATUS_CONFIG } from './constants';
+import { useProfileStatus } from './hooks';
 import styles from './styles.module.scss';
 import { ProfileItemProps } from './types';
 
@@ -12,11 +12,7 @@ export const ProfileItem = ({
   onDetails,
   canManage,
 }: ProfileItemProps) => {
-  const statusConfig =
-    STATUS_CONFIG[profile.status] || STATUS_CONFIG.disconnected;
-  const processStatusConfig = profile.processStatus
-    ? PROCESS_STATUS_CONFIG[profile.processStatus]
-    : null;
+  const { statusConfig, processStatusConfig } = useProfileStatus(profile);
 
   return (
     <div className={styles.profileItem}>

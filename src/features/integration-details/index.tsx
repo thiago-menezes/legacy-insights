@@ -8,9 +8,9 @@ import {
   HotmartConfig,
   KirvanoConfig,
   KiwifyConfig,
-} from '@/features/integrations/components/webhook-configs';
-import { WebhookEvents } from '@/features/integrations/components/webhook-events';
-import { WebhookTester } from '@/features/integrations/components/webhook-tester';
+} from '@/features/integrations/webhook-configs';
+import { WebhookEvents } from '@/features/integrations/webhook-events';
+import { WebhookTester } from '@/features/integrations/webhook-tester';
 import { useIntegrationDetails } from './hooks';
 import styles from './styles.module.scss';
 

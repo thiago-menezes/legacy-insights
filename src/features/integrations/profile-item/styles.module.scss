@@ -1,0 +1,48 @@
+.profileItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--rs-unit-x3) var(--rs-unit-x4);
+  background-color: var(--rs-color-background-neutral-faded);
+  border-radius: var(--rs-radius-medium);
+  gap: var(--rs-unit-x3);
+  flex-wrap: wrap;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-unit-x2);
+}
+
+.profileName {
+  flex: 1;
+  min-width: 120px;
+}
+
+.profileStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+  min-width: 140px;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.statusDot_connected {
+  background-color: var(--rs-color-foreground-positive);
+}
+
+.statusDot_disconnected {
+  background-color: var(--rs-color-foreground-neutral-faded);
+}
+
+.profileActions {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+}

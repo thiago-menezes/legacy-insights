@@ -1,125 +1,23 @@
 import { useState } from 'react';
 import { Button, Text, TextArea, TextField, View } from 'reshaped';
 import { Icon } from '@/components/icon';
-
-interface WebhookTesterProps {
-  webhookUrl: string;
-  source: string;
-  secret?: string;
-}
+import { useWebhookTest } from './hooks';
+import { WebhookTesterProps } from './types';
+import { getDefaultPayload } from './utils';
 
 export const WebhookTester = ({
   webhookUrl,
   source,
   secret,
 }: WebhookTesterProps) => {
-  const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<{
-    ok: boolean;
-    status: number;
-    data: unknown;
-  } | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
-
-  // Default payloads for each platform
-  const getDefaultPayload = (source: string) => {
-    switch (source) {
-      case 'kiwify':
-        return JSON.stringify(
-          {
-            order_id: 'TEST-123456',
-            order_status: 'paid',
-            amount: 9700,
-            customer_email: 'test@example.com',
-            customer_name: 'Test User',
-          },
-          null,
-          2,
-        );
-      case 'hotmart':
-        return JSON.stringify(
-          {
-            event: 'PURCHASE_APPROVED',
-            hottok: 'YOUR_HOTTOK_HERE',
-            data: {
-              purchase: {
-                transaction: 'HP-123456',
-                price: { value: 97.0 },
-                sck: 'source_test',
-              },
-              buyer: {
-                email: 'test@example.com',
-                name: 'Test User',
-              },
-            },
-          },
-          null,
-          2,
-        );
-      case 'kirvano':
-        return JSON.stringify(
-          {
-            event: 'PAYMENT_APPROVED',
-            sale_id: 'KV-123456',
-            total_price: 'R$ 97,00',
-            customer: {
-              email: 'test@example.com',
-              name: 'Test User',
-            },
-          },
-          null,
-          2,
-        );
-      default:
-        return JSON.stringify(
-          {
-            event: 'test_event',
-            id: 'test_id_123',
-            amount: 100,
-          },
-          null,
-          2,
-        );
-    }
-  };
-
   const [payload, setPayload] = useState(getDefaultPayload(source));
-
   const [targetUrl, setTargetUrl] = useState(webhookUrl);
 
-  const handleTest = async () => {
-    setLoading(true);
-    setResponse(null);
-    setError(null);
-
-    try {
-      const res = await fetch(targetUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Add dummy headers that might be expected
-          'x-hotmart-hottok':
-            source === 'hotmart' ? JSON.parse(payload).hottok : '',
-          'x-kiwify-signature':
-            source === 'kiwify' ? secret || 'test-signature' : '',
-        },
-        body: payload,
-      });
-
-      const data = await res.json().catch(() => ({ status: res.statusText }));
-
-      setResponse({
-        status: res.status,
-        ok: res.ok,
-        data: data,
-      });
-    } catch (error) {
-      setError(JSON.stringify(error) || 'Failed to send test webhook');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { loading, response, error, handleTest } = useWebhookTest(
+    source,
+    secret,
+  );
 
   if (!expanded) {
     return (
@@ -181,7 +79,7 @@ export const WebhookTester = ({
       <View direction="row" gap={2}>
         <Button
           color="primary"
-          onClick={handleTest}
+          onClick={() => handleTest(targetUrl, payload)}
           loading={loading}
           disabled={loading}
         >
