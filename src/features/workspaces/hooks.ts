@@ -9,9 +9,12 @@ import {
 } from './api/mutation';
 import { useWorkspacesQuery } from './api/query';
 import { WorkspaceFormValues } from './types';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useWorkspaces = () => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+
   const createWorkspace = useCreateWorkspaceMutation();
   const updateWorkspace = useUpdateWorkspaceMutation();
   const deleteWorkspace = useDeleteWorkspaceMutation();
@@ -66,14 +69,22 @@ export const useWorkspaces = () => {
       });
     } else {
       if (user?.id) {
-        createWorkspace.mutate({
-          ...values,
-          owner: user.id,
-        });
+        createWorkspace.mutate(
+          {
+            ...values,
+            owner: user.id,
+          },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({
+                queryKey: ['workspaces', 'list'],
+              });
+              handleCloseModal();
+            },
+          },
+        );
       }
     }
-    getWorkspaces.refetch();
-    handleCloseModal();
   };
 
   const handleDelete = (workspace: Workspace) => {
@@ -85,7 +96,8 @@ export const useWorkspaces = () => {
     if (workspaceToDelete) {
       deleteWorkspace.mutate(workspaceToDelete.documentId, {
         onSuccess: () => {
-          getWorkspaces.refetch();
+          queryClient.invalidateQueries({ queryKey: ['workspaces', 'list'] });
+          handleCloseModal();
           setIsDeleteModalActive(false);
           setWorkspaceToDelete(null);
         },

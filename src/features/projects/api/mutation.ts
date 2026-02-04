@@ -21,23 +21,27 @@ export const useCreateProjectMutation = (workspaceId?: string) => {
 
 export const useUpdateProjectMutation = (workspaceId?: string) => {
   const { refetch } = useProjectsQuery(workspaceId);
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, params }: UpdateProjectParams) =>
       projectsService.update(id, params),
     onSuccess: () => {
       refetch();
+      queryClient.invalidateQueries({ queryKey: ['workspaces', 'list'] });
     },
   });
 };
 
 export const useDeleteProjectMutation = (workspaceId?: string) => {
   const { refetch } = useProjectsQuery(workspaceId);
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: string) => projectsService.deleteProject(id),
     onSuccess: () => {
       refetch();
+      queryClient.invalidateQueries({ queryKey: ['workspaces', 'list'] });
     },
   });
 };

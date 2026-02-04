@@ -13,7 +13,7 @@ export const useProductsQuery = (params?: ProductListParams) => {
 export const useProductQuery = (id: string) => {
   return useQuery({
     queryKey: ['products', id],
-    queryFn: () => productsService.getById(id),
+    queryFn: () => productsService.get(id),
     enabled: !!id,
   });
 };

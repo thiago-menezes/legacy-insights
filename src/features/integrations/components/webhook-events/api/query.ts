@@ -1,6 +1,8 @@
+import {
+  WebhookEventsParams,
+  webhookEventsService,
+} from '@/libs/api/services/webhook-events';
 import { useQuery } from '@tanstack/react-query';
-import type { WebhookEventsParams } from '../../services/webhook-events/types';
-import { webhookEventsService } from '../../services/webhook-events';
 
 export const useWebhookEventsQuery = (
   integrationId: string,

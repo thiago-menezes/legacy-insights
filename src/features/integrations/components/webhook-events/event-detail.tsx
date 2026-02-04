@@ -23,7 +23,6 @@ export const EventDetail = ({ event, isOpen, onClose }: EventDetailProps) => {
       <Modal.Title>Detalhes do Evento</Modal.Title>
 
       <View gap={4} paddingTop={4}>
-        {/* Event Metadata */}
         <View gap={2}>
           <View direction="row" gap={2} align="center">
             <Text variant="body-2" weight="medium">

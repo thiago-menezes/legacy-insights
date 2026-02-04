@@ -48,7 +48,7 @@ export const list = async (
   return data;
 };
 
-export const getById = async (id: string): Promise<StrapiProduct> => {
+export const get = async (id: string): Promise<StrapiProduct> => {
   const { data } = await apiClient.get<{ data: StrapiProduct }>(
     `/api/products/${id}?populate=project`,
   );

@@ -46,7 +46,6 @@ export const WebhookEvents = ({ integrationId }: WebhookEventsProps) => {
     );
   }
 
-  // Get unique event types for filter
   const eventTypes = [...new Set(events.map((e) => e.eventType))];
 
   return (
