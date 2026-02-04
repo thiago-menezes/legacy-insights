@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ProjectCreateInput } from '@/libs/api/services/projects';
 import { ProjectFormProps } from '../types';
+import { isApiError } from '@/libs/api/axios';
 
 export const useProjectForm = ({
   initialValues,
   workspaceId,
-}: Pick<ProjectFormProps, 'initialValues' | 'workspaceId'>) => {
-  const { register, handleSubmit, setValue, watch } =
+  onSubmit,
+}: Pick<ProjectFormProps, 'initialValues' | 'workspaceId' | 'onSubmit'>) => {
+  const [isSlugManual, setIsSlugManual] = useState(false);
+  const { register, handleSubmit, setValue, watch, setError, formState } =
     useForm<ProjectCreateInput>({
       defaultValues: {
         name: initialValues?.name || '',
@@ -18,14 +22,37 @@ export const useProjectForm = ({
 
   const handleNameChange = (value: string) => {
     setValue('name', value);
-    if (!initialValues?.slug) {
+    if (!initialValues?.slug && !isSlugManual) {
       const slug = value
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
-      setValue('slug', slug);
+      setValue('slug', slug, { shouldValidate: true });
+    }
+  };
+
+  const handleInternalSubmit = async (data: ProjectCreateInput) => {
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      if (isApiError(error)) {
+        const errorMessage = error.response?.data?.error?.message;
+        const isUniqueError =
+          errorMessage === 'This attribute must be unique' ||
+          error.response?.data?.error?.name === 'ValidationError' ||
+          error.status === 409 ||
+          error.response?.status === 409;
+
+        if (isUniqueError) {
+          setError('slug', {
+            type: 'manual',
+            message:
+              'Já existe um projeto com este Identificador. Por favor, escolha outro.',
+          });
+        }
+      }
     }
   };
 
@@ -35,5 +62,8 @@ export const useProjectForm = ({
     setValue,
     handleNameChange,
     watch,
+    setIsSlugManual,
+    formState,
+    handleInternalSubmit,
   };
 };

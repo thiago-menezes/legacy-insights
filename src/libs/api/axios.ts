@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { signOut } from 'next-auth/react';
 import { getAccessToken } from './token';
+import { ApiError } from './types';
 
 export const createApiClient = (addAuthInterceptor: boolean = false) => {
   const baseURL =
@@ -72,19 +73,6 @@ export const apiClient = createApiClient(true);
 export const publicApiClient = createApiClient(false);
 export default apiClient;
 
-export const query = async <T>(
-  endpoint: string,
-  params?: Record<string, unknown>,
-) => {
-  const { data } = await apiClient.get<T>(endpoint, { params });
-  return data;
-};
-
-export const mutate = async <T, P>(
-  endpoint: string,
-  payload: P,
-  method: 'post' | 'put' | 'delete' | 'patch' | 'get' = 'post',
-) => {
-  const { data } = await apiClient[method]<T>(endpoint, payload);
-  return data;
-};
+export function isApiError(error: unknown): error is AxiosError<ApiError> {
+  return axios.isAxiosError(error);
+}

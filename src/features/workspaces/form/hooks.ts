@@ -6,13 +6,19 @@ import { getMediaUrl } from '@/libs/api/strapi';
 import { workspaceFormSchema } from '../schema';
 import { WorkspaceFormValues } from '../types';
 import { sanitizeSlug } from '../utils';
+import { WorkspaceFormProps } from './types';
+import { isApiError } from '@/libs/api/axios';
 
-export const useWorkspaceForm = (initialValues?: WorkspaceFormValues) => {
+export const useWorkspaceForm = (
+  onSubmit: WorkspaceFormProps['onSubmit'],
+  initialValues?: WorkspaceFormProps['initialValues'],
+) => {
   const { user } = useAuth();
   const [tempLogoPreview, setTempLogoPreview] = useState<string | null>(null);
+  const [isSlugManual, setIsSlugManual] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { register, handleSubmit, setValue, control } =
+  const { register, handleSubmit, setValue, control, setError, formState } =
     useForm<WorkspaceFormValues>({
       resolver: zodResolver(workspaceFormSchema),
       defaultValues: (initialValues as WorkspaceFormValues) || {
@@ -42,11 +48,11 @@ export const useWorkspaceForm = (initialValues?: WorkspaceFormValues) => {
   });
 
   useEffect(() => {
-    if (!initialValues?.slug && nameValue) {
+    if (!initialValues?.slug && nameValue && !isSlugManual) {
       const slug = sanitizeSlug(nameValue);
       setValue('slug', slug);
     }
-  }, [nameValue, setValue, initialValues]);
+  }, [nameValue, setValue, initialValues, isSlugManual]);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -64,6 +70,29 @@ export const useWorkspaceForm = (initialValues?: WorkspaceFormValues) => {
     fileInputRef.current?.click();
   };
 
+  const handleInternalSubmit = async (values: WorkspaceFormValues) => {
+    try {
+      await onSubmit(values);
+    } catch (error) {
+      if (isApiError(error)) {
+        const isUniqueError =
+          error.response?.data?.error?.message ===
+            'This attribute must be unique' ||
+          error.response?.data?.error?.name === 'ValidationError' ||
+          error.status === 409 ||
+          error.response?.status === 409;
+
+        if (isUniqueError) {
+          setError('slug', {
+            type: 'manual',
+            message:
+              'Já existe um workspace com este identificador. Por favor, escolha outro.',
+          });
+        }
+      }
+    }
+  };
+
   return {
     register,
     handleSubmit,
@@ -75,5 +104,8 @@ export const useWorkspaceForm = (initialValues?: WorkspaceFormValues) => {
     handleLogoChange,
     handleTriggerUpload,
     fileInputRef,
+    setIsSlugManual,
+    formState,
+    handleInternalSubmit,
   };
 };

@@ -31,14 +31,17 @@ export const WorkspaceForm = ({
     handleLogoChange,
     nameValue,
     slugValue,
-  } = useWorkspaceForm(initialValues);
+    setIsSlugManual,
+    formState: { errors },
+    handleInternalSubmit,
+  } = useWorkspaceForm(onSubmit, initialValues);
 
   if (!isModalActive) {
     return <WorkspaceFormSkeleton />;
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(handleInternalSubmit)}>
       <View gap={4}>
         <Actionable onClick={handleTriggerUpload}>
           <View
@@ -91,7 +94,7 @@ export const WorkspaceForm = ({
           Clique para fazer upload do logo
         </Text>
 
-        <FormControl>
+        <FormControl hasError={!!errors.name}>
           <FormControl.Label>Nome do Workspace</FormControl.Label>
           <TextField
             placeholder={FORM_PLACEHOLDERS.NAME}
@@ -99,9 +102,12 @@ export const WorkspaceForm = ({
             value={nameValue}
             onChange={(e) => setValue('name', e.value)}
           />
+          {errors.name && (
+            <FormControl.Error>Campo obrigatório</FormControl.Error>
+          )}
         </FormControl>
 
-        <FormControl>
+        <FormControl hasError={!!errors.slug}>
           <FormControl.Label>Identificador do Workspace</FormControl.Label>
           <TextField
             placeholder={FORM_PLACEHOLDERS.SLUG}
@@ -110,9 +116,14 @@ export const WorkspaceForm = ({
             onChange={(e) => {
               const sanitized = sanitizeSlug(e.value);
               setValue('slug', sanitized);
+              setIsSlugManual(true);
             }}
-            disabled
           />
+          {errors.slug && (
+            <FormControl.Error>
+              {errors.slug.message || 'Campo obrigatório'}
+            </FormControl.Error>
+          )}
         </FormControl>
 
         <View gap={2} direction="row" justify="end" paddingTop={4}>

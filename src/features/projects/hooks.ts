@@ -105,41 +105,75 @@ export const useProjects = () => {
 
   const handleConfirmDelete = async () => {
     if (projectToDelete) {
-      try {
-        await deleteMutation.mutateAsync(projectToDelete.documentId);
-        toast.show({
-          title: 'Projeto removido',
-          text: 'O projeto foi removido com sucesso.',
-          color: 'positive',
-        });
-        handleCloseDelete();
-      } catch {
-        toast.show({
-          title: 'Erro ao remover projeto',
-          text: 'Ocorreu um erro ao tentar remover o projeto.',
-          color: 'critical',
-        });
-      }
+      await deleteMutation.mutateAsync(projectToDelete.documentId, {
+        onSuccess: () => {
+          refreshWorkspaces();
+          toast.show({
+            title: 'Projeto removido',
+            text: 'O projeto foi removido com sucesso.',
+            color: 'positive',
+          });
+          handleCloseDelete();
+        },
+        onError: () => {
+          toast.show({
+            title: 'Erro ao remover projeto',
+            text: 'Ocorreu um erro ao tentar remover o projeto.',
+            color: 'critical',
+          });
+        },
+      });
     }
   };
 
   const isLoading = projectsQuery.isLoading;
 
+  const handleCreateProject = async (data: ProjectCreateInput) => {
+    const result = await createMutation.mutateAsync(data, {
+      onError: (error) => {
+        const errorMessage = error.response?.data?.error?.message;
+        const isUniqueError =
+          errorMessage === 'This attribute must be unique' ||
+          error.response?.data?.error?.name === 'ValidationError' ||
+          error.status === 409 ||
+          error.response?.status === 409;
+
+        if (isUniqueError) {
+          toast.show({
+            title: 'Erro ao criar projeto',
+            text: 'Já existe um projeto com este Identificador. Por favor, escolha outro.',
+            color: 'critical',
+          });
+        } else {
+          toast.show({
+            title: 'Erro ao criar projeto',
+            text: 'Ocorreu um erro ao tentar criar o projeto.',
+            color: 'critical',
+          });
+        }
+      },
+    });
+    const newProject = result.data;
+
+    if (projects.length === 0 && workspace && newProject) {
+      selectWorkspace(workspace.documentId, String(newProject.id));
+    }
+
+    toast.show({
+      title: 'Projeto criado',
+      text: 'O projeto foi criado com sucesso.',
+      color: 'positive',
+    });
+
+    refreshWorkspaces();
+    handleCloseModal();
+  };
+
   return {
     project,
     projects,
     isLoading,
-    handleCreateProject: async (data: ProjectCreateInput) => {
-      const result = await createMutation.mutateAsync(data);
-      const newProject = result.data;
-
-      if (projects.length === 0 && workspace && newProject) {
-        selectWorkspace(workspace.documentId, String(newProject.id));
-      }
-
-      refreshWorkspaces();
-      handleCloseModal();
-    },
+    handleCreateProject,
     isModalOpen,
     handleOpenCreate,
     handleCloseModal,

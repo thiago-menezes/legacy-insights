@@ -18,39 +18,33 @@ const config: NextAuthConfig = {
           return null;
         }
 
-        try {
-          const response: StrapiAuthResponse = await strapiLogin(
-            credentials.identifier as string,
-            credentials.password as string,
-          );
+        const response: StrapiAuthResponse = await strapiLogin(
+          credentials.identifier as string,
+          credentials.password as string,
+        );
 
-          if (response.jwt && response.user) {
-            return {
-              id: String(response.user.id),
-              name: response.user.username,
-              email: response.user.email,
-              // Store Strapi JWT in user object for token callback
-              strapiJwt: response.jwt,
-            } as User & { strapiJwt: string };
-          }
-
-          return null;
-        } catch {
-          return null;
+        if (response.jwt && response.user) {
+          return {
+            id: String(response.user.id),
+            name: response.user.username,
+            email: response.user.email,
+            strapiJwt: response.jwt,
+          } as User & { strapiJwt: string };
         }
+
+        return null;
       },
     }),
   ],
   pages: {
     signIn: '/login',
-    error: '/login', // Redirect errors to login page
+    error: '/login',
   },
   session: { strategy: 'jwt', maxAge: 8 * 60 * 60 },
   trustHost: true,
   debug: process.env.NODE_ENV === 'development',
   callbacks: {
     async jwt({ token, user }) {
-      // Handle Strapi credentials login
       if (user && 'strapiJwt' in user) {
         token.accessToken = (user as { strapiJwt: string }).strapiJwt;
         token.provider = 'strapi';

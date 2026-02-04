@@ -165,6 +165,7 @@ export const WorkspaceDetail = () => {
               onSubmit={handleCreateProject}
               onCancel={handleCloseModal}
               isLoading={isLoading}
+              existingSlugs={projects.map((p) => p.slug)}
             />
           </>
         )}

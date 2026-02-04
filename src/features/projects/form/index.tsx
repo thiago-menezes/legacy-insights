@@ -8,17 +8,27 @@ export const ProjectForm = ({
   onCancel,
   isLoading,
   workspaceId,
+  existingSlugs,
 }: ProjectFormProps) => {
-  const { register, handleSubmit, setValue, handleNameChange, watch } =
-    useProjectForm({
-      initialValues,
-      workspaceId,
-    });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    handleNameChange,
+    watch,
+    setIsSlugManual,
+    handleInternalSubmit,
+    formState: { errors },
+  } = useProjectForm({
+    initialValues,
+    workspaceId,
+    onSubmit,
+  });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(handleInternalSubmit)}>
       <View gap={4} paddingTop={4}>
-        <FormControl>
+        <FormControl hasError={!!errors.name}>
           <FormControl.Label>Nome do Projeto</FormControl.Label>
           <TextField
             placeholder="Ex: Campanha de Verão 2024"
@@ -28,22 +38,41 @@ export const ProjectForm = ({
             value={watch('name')}
             onChange={(e) => handleNameChange(e.value)}
           />
+          {errors.name && (
+            <FormControl.Error>
+              {errors.name.message || 'Campo obrigatório'}
+            </FormControl.Error>
+          )}
         </FormControl>
 
-        <FormControl>
+        <FormControl hasError={!!errors.slug}>
           <FormControl.Label>Identificador do Projeto (URL)</FormControl.Label>
           <TextField
             placeholder="ex: campanha-verao-2024"
-            {...register('slug', { required: true })}
+            {...register('slug', {
+              required: 'Identificador é obrigatório',
+              validate: (value) => {
+                const isDuplicate = existingSlugs?.some(
+                  (slug) => slug === value && slug !== initialValues?.slug,
+                );
+                return isDuplicate
+                  ? 'Já existe um projeto com este Identificador. Por favor, escolha outro.'
+                  : true;
+              },
+            })}
             value={watch('slug')}
             onChange={(e) => {
               const sanitized = e.value
                 .toLowerCase()
                 .replace(/ /g, '-')
                 .replace(/[^\w-]+/g, '');
-              setValue('slug', sanitized);
+              setValue('slug', sanitized, { shouldValidate: true });
+              setIsSlugManual(true);
             }}
           />
+          {errors.slug && (
+            <FormControl.Error>{errors.slug.message}</FormControl.Error>
+          )}
         </FormControl>
 
         <FormControl>

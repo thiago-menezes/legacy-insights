@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from 'reshaped';
 import { useAuth } from '@/features/auth/context';
 import { Workspace } from '@/libs/api/services/workspaces';
 import {
@@ -10,10 +11,12 @@ import {
 import { useWorkspacesQuery } from './api/query';
 import { WorkspaceFormValues } from './types';
 import { useQueryClient } from '@tanstack/react-query';
+import { isApiError } from '@/libs/api/axios';
 
 export const useWorkspaces = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const createWorkspace = useCreateWorkspaceMutation();
   const updateWorkspace = useUpdateWorkspaceMutation();
@@ -61,15 +64,50 @@ export const useWorkspaces = () => {
     setEditingWorkspace(null);
   };
 
-  const handleSubmit = (values: WorkspaceFormValues) => {
+  const handleSubmit = async (values: WorkspaceFormValues) => {
     if (editingWorkspace) {
-      updateWorkspace.mutate({
-        id: editingWorkspace.documentId,
-        params: values,
-      });
+      await updateWorkspace.mutateAsync(
+        {
+          id: editingWorkspace.documentId,
+          params: values,
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ['workspaces', 'list'],
+            });
+            toast.show({
+              title: 'Workspace atualizado',
+              text: 'As alterações foram salvas com sucesso.',
+              color: 'positive',
+            });
+            handleCloseModal();
+          },
+          onError: (error) => {
+            if (isApiError(error)) {
+              const errorMessage = error?.response?.data?.error?.message;
+              const isUniqueError =
+                errorMessage === 'This attribute must be unique' ||
+                error?.response?.data?.error?.name === 'ValidationError' ||
+                error?.status === 409 ||
+                error?.response?.status === 409;
+
+              if (isUniqueError) {
+                throw error;
+              } else {
+                toast.show({
+                  title: 'Erro ao atualizar workspace',
+                  text: 'Ocorreu um erro ao salvar as alterações.',
+                  color: 'critical',
+                });
+              }
+            }
+          },
+        },
+      );
     } else {
       if (user?.id) {
-        createWorkspace.mutate(
+        await createWorkspace.mutateAsync(
           {
             ...values,
             owner: user.id,
@@ -79,7 +117,30 @@ export const useWorkspaces = () => {
               queryClient.invalidateQueries({
                 queryKey: ['workspaces', 'list'],
               });
+              toast.show({
+                title: 'Workspace criado',
+                text: 'Seu workspace foi criado com sucesso.',
+                color: 'positive',
+              });
               handleCloseModal();
+            },
+            onError: (error) => {
+              const errorMessage = error.response?.data?.error?.message;
+              const isUniqueError =
+                errorMessage === 'This attribute must be unique' ||
+                error.response?.data?.error?.name === 'ValidationError' ||
+                error.status === 409 ||
+                error.response?.status === 409;
+
+              if (isUniqueError) {
+                throw error;
+              } else {
+                toast.show({
+                  title: 'Erro ao criar workspace',
+                  text: 'Ocorreu um erro inesperado ao criar o workspace.',
+                  color: 'critical',
+                });
+              }
             },
           },
         );
@@ -97,9 +158,21 @@ export const useWorkspaces = () => {
       deleteWorkspace.mutate(workspaceToDelete.documentId, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['workspaces', 'list'] });
+          toast.show({
+            title: 'Workspace excluído',
+            text: 'O workspace foi removido com sucesso.',
+            color: 'positive',
+          });
           handleCloseModal();
           setIsDeleteModalActive(false);
           setWorkspaceToDelete(null);
+        },
+        onError: () => {
+          toast.show({
+            title: 'Erro ao excluir workspace',
+            text: 'Ocorreu um erro ao tentar excluir o workspace.',
+            color: 'critical',
+          });
         },
       });
     }

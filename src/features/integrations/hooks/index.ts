@@ -54,43 +54,60 @@ export const useIntegrations = (projectId?: string) => {
   };
 
   const handleProcess = async (id: string) => {
-    try {
-      await processMutation.mutateAsync(id);
-      show({
-        title: 'Processamento',
-        text: 'O Processamento foi iniciado com sucesso. Aguarde o término do processamento para continuar!',
-        color: 'neutral',
-      });
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
-      show({
-        title: 'Erro',
-        text: 'Falha ao iniciar processamento.',
-        color: 'critical',
-      });
-    }
+    await processMutation.mutateAsync(id, {
+      onError: () => {
+        show({
+          title: 'Erro',
+          text: 'Falha ao iniciar processamento.',
+          color: 'critical',
+        });
+      },
+      onSuccess: () => {
+        show({
+          title: 'Processamento',
+          text: 'O Processamento foi iniciado com sucesso. Aguarde o término do processamento para continuar!',
+          color: 'neutral',
+        });
+      },
+    });
   };
 
   const handleFormSubmit = async (values: IntegrationCreateInput) => {
-    try {
-      if (editingIntegration) {
-        await updateMutation.mutateAsync({
+    if (editingIntegration) {
+      await updateMutation.mutateAsync(
+        {
           id: editingIntegration.documentId,
           data: values,
-        });
-      } else {
-        await createMutation.mutateAsync({
+        },
+        {
+          onError: () => {
+            show({
+              title: 'Erro',
+              text: 'Falha ao atualizar integração.',
+              color: 'critical',
+            });
+          },
+        },
+      );
+    } else {
+      await createMutation.mutateAsync(
+        {
           ...values,
           project: projectId as string,
-        });
-      }
-      setIsModalOpen(false);
-      setEditingIntegration(undefined);
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
+        },
+        {
+          onError: () => {
+            show({
+              title: 'Erro',
+              text: 'Falha ao criar integração.',
+              color: 'critical',
+            });
+          },
+        },
+      );
     }
+    setIsModalOpen(false);
+    setEditingIntegration(undefined);
   };
 
   return {

@@ -15,18 +15,15 @@ export const useUsersManagement = () => {
 
   const workspaceId = selectedOrg?.documentId;
 
-  // Modal states
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isEditRoleModalOpen, setIsEditRoleModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] =
     useState<WorkspaceMemberItem | null>(null);
 
-  // Data fetching
   const { data: projectMembers, isLoading: isLoadingProjectMembers } =
     useProjectMembers(selectedProject?.documentId || undefined);
 
-  // Mutations - Project
   const inviteProjectMemberMutation = useInviteProjectMember(
     selectedProject?.documentId || undefined,
   );
@@ -37,11 +34,9 @@ export const useUsersManagement = () => {
     selectedProject?.documentId || undefined,
   );
 
-  // Computed values
   const currentMembers = useMemo((): WorkspaceMemberItem[] => {
     return (projectMembers || []).map((member) => ({
       ...member,
-      // Handle both flattened and nested user data structure
       username: member.username || member.user?.username,
       email: member.email || member.user?.email,
       invitedAt: member.invitedAt ?? null,
@@ -63,7 +58,6 @@ export const useUsersManagement = () => {
     removeProjectMemberMutation.isPending,
   ]);
 
-  // Handlers
   const handleOpenInviteModal = useCallback(() => {
     setIsInviteModalOpen(true);
   }, []);
@@ -141,23 +135,19 @@ export const useUsersManagement = () => {
   ]);
 
   return {
-    // State
     selectedProjectId: selectedProject?.documentId,
     workspaceId,
     selectedWorkspace: selectedOrg,
 
-    // Data
     currentMembers,
     isLoading,
     isMutating,
 
-    // Modal states
     isInviteModalOpen,
     isEditRoleModalOpen,
     isRemoveModalOpen,
     selectedMember,
 
-    // Handlers
     handleOpenInviteModal,
     handleCloseInviteModal,
     handleOpenEditRoleModal,
@@ -168,7 +158,6 @@ export const useUsersManagement = () => {
     handleUpdateRole,
     handleRemoveMember,
 
-    // Permissions
     isAdmin,
     isOwner,
     isEditor,
