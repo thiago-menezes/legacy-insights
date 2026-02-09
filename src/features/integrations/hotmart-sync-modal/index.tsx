@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Alert, Button, Modal, Text, TextField, View } from 'reshaped';
+import { Alert, Button, Grid, Modal, Text, TextField, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { HotmartSyncModalProps } from './types';
 import { useHotmartSync } from './hooks';
 import { getDefaultDateRange, formatSyncStats } from './utils';
-import styles from './styles.module.scss';
 
 export const HotmartSyncModal = ({
   integrationId,
@@ -54,9 +53,9 @@ export const HotmartSyncModal = ({
         <strong>{integrationName}</strong>.
       </Modal.Subtitle>
 
-      <View className={styles.modalContent} gap={4} paddingTop={4}>
+      <View gap={4} paddingTop={4}>
         <View gap={3}>
-          <View className={styles.dateInputs}>
+          <View direction={{ s: 'column', m: 'row' }} gap={4}>
             <View gap={2}>
               <Text variant="body-3" weight="medium">
                 Data Inicial
@@ -102,76 +101,66 @@ export const HotmartSyncModal = ({
         )}
 
         {stats && (
-          <Alert
-            color="positive"
-            title="Sincronização concluída!"
-            icon={<Icon name="check" size={20} />}
+          <View
+            backgroundColor="positive-faded"
+            borderRadius="medium"
+            padding={4}
+            gap={3}
           >
-            <View gap={3} paddingTop={3}>
-              <View className={styles.statsGrid}>
-                <View className={styles.statCard} gap={1}>
-                  <Text
-                    variant="featured-1"
-                    weight="bold"
-                    color="primary"
-                    className={styles.statValue}
-                  >
-                    {stats.created}
-                  </Text>
-                  <Text
-                    variant="caption-1"
-                    weight="medium"
-                    color="neutral"
-                    className={styles.statLabel}
-                  >
-                    Criadas
-                  </Text>
-                </View>
-
-                <View className={styles.statCard} gap={1}>
-                  <Text
-                    variant="featured-1"
-                    weight="bold"
-                    color="primary"
-                    className={styles.statValue}
-                  >
-                    {stats.updated}
-                  </Text>
-                  <Text
-                    variant="caption-1"
-                    weight="medium"
-                    color="neutral"
-                    className={styles.statLabel}
-                  >
-                    Atualizadas
-                  </Text>
-                </View>
-
-                <View className={styles.statCard} gap={1}>
-                  <Text
-                    variant="featured-1"
-                    weight="bold"
-                    color="primary"
-                    className={styles.statValue}
-                  >
-                    {stats.errors}
-                  </Text>
-                  <Text
-                    variant="caption-1"
-                    weight="medium"
-                    color="neutral"
-                    className={styles.statLabel}
-                  >
-                    Erros
-                  </Text>
-                </View>
+            <Grid columns={{ s: 1, m: 3 }} gap={3}>
+              <View
+                gap={1}
+                backgroundColor="white"
+                borderRadius="medium"
+                padding={2}
+                align="center"
+                justify="center"
+              >
+                <Text variant="featured-1" weight="bold" color="primary">
+                  {stats.created}
+                </Text>
+                <Text variant="caption-1" weight="medium" color="neutral">
+                  Criadas
+                </Text>
               </View>
 
-              <Text variant="body-3" color="neutral">
-                {formatSyncStats(stats)}
-              </Text>
-            </View>
-          </Alert>
+              <View
+                gap={1}
+                backgroundColor="white"
+                borderRadius="medium"
+                padding={2}
+                align="center"
+                justify="center"
+              >
+                <Text variant="featured-1" weight="bold" color="primary">
+                  {stats.updated}
+                </Text>
+                <Text variant="caption-1" weight="medium" color="neutral">
+                  Atualizadas
+                </Text>
+              </View>
+
+              <View
+                gap={1}
+                backgroundColor="white"
+                borderRadius="medium"
+                padding={2}
+                align="center"
+                justify="center"
+              >
+                <Text variant="featured-1" weight="bold" color="primary">
+                  {stats.errors}
+                </Text>
+                <Text variant="caption-1" weight="medium" color="neutral">
+                  Erros
+                </Text>
+              </View>
+            </Grid>
+
+            <Text variant="body-3" color="neutral">
+              {formatSyncStats(stats)}
+            </Text>
+          </View>
         )}
 
         <View direction="row" gap={3} justify="end" paddingTop={2}>

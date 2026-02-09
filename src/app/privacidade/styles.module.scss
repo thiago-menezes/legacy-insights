@@ -1,0 +1,18 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--rs-color-background-page);
+}
+
+.backLink {
+  color: var(--rs-color-foreground-neutral-faded);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--rs-color-foreground-neutral);
+  }
+}
