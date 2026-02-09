@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader, Modal, Tabs, Text, View } from 'reshaped';
+import { Modal, Tabs, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { useProjects } from '../projects/hooks';
@@ -16,6 +16,7 @@ import { useIntegrations } from './hooks';
 import { PlatformCard } from './platform-card';
 import styles from './styles.module.scss';
 import { IntegrationTab } from './types';
+import { IntegrationsSkeleton } from './skeleton';
 
 export const Integrations = () => {
   const [activeTab, setActiveTab] = useState<IntegrationTab>('all');
@@ -26,6 +27,7 @@ export const Integrations = () => {
     isModalOpen,
     isDeleteModalOpen,
     selectedType,
+    selectedCategory,
     editingIntegration,
     integrationToDelete,
     handleDelete,
@@ -55,6 +57,7 @@ export const Integrations = () => {
   const filteredPlatforms = platforms.filter((p) => {
     if (activeTab === 'all') return true;
     if (activeTab === 'ads') return p.category === 'ads';
+    if (activeTab === 'sales') return p.category === 'sales';
     if (activeTab === 'webhooks') return p.category === 'webhooks';
     return false;
   });
@@ -73,33 +76,25 @@ export const Integrations = () => {
     }
   };
 
-  // Check if selected type is a webhook integration
-  const isWebhookType = (type: string | undefined) => {
-    return (
-      type === 'hotmart' ||
-      type === 'kiwify' ||
-      type === 'kirvano' ||
-      type === 'custom_webhook'
-    );
-  };
-
-  const currentType = editingIntegration?.type || selectedType;
-  const isWebhookIntegration = isWebhookType(currentType);
+  const isWebhookIntegration = editingIntegration
+    ? editingIntegration.type === 'kiwify' ||
+      editingIntegration.type === 'kirvano' ||
+      editingIntegration.type === 'custom_webhook'
+    : selectedCategory === 'webhooks';
 
   if (isLoading) {
-    return (
-      <View align="center" justify="center" paddingTop={10}>
-        <Loader />
-      </View>
-    );
+    return <IntegrationsSkeleton />;
   }
 
-  if (!project) {
+  if (!isLoading && !project) {
     return (
       <View align="center" justify="center" paddingTop={10}>
         <Text>Projeto não encontrado</Text>
       </View>
     );
+  }
+  if (!project) {
+    return;
   }
 
   return (
@@ -141,8 +136,14 @@ export const Integrations = () => {
 
       {(activeTab === 'ads' || activeTab === 'all') && (
         <View gap={4} paddingTop={6}>
-          <Text variant="featured-2" weight="medium">
-            Anúncios
+          <View direction="row" align="center" gap={2}>
+            <Icon name="speakerphone" size={20} />
+            <Text variant="featured-2" weight="medium">
+              Anúncios
+            </Text>
+          </View>
+          <Text variant="body-3" color="neutral">
+            Conecte suas contas de anúncios para rastrear campanhas e métricas
           </Text>
           <div className={styles.platformsGrid}>
             {filteredPlatforms
@@ -163,10 +164,47 @@ export const Integrations = () => {
         </View>
       )}
 
+      {(activeTab === 'sales' || activeTab === 'all') && (
+        <View gap={4} paddingTop={6}>
+          <View direction="row" align="center" gap={2}>
+            <Icon name="shopping-cart" size={20} />
+            <Text variant="featured-2" weight="medium">
+              Plataformas de Venda
+            </Text>
+          </View>
+          <Text variant="body-3" color="neutral">
+            Conecte suas plataformas de checkout para rastrear vendas e
+            conversões
+          </Text>
+          <div className={styles.platformsGrid}>
+            {filteredPlatforms
+              .filter((p) => p.category === 'sales')
+              .map((platform) => (
+                <PlatformCard
+                  key={platform.id}
+                  platform={platform}
+                  onDelete={handleDelete}
+                  onAdd={handleAdd}
+                  onEdit={handleEdit}
+                  onProcess={handleProcess}
+                  onDetails={handleDetails}
+                  canManage={canCreateIntegration}
+                />
+              ))}
+          </div>
+        </View>
+      )}
+
       {(activeTab === 'webhooks' || activeTab === 'all') && (
         <View gap={4} paddingTop={6}>
-          <Text variant="featured-2" weight="medium">
-            Webhooks
+          <View direction="row" align="center" gap={2}>
+            <Icon name="webhook" size={20} />
+            <Text variant="featured-2" weight="medium">
+              Webhooks Personalizados
+            </Text>
+          </View>
+          <Text variant="body-3" color="neutral">
+            Configure webhooks customizados para integrar com outras plataformas
           </Text>
           <div className={styles.platformsGrid}>
             {filteredPlatforms
@@ -211,6 +249,7 @@ export const Integrations = () => {
             initialValues={initialValues}
             onSubmit={handleFormSubmit}
             onCancel={handleModalClose}
+            category={selectedCategory}
           />
         )}
       </Modal>

@@ -128,11 +128,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const register = useCallback(
-    async (email: string, password: string): Promise<{ error?: string }> => {
+    async (
+      name: string,
+      email: string,
+      password: string,
+    ): Promise<{ error?: string }> => {
       try {
         // We use email as the username to ensure uniqueness and avoid "username taken" errors
         // for display names. The actual name is sent as a separate field.
-        await strapiRegister(email, email, password);
+        await strapiRegister(name, email, password);
 
         // After registration, log in automatically with NextAuth
         const result = await signIn('strapi', {

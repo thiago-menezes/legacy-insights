@@ -144,6 +144,10 @@ export function getStrapiErrorMessage(error: unknown): string {
         return 'E-mail ou senha incorretos.';
       }
 
+      if (msg === 'email must be a valid email') {
+        return 'O e-mail informado não é um endereço válido.';
+      }
+
       return msg;
     }
     if (error.response?.status === 400) {

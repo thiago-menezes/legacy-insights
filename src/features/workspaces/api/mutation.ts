@@ -1,42 +1,41 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CreateWorkspacePayload,
   workspacesService,
 } from '@/libs/api/services/workspaces';
-import { useWorkspacesQuery } from './query';
 import { UpdateWorkspaceParams } from './types';
 
 export const useCreateWorkspaceMutation = () => {
-  const { refetch: refetchWorkspaces } = useWorkspacesQuery();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (params: CreateWorkspacePayload) =>
       workspacesService.create(params),
     onSuccess: () => {
-      refetchWorkspaces();
+      queryClient.invalidateQueries({ queryKey: ['workspaces', 'list'] });
     },
   });
 };
 
 export const useUpdateWorkspaceMutation = () => {
-  const { refetch: refetchWorkspaces } = useWorkspacesQuery();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, params }: UpdateWorkspaceParams) =>
       workspacesService.update(id, params),
     onSuccess: () => {
-      refetchWorkspaces();
+      queryClient.invalidateQueries({ queryKey: ['workspaces', 'list'] });
     },
   });
 };
 
 export const useDeleteWorkspaceMutation = () => {
-  const { refetch: refetchWorkspaces } = useWorkspacesQuery();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: string) => workspacesService.deleteWorkspace(id),
     onSuccess: () => {
-      refetchWorkspaces();
+      queryClient.invalidateQueries({ queryKey: ['workspaces', 'list'] });
     },
   });
 };

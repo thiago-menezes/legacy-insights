@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Alert,
   Button,
   Checkbox,
   FormControl,
@@ -87,11 +88,9 @@ export const UtmScripts = (_props: UtmScriptsProps) => {
               </Button>
             </div>
 
-            <div className={styles.instructionsBox}>
-              <Text variant="caption-1" color="neutral-faded">
-                {metaAdsScript.instructions}
-              </Text>
-            </div>
+            <Alert title="Instruções" icon={<Icon name="activity" size={20} />}>
+              {metaAdsScript.instructions}
+            </Alert>
 
             <Checkbox
               checked={includeHotmartXcod}
@@ -101,15 +100,13 @@ export const UtmScripts = (_props: UtmScriptsProps) => {
             </Checkbox>
 
             {includeHotmartXcod && (
-              <div className={styles.instructionsBox}>
-                <Text variant="caption-1" weight="medium">
-                  Configuração Hotmart
-                </Text>
-                <Text variant="caption-1" color="neutral-faded">
-                  Configure o parâmetro xcod nas configurações do produto
-                  Hotmart para rastrear vendas vindas desta campanha.
-                </Text>
-              </div>
+              <Alert
+                title="Configuração Hotmart"
+                icon={<Icon name="activity" size={20} />}
+              >
+                Configure o parâmetro xcod nas configurações do produto Hotmart
+                para rastrear vendas vindas desta campanha.
+              </Alert>
             )}
           </View>
         </div>
@@ -135,9 +132,9 @@ export const UtmScripts = (_props: UtmScriptsProps) => {
               </Button>
             </div>
 
-            <div className={styles.instructionsBox}>
-              <Text variant="caption-1">{googleAdsScript.instructions}</Text>
-            </div>
+            <Alert title="Instruções" icon={<Icon name="activity" size={20} />}>
+              {googleAdsScript.instructions}
+            </Alert>
           </View>
         </div>
       )}

@@ -54,7 +54,7 @@ export const Campaigns = () => {
 
   const isLoading = isLoadingData || isLoadingAccess;
 
-  if (!platformParam) return <></>;
+  if (!platformParam) return;
 
   if (isLoading) {
     return <CampaignsSkeleton />;

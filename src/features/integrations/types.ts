@@ -3,7 +3,7 @@ import {
   StrapiIntegration,
 } from '@/libs/api/services/integrations';
 
-export type IntegrationTab = 'all' | 'ads' | 'webhooks' | 'utms';
+export type IntegrationTab = 'all' | 'ads' | 'sales' | 'webhooks' | 'utms';
 
 export type ConnectionStatus =
   | 'connected'
@@ -26,7 +26,8 @@ export interface IntegrationPlatform {
   description: string;
   icon: string;
   profiles: IntegrationProfile[];
-  category: 'ads' | 'webhooks';
+  category: 'ads' | 'sales' | 'webhooks';
+  integrationType: IntegrationType;
 }
 
 export interface StatusConfig {
@@ -41,7 +42,10 @@ export interface IntegrationsProps {
 export interface PlatformCardProps {
   platform: IntegrationPlatform;
   onDelete: (id: string) => void;
-  onAdd: (type: IntegrationType) => void;
+  onAdd: (
+    type: IntegrationType,
+    category: 'ads' | 'sales' | 'webhooks',
+  ) => void;
   onEdit: (integration: StrapiIntegration) => void;
   onProcess: (id: string) => void;
   onDetails: (id: string) => void;

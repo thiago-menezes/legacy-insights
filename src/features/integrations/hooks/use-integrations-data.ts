@@ -77,7 +77,12 @@ export const useIntegrationsData = (projectId?: string) => {
     return PLATFORM_METADATA.map((platform) => ({
       ...platform,
       profiles: integrations
-        .filter((i) => i.type === platform.id)
+        .filter((i) => {
+          if ('filter' in platform && typeof platform.filter === 'function') {
+            return (platform.filter as (i: StrapiIntegration) => boolean)(i);
+          }
+          return i.type === platform.integrationType;
+        })
         .map((i) => ({
           id: i.documentId,
           name: i.name,

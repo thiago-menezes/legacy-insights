@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Badge, Button, Divider, Loader, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
@@ -9,6 +10,7 @@ import {
   KirvanoConfig,
   KiwifyConfig,
 } from '@/features/integrations/webhook-configs';
+import { HotmartSyncModal } from '@/features/integrations/hotmart-sync-modal';
 import { WebhookEvents } from '@/features/integrations/webhook-events';
 import { WebhookTester } from '@/features/integrations/webhook-tester';
 import { useIntegrationDetails } from './hooks';
@@ -24,7 +26,10 @@ export const IntegrationDetails = () => {
     isLoading,
     error,
     updateIntegration,
+    refetch,
   } = useIntegrationDetails(integrationId);
+
+  const [showSyncModal, setShowSyncModal] = useState(false);
 
   if (isLoading) {
     return (
@@ -62,12 +67,13 @@ export const IntegrationDetails = () => {
     }
   };
 
-  const isWebhookIntegration = [
-    'hotmart',
-    'kiwify',
-    'kirvano',
-    'custom_webhook',
-  ].includes(integration.type);
+  const isHotmartApi =
+    integration.type === 'hotmart' &&
+    (!!integration.accessToken || !!integration.config?.clientId);
+
+  const isWebhookIntegration =
+    ['kiwify', 'kirvano', 'custom_webhook'].includes(integration.type) ||
+    (integration.type === 'hotmart' && !isHotmartApi);
 
   return (
     <View gap={6}>
@@ -173,6 +179,29 @@ export const IntegrationDetails = () => {
         </View>
 
         <Divider />
+
+        {isHotmartApi && (
+          <>
+            <View gap={2} paddingTop={4}>
+              <Text variant="featured-3" weight="bold">
+                Sincronização de Vendas
+              </Text>
+              <Text variant="body-3" color="neutral">
+                Sincronize vendas históricas da Hotmart para o período desejado.
+              </Text>
+
+              <Button
+                color="primary"
+                icon={<Icon name="refresh" size={16} />}
+                onClick={() => setShowSyncModal(true)}
+              >
+                Sincronizar Vendas
+              </Button>
+            </View>
+
+            <Divider />
+          </>
+        )}
 
         <View gap={4}>
           <Text variant="featured-3" weight="bold">
@@ -293,6 +322,19 @@ export const IntegrationDetails = () => {
             <WebhookEvents integrationId={integrationId} />
           </View>
         </View>
+      )}
+
+      {/* Hotmart Sync Modal */}
+      {isHotmartApi && (
+        <HotmartSyncModal
+          integrationId={integrationId}
+          integrationName={integration.name}
+          isOpen={showSyncModal}
+          onClose={() => setShowSyncModal(false)}
+          onSuccess={() => {
+            refetch();
+          }}
+        />
       )}
     </View>
   );

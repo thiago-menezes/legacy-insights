@@ -18,14 +18,14 @@ export interface LoginFormData {
 }
 
 const loginSchema = z.object({
-  identifier: z.string().email('Por favor, insira um e-mail válido'),
+  identifier: z.email({ message: 'Por favor, insira um e-mail válido' }),
   password: z.string().min(1, 'A senha é obrigatória'),
 });
 
 const registerSchema = z
   .object({
     name: z.string().min(1, 'Nome é obrigatório'),
-    email: z.string(),
+    email: z.email({ message: 'O e-mail informado não é válido' }),
     password: z
       .string()
       .min(8, 'A senha deve ter no mínimo 8 caracteres')
@@ -50,7 +50,7 @@ const registerSchema = z
   });
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z.email({ message: 'Email inválido' }),
 });
 
 const resetPasswordSchema = z

@@ -46,7 +46,7 @@ const EditRoleForm = ({
   });
 
   return (
-    <>
+    <View>
       <View gap={3} paddingTop={4} paddingBottom={4}>
         <Text>
           Alterar função de <strong>{memberUsername}</strong>
@@ -69,7 +69,7 @@ const EditRoleForm = ({
           Salvar
         </Button>
       </View>
-    </>
+    </View>
   );
 };
 

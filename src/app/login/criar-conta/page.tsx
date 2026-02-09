@@ -38,7 +38,7 @@ const CreateAccountPage = () => {
   }, [emailFromUrl, setValue]);
 
   return (
-    <>
+    <section>
       <View paddingBottom={6}>
         <Text variant="featured-2" weight="bold">
           Criar sua conta
@@ -306,7 +306,7 @@ const CreateAccountPage = () => {
           </Link>
         </Text>
       </div>
-    </>
+    </section>
   );
 };
 

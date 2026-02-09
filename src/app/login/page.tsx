@@ -37,7 +37,7 @@ export default function LoginV2Page() {
   const password = watch('password');
 
   return (
-    <>
+    <section>
       <View paddingBottom={8}>
         <Text variant="title-6" weight="bold" className={styles.headerText}>
           Entrar na Plataforma
@@ -207,6 +207,6 @@ export default function LoginV2Page() {
           </Link>
         </Text>
       </View>
-    </>
+    </section>
   );
 }

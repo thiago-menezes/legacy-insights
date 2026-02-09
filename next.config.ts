@@ -33,12 +33,6 @@ const nextConfig: NextConfig = {
         port: '1337',
         pathname: '/uploads/**',
       },
-      {
-        protocol: 'http',
-        hostname: 'dev.api.legacy',
-        port: '1337',
-        pathname: '/uploads/**',
-      },
     ],
   },
   compiler: {

@@ -11,7 +11,7 @@ const ForgotPasswordPage = () => {
 
   if (success) {
     return (
-      <>
+      <section>
         <View paddingBottom={6}>
           <Text variant="featured-2" weight="bold">
             Verifique seu e-mail
@@ -40,12 +40,12 @@ const ForgotPasswordPage = () => {
             </Button>
           </Link>
         </View>
-      </>
+      </section>
     );
   }
 
   return (
-    <>
+    <section>
       <Link href="/login" className={styles.backLink}>
         <svg
           width="16"
@@ -118,7 +118,7 @@ const ForgotPasswordPage = () => {
           </Link>
         </Text>
       </div>
-    </>
+    </section>
   );
 };
 

@@ -55,13 +55,9 @@ export const CampaignsTable = ({
         className={styles.pagination}
       >
         <Text variant="body-3" color="neutral-faded">
-          {totalItems > 0 ? (
-            <>
-              {startItem}-{endItem} de {totalItems} itens
-            </>
-          ) : (
-            'Nenhum item encontrado'
-          )}
+          {totalItems > 0
+            ? `${startItem}-${endItem} de ${totalItems} itens`
+            : 'Nenhum item encontrado'}
         </Text>
 
         <View direction="row" align="center" gap={3}>

@@ -19,6 +19,7 @@ export const useIntegrations = (projectId?: string) => {
   const {
     isModalOpen,
     selectedType,
+    selectedCategory,
     editingIntegration,
     handleAdd,
     handleEdit,
@@ -116,6 +117,7 @@ export const useIntegrations = (projectId?: string) => {
     isModalOpen,
     isDeleteModalOpen,
     selectedType,
+    selectedCategory,
     editingIntegration,
     integrationToDelete,
     handleDelete,

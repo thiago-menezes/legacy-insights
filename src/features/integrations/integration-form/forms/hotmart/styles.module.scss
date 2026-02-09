@@ -1,0 +1,27 @@
+.credentialsTextarea {
+  font-family: monospace;
+  min-height: 150px;
+}
+
+.helperText {
+  margin-bottom: 8px;
+}
+
+.exampleBlock {
+  background-color: var(--rs-color-background-neutral);
+  border-radius: var(--rs-radius-medium);
+  padding: 12px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.exampleTitle {
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: var(--rs-color-foreground-neutral);
+}
+
+.exampleCode {
+  white-space: pre-wrap;
+  color: var(--rs-color-foreground-neutral);
+}

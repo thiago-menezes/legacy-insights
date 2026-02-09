@@ -1,0 +1,39 @@
+.modalContent {
+  min-width: 500px;
+  max-width: 600px;
+}
+
+.dateInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.statCard {
+  padding: 12px;
+  border-radius: 8px;
+  background-color: var(--rs-color-background-neutral-faded);
+  border: 1px solid var(--rs-color-border-neutral);
+  text-align: center;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--rs-color-foreground-primary);
+  margin-bottom: 4px;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--rs-color-foreground-neutral);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

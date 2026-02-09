@@ -1,11 +1,15 @@
 import { IconNames } from '@/components/icon';
-import { IntegrationType } from '@/libs/api/services/integrations';
+import {
+  IntegrationType,
+  StrapiIntegration,
+} from '@/libs/api/services/integrations';
 import { StrapiProject } from '@/libs/api/services/projects';
 import { IntegrationTab } from './types';
 
 export const TABS: { id: IntegrationTab; label: string; icon?: IconNames }[] = [
   { id: 'all', label: 'Todos' },
   { id: 'ads', label: 'Anúncios', icon: 'speakerphone' },
+  { id: 'sales', label: 'Plataformas de Venda', icon: 'shopping-cart' },
   { id: 'webhooks', label: 'Webhooks', icon: 'webhook' },
   { id: 'utms', label: 'UTMs & Scripts', icon: 'code' },
 ];
@@ -17,6 +21,7 @@ export const PLATFORM_METADATA = [
     description: 'Conecte seus perfis do Meta Ads',
     icon: '/icon-meta.png',
     category: 'ads',
+    integrationType: 'meta_ads',
   },
   {
     id: 'google_ads',
@@ -24,13 +29,27 @@ export const PLATFORM_METADATA = [
     description: 'Conecte seus perfis do Google Ads',
     icon: '/icon-google.png',
     category: 'ads',
+    integrationType: 'google_ads',
+  },
+  {
+    id: 'hotmart_api',
+    name: 'Hotmart',
+    description: 'Conecte sua conta Hotmart via API e sincronize vendas',
+    icon: '/icon-hotmart.png',
+    category: 'sales',
+    integrationType: 'hotmart',
+    filter: (i: StrapiIntegration) =>
+      i.type === 'hotmart' && (!!i.accessToken || !!i.config?.clientId),
   },
   {
     id: 'hotmart',
     name: 'Hotmart',
-    description: 'Receba eventos de vendas do Hotmart',
+    description: 'Receba eventos de vendas do Hotmart via webhook',
     icon: '/icon-hotmart.png',
     category: 'webhooks',
+    integrationType: 'hotmart',
+    filter: (i: StrapiIntegration) =>
+      i.type === 'hotmart' && !i.accessToken && !i.config?.clientId,
   },
   {
     id: 'kiwify',
@@ -38,6 +57,7 @@ export const PLATFORM_METADATA = [
     description: 'Receba eventos de vendas do Kiwify',
     icon: '/icon-kiwify.png',
     category: 'webhooks',
+    integrationType: 'kiwify',
   },
   {
     id: 'kirvano',
@@ -45,6 +65,7 @@ export const PLATFORM_METADATA = [
     description: 'Receba eventos de vendas do Kirvano',
     icon: '/icon-kirvano.png',
     category: 'webhooks',
+    integrationType: 'kirvano',
   },
   {
     id: 'custom_webhook',
@@ -52,6 +73,7 @@ export const PLATFORM_METADATA = [
     description: 'Configure um webhook customizado',
     icon: 'webhook',
     category: 'webhooks',
+    integrationType: 'custom_webhook',
   },
 ] as const;
 

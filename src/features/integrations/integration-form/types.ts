@@ -9,4 +9,11 @@ export interface IntegrationFormProps {
   onCancel: () => void;
   isLoading?: boolean;
   projectId?: string;
+  category?: 'ads' | 'sales' | 'webhooks';
+}
+
+export interface HotmartCredentials {
+  clientId: string;
+  clientSecret: string;
+  basicToken: string;
 }

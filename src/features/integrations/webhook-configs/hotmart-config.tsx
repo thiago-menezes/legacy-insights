@@ -38,10 +38,9 @@ export const HotmartConfig = ({
     } catch (error) {
       show({
         title: 'Erro',
-        text: 'Falha ao atualizar Webhook Secret.',
+        text: `Falha ao atualizar Webhook Secret: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
         color: 'critical',
       });
-      console.error(error);
     } finally {
       setIsSaving(false);
     }
@@ -116,9 +115,9 @@ export const HotmartConfig = ({
         </View>
       </View>
 
-      <View padding={3} borderRadius="medium" backgroundColor="critical-faded">
-        <Text variant="body-3" color="critical">
-          <strong>Importante:</strong> O Hotmart envia um token chamado{' '}
+      <View padding={3} borderRadius="medium" backgroundColor="primary-faded">
+        <Text variant="body-3" color="primary">
+          <strong>Opcional:</strong> O Hotmart envia um token chamado{' '}
           <strong>hottok</strong> que deve ser configurado como &quot;Webhook
           abaixo para validar os webhooks.
         </Text>

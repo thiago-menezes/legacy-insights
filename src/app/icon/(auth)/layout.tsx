@@ -9,10 +9,5 @@ export default async function AuthLayout({ children }: PropsWithChildren) {
     redirect('/');
   }
 
-  return (
-    <>
-      Você está autenticado
-      <main>{children}</main>
-    </>
-  );
+  return <main>{children}</main>;
 }

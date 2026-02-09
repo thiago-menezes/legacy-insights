@@ -26,16 +26,9 @@ $tablet: 1024px;
 
 .platformHeader {
   display: flex;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: var(--rs-unit-x3);
-}
-
-.platformIcon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .platformInfo {
@@ -104,6 +97,8 @@ $tablet: 1024px;
 }
 
 .iconIntegration {
-  width: 40px;
+  min-width: 40px;
+  min-height: 40px;
   height: auto;
+  object-fit: contain;
 }

@@ -38,13 +38,6 @@
   right: var(--rs-unit-x2);
 }
 
-.instructionsBox {
-  background-color: var(--rs-color-background-primary);
-  padding: var(--rs-unit-x3);
-  border-left: 3px solid var(--rs-color-border-accent-faded);
-  border-radius: var(--rs-border-radius-small);
-}
-
 .customFormGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));

@@ -20,7 +20,7 @@ export const useUpdateIntegrationMutation = () => {
   return useMutation({
     mutationFn: ({ id, ...payload }: UpdateIntegrationPayload) =>
       integrationsService.update(id, payload),
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['integrations', variables.id],
       });

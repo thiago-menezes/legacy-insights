@@ -22,7 +22,7 @@ const Providers = ({ children }: PropsWithChildren) => {
     return () => clearTimeout(timeout);
   }, []);
 
-  if (delayToRender) return <></>;
+  if (delayToRender) return;
 
   return (
     <Reshaped

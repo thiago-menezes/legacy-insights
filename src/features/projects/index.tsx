@@ -54,7 +54,7 @@ export const WorkspaceDetail = () => {
   }
 
   return (
-    <>
+    <View>
       <PageTitle
         icon={
           workspace.logo?.url && (
@@ -157,7 +157,7 @@ export const WorkspaceDetail = () => {
 
       <Modal active={isModalOpen} onClose={handleCloseModal}>
         {isModalOpen && (
-          <>
+          <View>
             <Modal.Title>Novo Projeto</Modal.Title>
 
             <ProjectForm
@@ -167,7 +167,7 @@ export const WorkspaceDetail = () => {
               isLoading={isLoading}
               existingSlugs={projects.map((p) => p.slug)}
             />
-          </>
+          </View>
         )}
       </Modal>
 
@@ -203,6 +203,6 @@ export const WorkspaceDetail = () => {
           </View>
         </View>
       </Modal>
-    </>
+    </View>
   );
 };

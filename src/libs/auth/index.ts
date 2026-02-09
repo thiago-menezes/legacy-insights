@@ -18,21 +18,26 @@ const config: NextAuthConfig = {
           return null;
         }
 
-        const response: StrapiAuthResponse = await strapiLogin(
-          credentials.identifier as string,
-          credentials.password as string,
-        );
+        try {
+          const response: StrapiAuthResponse = await strapiLogin(
+            credentials.identifier as string,
+            credentials.password as string,
+          );
 
-        if (response.jwt && response.user) {
-          return {
-            id: String(response.user.id),
-            name: response.user.username,
-            email: response.user.email,
-            strapiJwt: response.jwt,
-          } as User & { strapiJwt: string };
+          if (response.jwt && response.user) {
+            return {
+              id: String(response.user.id),
+              name: response.user.username,
+              email: response.user.email,
+              strapiJwt: response.jwt,
+            } as User & { strapiJwt: string };
+          }
+
+          return null;
+        } catch {
+          // Return null to trigger CredentialsSignin error instead of Configuration error
+          return null;
         }
-
-        return null;
       },
     }),
   ],

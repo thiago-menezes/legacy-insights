@@ -14,14 +14,17 @@ import { useQueryClient } from '@tanstack/react-query';
 import { isApiError } from '@/libs/api/axios';
 
 export const useWorkspaces = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const queryClient = useQueryClient();
   const toast = useToast();
 
   const createWorkspace = useCreateWorkspaceMutation();
   const updateWorkspace = useUpdateWorkspaceMutation();
   const deleteWorkspace = useDeleteWorkspaceMutation();
-  const getWorkspaces = useWorkspacesQuery();
+
+  const getWorkspaces = useWorkspacesQuery(
+    !isAuthLoading && isAuthenticated && !!user?.id,
+  );
 
   const error =
     createWorkspace.error ||

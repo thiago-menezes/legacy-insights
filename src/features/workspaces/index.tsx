@@ -37,7 +37,7 @@ export const Workspaces = () => {
     useSelectedWorkspace();
 
   return (
-    <>
+    <View>
       <PageTitle
         title="Workspaces"
         description="Gerencie seus espaços de trabalho e organize seus projetos"
@@ -135,6 +135,6 @@ export const Workspaces = () => {
         workspace={workspaceToDelete}
         isPending={isLoading}
       />
-    </>
+    </View>
   );
 };

@@ -4,7 +4,7 @@ import { UseIntegrationDetailsResult } from './types';
 export const useIntegrationDetails = (
   id: string,
 ): UseIntegrationDetailsResult => {
-  const { data, isLoading, error } = useIntegrationQuery(id);
+  const { data, isLoading, error, refetch } = useIntegrationQuery(id);
   const updateMutation = useUpdateIntegrationMutation();
 
   return {
@@ -12,5 +12,6 @@ export const useIntegrationDetails = (
     isLoading,
     error: error ? String(error) : null,
     updateIntegration: updateMutation.mutateAsync,
+    refetch,
   };
 };

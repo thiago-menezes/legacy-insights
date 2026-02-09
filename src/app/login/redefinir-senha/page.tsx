@@ -15,7 +15,7 @@ const ResetPasswordPage = () => {
 
   if (success) {
     return (
-      <>
+      <View>
         <View paddingBottom={6}>
           <Text variant="featured-2" weight="bold">
             Senha redefinida!
@@ -38,13 +38,13 @@ const ResetPasswordPage = () => {
             Ir para o login
           </Button>
         </View>
-      </>
+      </View>
     );
   }
 
   if (!code) {
     return (
-      <>
+      <View>
         <View paddingBottom={6}>
           <Text variant="featured-2" weight="bold">
             Link inválido
@@ -69,12 +69,12 @@ const ResetPasswordPage = () => {
             </Button>
           </Link>
         </View>
-      </>
+      </View>
     );
   }
 
   return (
-    <>
+    <View>
       <View paddingBottom={6}>
         <Text variant="featured-2" weight="bold">
           Redefinir senha
@@ -147,7 +147,7 @@ const ResetPasswordPage = () => {
           </Link>
         </Text>
       </div>
-    </>
+    </View>
   );
 };
 

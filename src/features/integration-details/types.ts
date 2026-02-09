@@ -11,4 +11,5 @@ export interface UseIntegrationDetailsResult {
     id: string | number;
     [key: string]: unknown;
   }) => Promise<SingleIntegrationResponse>;
+  refetch: () => void;
 }

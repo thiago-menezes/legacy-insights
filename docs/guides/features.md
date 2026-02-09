@@ -845,7 +845,7 @@ export const ProductList = ({ categoryId }: ProductListProps) => {
 
   // 5. Main render
   return (
-    <>
+    <View>
       <PageTitle title="Produtos" description="Gerencie seus produtos">
         <Button
           color="primary"
@@ -903,7 +903,7 @@ export const ProductList = ({ categoryId }: ProductListProps) => {
           onCancel={handleCloseModal}
         />
       </Modal>
-    </>
+    </View>
   );
 };
 ```

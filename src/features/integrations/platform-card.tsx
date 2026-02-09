@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { Button, Text } from 'reshaped';
 import { Icon } from '@/components/icon';
-import { IntegrationType } from '@/libs/api/services/integrations';
 import { ProfileItem } from './profile-item';
 import styles from './styles.module.scss';
 import { PlatformCardProps } from './types';
@@ -18,21 +17,20 @@ export const PlatformCard = ({
   return (
     <div className={styles.platformCard}>
       <div className={styles.platformHeader}>
-        <div className={styles.platformIcon}>
-          {platform.icon.startsWith('/') ? (
-            <Image
-              src={platform.icon}
-              width={40}
-              height={40}
-              alt={platform.name}
-              priority
-              className={styles.iconIntegration}
-            />
-          ) : (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <Icon name={platform.icon as any} size={40} />
-          )}
-        </div>
+        {platform.icon.startsWith('/') ? (
+          <Image
+            src={platform.icon}
+            width={40}
+            height={40}
+            alt={platform.name}
+            priority
+            className={styles.iconIntegration}
+          />
+        ) : (
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          <Icon name={platform.icon as any} size={40} />
+        )}
+
         <div className={styles.platformInfo}>
           <Text variant="body-1" weight="bold">
             {platform.name}
@@ -59,7 +57,7 @@ export const PlatformCard = ({
         {canManage && (
           <Button
             className={styles.addProfileButton}
-            onClick={() => onAdd(platform.id as IntegrationType)}
+            onClick={() => onAdd(platform.integrationType, platform.category)}
           >
             <Icon name="plus" size={18} />
             Adicionar novo perfil

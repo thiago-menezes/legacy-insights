@@ -7,13 +7,20 @@ import {
 export const useIntegrationModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<IntegrationType>('meta_ads');
+  const [selectedCategory, setSelectedCategory] = useState<
+    'ads' | 'sales' | 'webhooks'
+  >('ads');
   const [editingIntegration, setEditingIntegration] = useState<
     StrapiIntegration | undefined
   >(undefined);
 
-  const handleAdd = (type: IntegrationType) => {
+  const handleAdd = (
+    type: IntegrationType,
+    category: 'ads' | 'sales' | 'webhooks' = 'ads',
+  ) => {
     setEditingIntegration(undefined);
     setSelectedType(type);
+    setSelectedCategory(category);
     setIsModalOpen(true);
   };
 
@@ -31,6 +38,7 @@ export const useIntegrationModal = () => {
   return {
     isModalOpen,
     selectedType,
+    selectedCategory,
     editingIntegration,
     handleAdd,
     handleEdit,

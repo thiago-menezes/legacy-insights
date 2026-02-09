@@ -522,7 +522,7 @@ const ProductList = () => {
   const products = data?.pages.flatMap((page) => page.data) ?? [];
 
   return (
-    <>
+    <View>
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
@@ -532,7 +532,7 @@ const ProductList = () => {
           Load More
         </Button>
       )}
-    </>
+    </View>
   );
 };
 ```

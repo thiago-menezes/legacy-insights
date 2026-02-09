@@ -39,10 +39,9 @@ export const KirvanoConfig = ({
     } catch (error) {
       show({
         title: 'Erro',
-        text: 'Falha ao atualizar Webhook Secret.',
+        text: `Falha ao atualizar Webhook Secret: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
         color: 'critical',
       });
-      console.error(error);
     } finally {
       setIsSaving(false);
     }
