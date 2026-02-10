@@ -13,7 +13,7 @@ export const parseHotmartCredentials = (
   try {
     const clientIdMatch = text.match(/Client\s*ID[:\s]*([a-f0-9-]+)/i);
     const clientSecretMatch = text.match(/Client\s*Secret[:\s]*([a-f0-9-]+)/i);
-    const basicMatch = text.match(/Basic[:\s]*([A-Za-z0-9+/=]+)/i);
+    const basicMatch = text.match(/Basic[:\s]+(?:Basic\s+)?([A-Za-z0-9+/=]+)/i);
 
     if (!clientIdMatch || !clientSecretMatch || !basicMatch) {
       return null;

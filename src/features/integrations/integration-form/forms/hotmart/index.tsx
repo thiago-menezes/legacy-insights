@@ -125,7 +125,7 @@ export const HotmartForm = (props: IntegrationFormProps) => {
                   <div className={styles.exampleCode}>
                     {`Client ID: c413fcd3-945e-4375-85df-7b253a12d8c1
 Client Secret: 2fd4f2d9-6ee1-4742-b42d-8600165ec18c
-Basic: YzQxM2ZjZDMtOTQ1ZS00Mzc1...`}
+Basic: Basic YzQxM2ZjZDMtOTQ1ZS00Mzc1...`}
                   </div>
                 </div>
               </FormControl.Helper>
