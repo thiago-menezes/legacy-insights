@@ -10,7 +10,8 @@ import { Pagination, Select, Text, View } from 'reshaped';
 import { Table } from '@/components/table';
 import styles from '../styles.module.scss';
 import { CampaignRow, CampaignsTableProps } from '../types';
-import { COLUMN_DEFS, PAGE_SIZE_OPTIONS } from './constants';
+import { PAGE_SIZE_OPTIONS } from './constants';
+import { buildColumnDefs } from './utils';
 
 ModuleRegistry.registerModules([
   PaginationModule,
@@ -35,13 +36,11 @@ export const CampaignsTable = ({
     <View className={styles.tableContainer}>
       <Table<CampaignRow>
         rowData={data}
-        columnDefs={COLUMN_DEFS(platform)}
+        columnDefs={buildColumnDefs(platform)}
         defaultColDef={{
           resizable: true,
           suppressMovable: true,
         }}
-        rowSelection="multiple"
-        onSelectionChanged={() => {}}
         domLayout="autoHeight"
         rowHeight={72}
         headerHeight={48}

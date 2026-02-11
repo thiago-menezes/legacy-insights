@@ -1,26 +1,47 @@
+import { StrapiCampaign } from '@/libs/api/services/campaigns';
+import { CampaignRow, CampaignStatus } from '../types';
 import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import Link from 'next/link';
 import { Badge, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { STATUS_CONFIG } from '../constants';
 import styles from '../styles.module.scss';
-import { CampaignRow, CampaignStatus } from '../types';
 import { CellWithChange } from './cell-with-change';
-import { formatCurrency, formatNumber } from '@/utils/format-currency';
+import {
+  formatCurrency,
+  formatNumber,
+  formatPercentage,
+} from '@/utils/format-currency';
 
-export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100].map((size) => ({
-  label: String(size),
-  value: String(size),
-}));
+export const buildCampaignRow = (apiResponse: StrapiCampaign): CampaignRow => {
+  const latestMetric = apiResponse.dailyMetrics?.[0];
 
-export const COLUMN_DEFS = (
+  return {
+    id: String(apiResponse.id),
+    name: apiResponse.name,
+    status: apiResponse.status as CampaignStatus,
+    budget: Number(apiResponse.dailyBudget || 0),
+    clicks: Number(latestMetric?.clicks || 0),
+    clicksPrevious: 0,
+    clicksChange: 0,
+    cpc: Number(latestMetric?.cpc || 0),
+    cpcPrevious: 0,
+    cpcChange: 0,
+    ctr: Number(latestMetric?.ctr || 0),
+    ctrPrevious: 0,
+    ctrChange: 0,
+    conversionRate: Number(latestMetric?.conversionRate || 0),
+    conversionRatePrevious: 0,
+    conversionRateChange: 0,
+  };
+};
+
+export const buildColumnDefs = (
   platform: 'meta' | 'google',
 ): ColDef<CampaignRow>[] => [
   {
     headerName: 'Nome da campanha',
     field: 'name',
-    checkboxSelection: true,
-    headerCheckboxSelection: true,
     minWidth: 320,
     sortable: false,
     cellRenderer: (params: ICellRendererParams<CampaignRow>) => {
@@ -90,10 +111,9 @@ export const COLUMN_DEFS = (
       const row = params.data as CampaignRow;
       return (
         <CellWithChange
-          value={row.cpc.toFixed(2).replace('.', ',')}
-          previousValue={row.cpcPrevious.toFixed(2).replace('.', ',')}
+          value={formatCurrency(row.cpc)}
+          previousValue={formatCurrency(row.cpcPrevious)}
           change={row.cpcChange}
-          prefix="R$ "
         />
       );
     },
@@ -106,10 +126,9 @@ export const COLUMN_DEFS = (
       const row = params.data as CampaignRow;
       return (
         <CellWithChange
-          value={row.ctr.toFixed(2).replace('.', ',')}
-          previousValue={row.ctrPrevious.toFixed(2).replace('.', ',')}
+          value={formatPercentage(row.ctr)}
+          previousValue={formatPercentage(row.ctrPrevious)}
           change={row.ctrChange}
-          suffix="%"
         />
       );
     },
@@ -122,12 +141,9 @@ export const COLUMN_DEFS = (
       const row = params.data as CampaignRow;
       return (
         <CellWithChange
-          value={row.conversionRate.toFixed(2).replace('.', ',')}
-          previousValue={row.conversionRatePrevious
-            .toFixed(2)
-            .replace('.', ',')}
+          value={formatPercentage(row.conversionRate)}
+          previousValue={formatPercentage(row.conversionRatePrevious)}
           change={row.conversionRateChange}
-          suffix="%"
         />
       );
     },
