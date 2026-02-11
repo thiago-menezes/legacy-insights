@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Badge, Button, Loader, Pagination, Text, View } from 'reshaped';
+import { Button, Loader, Pagination, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { StrapiProduct } from '@/libs/api/services/products';
