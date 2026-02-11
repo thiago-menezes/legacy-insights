@@ -181,15 +181,15 @@ export const IntegrationDetails = () => {
         <Divider />
 
         {isHotmartApi && (
-          <>
-            <View gap={2} paddingTop={4}>
-              <Text variant="featured-3" weight="bold">
-                Sincronização de Vendas
-              </Text>
-              <Text variant="body-3" color="neutral">
-                Sincronize vendas históricas da Hotmart para o período desejado.
-              </Text>
+          <View gap={2} paddingTop={4}>
+            <Text variant="featured-3" weight="bold">
+              Sincronização de Vendas
+            </Text>
+            <Text variant="body-3" color="neutral">
+              Sincronize vendas históricas da Hotmart para o período desejado.
+            </Text>
 
+            <View paddingBottom={6}>
               <Button
                 color="primary"
                 icon={<Icon name="refresh" size={16} />}
@@ -200,7 +200,7 @@ export const IntegrationDetails = () => {
             </View>
 
             <Divider />
-          </>
+          </View>
         )}
 
         <View gap={4}>

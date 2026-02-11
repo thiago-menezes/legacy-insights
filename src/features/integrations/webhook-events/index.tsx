@@ -5,6 +5,8 @@ import { EventDetail } from './event-detail';
 import { useWebhookEvents } from './hooks';
 import styles from './styles.module.scss';
 import { WebhookEventsProps } from './types';
+import { formatDate } from 'date-fns';
+import { formatCurrency } from '@/utils/format-currency';
 
 export const WebhookEvents = ({ integrationId }: WebhookEventsProps) => {
   const {
@@ -18,8 +20,6 @@ export const WebhookEvents = ({ integrationId }: WebhookEventsProps) => {
     handleEventClick,
     handleCloseDetail,
     handlePageChange,
-    formatDate,
-    formatCurrency,
   } = useWebhookEvents(integrationId);
 
   if (isLoading) {
@@ -92,7 +92,7 @@ export const WebhookEvents = ({ integrationId }: WebhookEventsProps) => {
                 onClick={() => handleEventClick(event)}
               >
                 <td className={styles.tableCell}>
-                  {formatDate(event.processedAt)}
+                  {formatDate(event.processedAt, 'dd/MM/yyyy HH:mm')}
                 </td>
                 <td className={styles.tableCell}>
                   <span className={styles.eventTypeBadge}>

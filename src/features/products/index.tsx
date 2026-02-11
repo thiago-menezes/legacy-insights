@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Badge, Button, Loader, Table, Text, View } from 'reshaped';
+import { Badge, Button, Loader, Pagination, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { StrapiProduct } from '@/libs/api/services/products';
@@ -15,6 +15,8 @@ import {
 import { useProductsData } from './hooks';
 import { ProductForm } from './product-form';
 import { ProductFormData } from './types';
+import { Table } from '@/components/table';
+import { COLUMN_DEFS } from './constants';
 
 export const Products = () => {
   const { project } = useProjects();
@@ -136,85 +138,34 @@ export const Products = () => {
             </Text>
           </View>
         ) : (
-          <Table>
-            <Table.Head>
-              <Table.Row>
-                <Table.Cell>Nome</Table.Cell>
-                <Table.Cell>Plataforma</Table.Cell>
-                <Table.Cell>Preço</Table.Cell>
-                <Table.Cell>Status</Table.Cell>
-                <Table.Cell>ID Externo</Table.Cell>
-                <Table.Cell>Ações</Table.Cell>
-              </Table.Row>
-            </Table.Head>
-            <Table.Body>
-              {products.map((product) => (
-                <Table.Row key={product.id}>
-                  <Table.Cell>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleViewDetails(product.documentId)}
-                    >
-                      {product.name}
-                    </Button>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Badge color="neutral">{product.platform}</Badge>
-                  </Table.Cell>
-                  <Table.Cell>
-                    {product.price
-                      ? `${product.currency || 'BRL'} ${product.price.toFixed(2)}`
-                      : '-'}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Badge color={product.active ? 'positive' : 'neutral'}>
-                      {product.active ? 'Ativo' : 'Inativo'}
-                    </Badge>
-                  </Table.Cell>
-                  <Table.Cell>{product.externalId || '-'}</Table.Cell>
-                  <Table.Cell>
-                    <View direction="row" gap={2}>
-                      <Button
-                        size="small"
-                        variant="ghost"
-                        onClick={() => handleEdit(product)}
-                      >
-                        Editar
-                      </Button>
-                      <Button
-                        size="small"
-                        variant="ghost"
-                        color="critical"
-                        onClick={() => handleDelete(product.documentId)}
-                      >
-                        Excluir
-                      </Button>
-                    </View>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
+          <Table<StrapiProduct>
+            rowData={products}
+            columnDefs={COLUMN_DEFS({
+              onViewDetails: handleViewDetails,
+              onEdit: handleEdit,
+              onDelete: handleDelete,
+            })}
+            defaultColDef={{
+              resizable: true,
+              suppressMovable: true,
+            }}
+            rowSelection="multiple"
+            onSelectionChanged={() => {}}
+            domLayout="autoHeight"
+            rowHeight={72}
+            headerHeight={48}
+            pagination={false}
+          />
         )}
 
         {pagination && pagination.pageCount > 1 && (
-          <View direction="row" justify="center" gap={2}>
-            <Button
-              disabled={pagination.page === 1}
-              onClick={() => handlePageChange(pagination.page - 1)}
-            >
-              Anterior
-            </Button>
-            <Text>
-              Página {pagination.page} de {pagination.pageCount}
-            </Text>
-            <Button
-              disabled={pagination.page === pagination.pageCount}
-              onClick={() => handlePageChange(pagination.page + 1)}
-            >
-              Próxima
-            </Button>
-          </View>
+          <Pagination
+            total={pagination.pageCount}
+            previousAriaLabel="Previous page"
+            nextAriaLabel="Next page"
+            onChange={({ page }) => handlePageChange(page)}
+            page={pagination.page}
+          />
         )}
       </View>
 

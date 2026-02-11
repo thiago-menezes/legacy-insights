@@ -1,19 +1,7 @@
 import { StrapiCampaignListResponse } from '@/libs/api/services/campaigns';
 import { buildCampaignRow } from './table/utils';
 import { CampaignsData } from './types';
-
-export const formatNumber = (value: number): string => {
-  return new Intl.NumberFormat('pt-BR').format(value);
-};
-
-export const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-};
+import { formatCurrency, formatNumber } from '@/utils/format-currency';
 
 export const mapStrapiToCampaignsData = (
   response: StrapiCampaignListResponse,

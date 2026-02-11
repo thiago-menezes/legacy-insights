@@ -30,25 +30,6 @@ export const useWebhookEvents = (integrationId: string) => {
     setPage(newPage);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date);
-  };
-
-  const formatCurrency = (amount?: number) => {
-    if (!amount) return '-';
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(amount);
-  };
-
   return {
     data,
     isLoading,
@@ -60,7 +41,5 @@ export const useWebhookEvents = (integrationId: string) => {
     handleEventClick,
     handleCloseDetail,
     handlePageChange,
-    formatDate,
-    formatCurrency,
   };
 };

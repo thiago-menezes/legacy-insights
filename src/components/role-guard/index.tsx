@@ -9,10 +9,6 @@ interface RoleGuardProps extends PropsWithChildren {
   redirectTo?: string;
 }
 
-/**
- * Component to guard routes based on user role
- * Redirects viewers away from management pages
- */
 export const RoleGuard = ({
   children,
   requireManagement = false,
@@ -27,7 +23,6 @@ export const RoleGuard = ({
     }
   }, [isLoading, requireManagement, canManage, router, redirectTo]);
 
-  // Show nothing while loading or if access is denied
   if (isLoading || (requireManagement && !canManage)) {
     return null;
   }

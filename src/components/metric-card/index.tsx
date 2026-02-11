@@ -2,7 +2,7 @@ import { Badge, Card, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import styles from './styles.module.scss';
 import { MetricCardProps } from './types';
-import { formatPercentage } from './utils';
+import { formatPercentage } from '@/utils/format-currency';
 
 export const MetricCard = ({
   title,

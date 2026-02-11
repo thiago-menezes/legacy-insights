@@ -14,7 +14,7 @@ import { Icon } from '@/components/icon';
 import { CHART_COLORS } from './constants';
 import styles from './styles.module.scss';
 import { DashboardChartProps } from './types';
-import { formatCurrency, formatPercentage } from './utils';
+import { formatCurrency, formatPercentage } from '@/utils/format-currency';
 
 export const DashboardChart = ({
   title,

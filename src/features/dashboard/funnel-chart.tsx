@@ -4,7 +4,8 @@ import { Button, Card, Text, Tooltip, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import styles from './styles.module.scss';
 import { FunnelChartProps } from './types';
-import { formatNumber, getBarColor } from './utils';
+import { getBarColor } from './utils';
+import { formatNumber } from '@/utils/format-currency';
 
 export const FunnelChart = ({
   title,

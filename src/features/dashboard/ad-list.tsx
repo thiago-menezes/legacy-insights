@@ -5,7 +5,7 @@ import { Card, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import styles from './styles.module.scss';
 import { AdListProps } from './types';
-import { formatNumber, formatPercentage } from './utils';
+import { formatNumber, formatPercentage } from '@/utils/format-currency';
 
 export const AdList = ({ title, ads }: AdListProps) => {
   return (

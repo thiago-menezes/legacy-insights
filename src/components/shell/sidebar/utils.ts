@@ -63,7 +63,6 @@ export const buildNavigationSections = (
           : undefined,
       });
 
-      // TODO: Add products when implemented
       // gestaoSection.items.push({
       //   label: 'Produtos',
       //   href: `/workspaces/${workspaceSlug}/${projectSlug}/products`,

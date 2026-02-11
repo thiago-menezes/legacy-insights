@@ -2,7 +2,8 @@ export const formatNumber = (value: number): string => {
   return new Intl.NumberFormat('pt-BR').format(value);
 };
 
-export const formatCurrency = (value: number): string => {
+export const formatCurrency = (value?: number): string => {
+  if (!value) return '-';
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',

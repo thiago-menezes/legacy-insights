@@ -9,9 +9,6 @@ export const loadPreferences = (): ShellPreferences => {
         return JSON.parse(stored);
       }
 
-      // Default behavior if no preferences found:
-      // Mobile: closed by default
-      // Desktop: open by default
       return {
         sidebarVisible: window.innerWidth > MOBILE_BREAKPOINT,
         headerVisible: true,
