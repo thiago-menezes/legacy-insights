@@ -1,0 +1,7 @@
+.filterBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--rs-unit-x3);
+  flex-wrap: wrap;
+}

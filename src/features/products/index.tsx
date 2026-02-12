@@ -1,20 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Loader, Pagination, Text, View } from 'reshaped';
+import { Loader, Pagination, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { StrapiProduct } from '@/libs/api/services/products';
 import { useProjects } from '../projects/hooks';
 import { useSelectedWorkspace } from '../workspaces/context';
-import {
-  useCreateProductMutation,
-  useDeleteProductMutation,
-} from './api/mutations';
 import { useProductsData } from './hooks';
-import { ProductForm } from './product-form';
-import { ProductFormData } from './types';
 import { Table } from '@/components/table';
 import { COLUMN_DEFS } from './constants';
 
@@ -37,45 +31,6 @@ export const Products = () => {
   const { data, isLoading, handlePageChange } = useProductsData(
     project?.documentId,
   );
-
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<StrapiProduct | null>(
-    null,
-  );
-
-  const createMutation = useCreateProductMutation();
-  const deleteMutation = useDeleteProductMutation();
-
-  const handleCreate = () => {
-    setEditingProduct(null);
-    setIsFormOpen(true);
-  };
-
-  const handleEdit = (product: StrapiProduct) => {
-    setEditingProduct(product);
-    setIsFormOpen(true);
-  };
-
-  const handleDelete = async (id: string) => {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
-      await deleteMutation.mutateAsync(id);
-    }
-  };
-
-  const handleFormSubmit = async (values: ProductFormData) => {
-    if (!project?.documentId) return;
-
-    await createMutation.mutateAsync({
-      ...values,
-      projectId: project.documentId,
-    });
-    setIsFormOpen(false);
-  };
-
-  const handleFormClose = () => {
-    setIsFormOpen(false);
-    setEditingProduct(null);
-  };
 
   const handleViewDetails = (productId: string) => {
     if (selectedOrg && project) {
@@ -117,12 +72,6 @@ export const Products = () => {
           <Text variant="featured-2" weight="medium">
             Lista de Produtos
           </Text>
-          <Button onClick={handleCreate}>
-            <View direction="row" align="center" gap={2}>
-              <Icon name="plus" size={16} />
-              Novo Produto
-            </View>
-          </Button>
         </View>
 
         {products.length === 0 ? (
@@ -133,8 +82,7 @@ export const Products = () => {
             paddingBottom={10}
           >
             <Text color="neutral-faded">
-              Nenhum produto cadastrado. Clique em &quot;Novo Produto&quot; para
-              começar.
+              Nenhum produto integrado encontrado para este projeto.
             </Text>
           </View>
         ) : (
@@ -142,8 +90,6 @@ export const Products = () => {
             rowData={products}
             columnDefs={COLUMN_DEFS({
               onViewDetails: handleViewDetails,
-              onEdit: handleEdit,
-              onDelete: handleDelete,
             })}
             defaultColDef={{
               resizable: true,
@@ -168,15 +114,6 @@ export const Products = () => {
           />
         )}
       </View>
-
-      {isFormOpen && (
-        <ProductForm
-          isOpen={isFormOpen}
-          onClose={handleFormClose}
-          onSubmit={handleFormSubmit}
-          initialData={editingProduct}
-        />
-      )}
     </View>
   );
 };

@@ -2,14 +2,28 @@ export const formatNumber = (value: number): string => {
   return new Intl.NumberFormat('pt-BR').format(value);
 };
 
-export const formatCurrency = (value?: number): string => {
-  if (!value) return '-';
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
+export const formatCurrency = (
+  value?: number,
+  currency: string = 'BRL',
+): string => {
+  if (value === undefined || value === null) return '-';
+
+  try {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    // Fallback to BRL if currency is invalid
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  }
 };
 
 export const formatPercentage = (value: number, showSign = true): string => {

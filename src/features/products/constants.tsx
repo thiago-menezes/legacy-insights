@@ -1,17 +1,14 @@
 import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import { Badge, Button, View } from 'reshaped';
+import { formatCurrency } from '@/utils/format-currency';
 import { StrapiProduct } from '@/libs/api/services/products/types';
 
 interface ColumnDefsProps {
   onViewDetails: (documentId: string) => void;
-  onEdit: (product: StrapiProduct) => void;
-  onDelete: (documentId: string) => void;
 }
 
 export const COLUMN_DEFS = ({
   onViewDetails,
-  onEdit,
-  onDelete,
 }: ColumnDefsProps): ColDef<StrapiProduct>[] => [
   {
     headerName: 'Nome',
@@ -46,10 +43,8 @@ export const COLUMN_DEFS = ({
     headerName: 'Preço',
     field: 'price',
     width: 140,
-    cellRenderer: (params: ICellRendererParams<StrapiProduct>) => {
-      const { price, currency } = params.data || {};
-      return price ? `${currency} ${price.toFixed(2)}` : '-';
-    },
+    cellRenderer: (params: ICellRendererParams<StrapiProduct>) =>
+      formatCurrency(params.data?.price, params.data?.currency),
   },
   {
     headerName: 'Status',
@@ -72,7 +67,7 @@ export const COLUMN_DEFS = ({
   },
   {
     headerName: 'Ações',
-    width: 180,
+    width: 140,
     cellRenderer: (params: ICellRendererParams<StrapiProduct>) => {
       if (!params.data) return null;
       return (
@@ -80,17 +75,9 @@ export const COLUMN_DEFS = ({
           <Button
             size="small"
             variant="ghost"
-            onClick={() => onEdit(params.data!)}
+            onClick={() => onViewDetails(params.data!.documentId)}
           >
-            Editar
-          </Button>
-          <Button
-            size="small"
-            variant="ghost"
-            color="critical"
-            onClick={() => onDelete(params.data!.documentId)}
-          >
-            Excluir
+            Detalhes
           </Button>
         </View>
       );

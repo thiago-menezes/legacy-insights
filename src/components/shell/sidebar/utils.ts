@@ -22,6 +22,7 @@ export const buildNavigationSections = (
             { label: 'Google', href: '/campanhas/google' },
           ],
         },
+        { label: 'Vendas', href: '/vendas', icon: 'receipt' },
       ],
     },
   ];
@@ -63,15 +64,15 @@ export const buildNavigationSections = (
           : undefined,
       });
 
-      // gestaoSection.items.push({
-      //   label: 'Produtos',
-      //   href: `/workspaces/${workspaceSlug}/${projectSlug}/products`,
-      //   icon: 'package',
-      //   disabled: !hasProjects,
-      //   disabledTooltip: !hasProjects
-      //     ? 'Você ainda não possui projetos cadastrados nesse workspace'
-      //     : undefined,
-      // });
+      gestaoSection.items.push({
+        label: 'Produtos',
+        href: `/workspaces/${workspaceSlug}/${projectSlug}/products`,
+        icon: 'package',
+        disabled: !hasProjects,
+        disabledTooltip: !hasProjects
+          ? 'Você ainda não possui projetos cadastrados nesse workspace'
+          : undefined,
+      });
     }
   }
 
