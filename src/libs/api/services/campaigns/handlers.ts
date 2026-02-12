@@ -3,6 +3,7 @@ import {
   CampaignAttributionResponse,
   CampaignListParams,
   StrapiCampaignListResponse,
+  StrapiCampaignResponse,
 } from './types';
 
 export const list = async (
@@ -67,6 +68,16 @@ export const list = async (
 
   const { data } = await apiClient.get<StrapiCampaignListResponse>(
     `/api/campaigns?${query.toString()}`,
+  );
+
+  return data;
+};
+
+export const getById = async (
+  campaignId: string,
+): Promise<StrapiCampaignResponse> => {
+  const { data } = await apiClient.get<StrapiCampaignResponse>(
+    `/api/campaigns/${campaignId}?populate=dailyMetrics`,
   );
 
   return data;

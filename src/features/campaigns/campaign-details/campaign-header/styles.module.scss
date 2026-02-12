@@ -1,0 +1,10 @@
+$mobile: 768px;
+
+.header {
+  @media (max-width: $mobile) {
+    [class*='direction-row'] {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+    }
+  }
+}

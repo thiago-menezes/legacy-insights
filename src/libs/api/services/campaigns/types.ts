@@ -87,3 +87,7 @@ export interface CampaignAttribution {
 export interface CampaignAttributionResponse {
   data: CampaignAttribution;
 }
+
+export interface StrapiCampaignResponse {
+  data: StrapiCampaign;
+}

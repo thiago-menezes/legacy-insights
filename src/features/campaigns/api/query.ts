@@ -17,3 +17,11 @@ export const useCampaignAttributionQuery = (campaignId: string) => {
     enabled: !!campaignId,
   });
 };
+
+export const useCampaignDetailsQuery = (campaignId: string) => {
+  return useQuery({
+    queryKey: ['campaigns', campaignId, 'details'],
+    queryFn: () => campaignsService.getById(campaignId),
+    enabled: !!campaignId,
+  });
+};

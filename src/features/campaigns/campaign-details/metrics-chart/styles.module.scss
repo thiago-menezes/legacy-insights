@@ -1,0 +1,14 @@
+$mobile: 768px;
+
+.chartContainer {
+  width: 100%;
+  height: 350px;
+}
+
+.metricTabs {
+  flex-wrap: wrap;
+
+  @media (max-width: $mobile) {
+    gap: var(--rs-unit-x1);
+  }
+}

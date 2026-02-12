@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Badge, Loader, Select, Table, Text, View } from 'reshaped';
+import { CampaignAttributionResponse } from '@/libs/api/services/campaigns/types';
 import { useCampaignAttributionQuery } from '../../api/query';
 
 interface CampaignAttributionProps {
   campaignId: string;
+  mockData?: CampaignAttributionResponse;
 }
 
 const formatCurrency = (amount: number, currency = 'BRL') => {
@@ -34,11 +36,15 @@ const getPlatformColor = (
 
 export const CampaignAttribution = ({
   campaignId,
+  mockData,
 }: CampaignAttributionProps) => {
   const [platformFilter, setPlatformFilter] = useState<string>('all');
-  const { data, isLoading } = useCampaignAttributionQuery(campaignId);
+  const { data: queryData, isLoading } =
+    useCampaignAttributionQuery(campaignId);
 
-  if (isLoading) {
+  const data = mockData || queryData;
+
+  if (!mockData && isLoading) {
     return (
       <View align="center" justify="center" paddingTop={6}>
         <Loader />
