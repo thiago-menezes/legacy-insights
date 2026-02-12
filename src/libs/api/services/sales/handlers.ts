@@ -1,5 +1,11 @@
 import { apiClient } from '../../axios';
-import { SaleResponse, SaleFilters, SingleSaleResponse } from './types';
+import {
+  SaleResponse,
+  SaleFilters,
+  SingleSaleResponse,
+  SaleAnalyticsResponse,
+  SaleAnalyticsFilters,
+} from './types';
 
 export const list = async (filters?: SaleFilters) => {
   const params = new URLSearchParams();
@@ -60,6 +66,35 @@ export const list = async (filters?: SaleFilters) => {
 export const get = async (id: string | number) => {
   const { data } = await apiClient.get<SingleSaleResponse>(
     `/api/sales/${id}?populate=*`,
+  );
+  return data;
+};
+
+export const getAnalytics = async (filters?: SaleAnalyticsFilters) => {
+  const params = new URLSearchParams();
+
+  if (filters?.projectId) {
+    params.append('projectId', filters.projectId);
+  }
+
+  if (filters?.startDate) {
+    params.append('startDate', filters.startDate);
+  }
+
+  if (filters?.endDate) {
+    params.append('endDate', filters.endDate);
+  }
+
+  if (filters?.status) {
+    params.append('status', filters.status);
+  }
+
+  if (filters?.productId) {
+    params.append('productId', filters.productId);
+  }
+
+  const { data } = await apiClient.get<SaleAnalyticsResponse>(
+    `/api/sales/analytics?${params.toString()}`,
   );
   return data;
 };

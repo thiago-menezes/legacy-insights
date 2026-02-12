@@ -6,4 +6,5 @@ export interface SalesTableProps {
   currentPage?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
+  onRowClick?: (documentId: string) => void;
 }

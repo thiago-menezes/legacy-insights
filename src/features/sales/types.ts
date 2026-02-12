@@ -17,10 +17,14 @@ export interface SaleRow {
   integrationType: string;
 }
 
+export type DatePreset = '7d' | '30d' | '90d' | 'custom';
+
 export interface SalesPageFilters {
   status?: SaleStatus;
   startDate?: Date;
   endDate?: Date;
+  productId?: string;
+  datePreset: DatePreset;
   page?: number;
   pageSize?: number;
 }

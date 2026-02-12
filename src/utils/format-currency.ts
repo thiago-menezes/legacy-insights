@@ -16,7 +16,6 @@ export const formatCurrency = (
       maximumFractionDigits: 2,
     }).format(value);
   } catch {
-    // Fallback to BRL if currency is invalid
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',

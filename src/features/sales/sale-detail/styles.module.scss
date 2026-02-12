@@ -1,0 +1,15 @@
+$mobile: 768px;
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--rs-unit-x4);
+
+  @media (max-width: $mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.headerCard {
+  grid-column: 1 / -1;
+}

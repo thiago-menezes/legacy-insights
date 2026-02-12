@@ -5,8 +5,12 @@ import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { SaleStatus } from '@/libs/api/services/sales/types';
 import { STATUS_CONFIG } from './constants';
+import { DateFilter } from './date-filter';
 import { useSalesData } from './hooks';
+import { ProductFilter } from './product-filter';
+import { RevenueChart } from './revenue-chart';
 import styles from './styles.module.scss';
+import { SalesSummary } from './summary';
 import { SalesTable } from './table';
 
 const STATUS_OPTIONS = [
@@ -21,13 +25,19 @@ export const Sales = () => {
   const {
     rows,
     isLoading,
+    isAnalyticsLoading,
     filters,
+    analytics,
     pagination,
     handlePageChange,
     handleStatusFilter,
+    handleDatePresetChange,
+    handleDateRangeChange,
+    handleProductFilter,
+    handleRowClick,
   } = useSalesData();
 
-  if (isLoading && rows.length === 0) {
+  if (isLoading && rows.length === 0 && !analytics) {
     return (
       <View align="center" justify="center" paddingTop={10}>
         <Loader />
@@ -44,32 +54,48 @@ export const Sales = () => {
       />
 
       <View gap={4}>
-        <View
-          direction="row"
-          justify="space-between"
-          align="center"
-          className={styles.filterBar}
-        >
-          <Text variant="featured-2" weight="medium">
-            Lista de Vendas
-          </Text>
+        <View className={styles.filterBar}>
+          <DateFilter
+            startDate={filters.startDate}
+            endDate={filters.endDate}
+            preset={filters.datePreset}
+            onPresetChange={handleDatePresetChange}
+            onDateRangeChange={handleDateRangeChange}
+          />
 
-          <View direction="row" gap={3} align="center">
-            <Select
-              name="status-filter"
-              onChange={({ value }) =>
-                handleStatusFilter(value ? (value as SaleStatus) : undefined)
-              }
-              value={filters.status || ''}
-            >
-              {STATUS_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-          </View>
+          <Select
+            name="status-filter"
+            onChange={({ value }) =>
+              handleStatusFilter(value ? (value as SaleStatus) : undefined)
+            }
+            value={filters.status || ''}
+          >
+            {STATUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+
+          <ProductFilter
+            value={filters.productId}
+            onChange={handleProductFilter}
+          />
         </View>
+
+        <SalesSummary
+          summary={analytics?.summary}
+          isLoading={isAnalyticsLoading}
+        />
+
+        <RevenueChart
+          data={analytics?.revenueTimeSeries || []}
+          isLoading={isAnalyticsLoading}
+        />
+
+        <Text variant="featured-2" weight="medium">
+          Lista de Vendas
+        </Text>
 
         <SalesTable
           data={rows}
@@ -77,6 +103,7 @@ export const Sales = () => {
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
           onPageChange={handlePageChange}
+          onRowClick={handleRowClick}
         />
       </View>
     </View>

@@ -10,6 +10,7 @@ export const SalesTable = ({
   currentPage = 1,
   totalPages = 1,
   onPageChange,
+  onRowClick,
 }: SalesTableProps) => {
   if (!isLoading && data.length === 0) {
     return (
@@ -32,6 +33,12 @@ export const SalesTable = ({
         rowHeight={72}
         headerHeight={48}
         pagination={false}
+        onRowClicked={(event) => {
+          if (event.data?.documentId && onRowClick) {
+            onRowClick(event.data.documentId);
+          }
+        }}
+        rowStyle={onRowClick ? { cursor: 'pointer' } : undefined}
       />
 
       {totalPages > 1 && (

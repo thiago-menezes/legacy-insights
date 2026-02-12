@@ -71,3 +71,33 @@ export interface SaleFilters {
   page?: number;
   pageSize?: number;
 }
+
+export interface SalesSummary {
+  totalRevenue: number;
+  totalSales: number;
+  approvedSales: number;
+  averageTicket: number;
+  totalCommission: number;
+  approvalRate: number;
+}
+
+export interface RevenueTimeSeriesPoint {
+  date: string;
+  revenue: number;
+  commission: number;
+}
+
+export interface SaleAnalyticsResponse {
+  data: {
+    summary: SalesSummary;
+    revenueTimeSeries: RevenueTimeSeriesPoint[];
+  };
+}
+
+export interface SaleAnalyticsFilters {
+  projectId?: string;
+  startDate?: string;
+  endDate?: string;
+  status?: SaleStatus;
+  productId?: string;
+}
