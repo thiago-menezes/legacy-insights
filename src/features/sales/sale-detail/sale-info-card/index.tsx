@@ -14,10 +14,10 @@ export const SaleInfoCard = ({ title, icon, items }: SaleInfoCardProps) => {
         </View>
 
         <View gap={3}>
-          {items.map((item) => (
-            <View key={item.label} direction="row" justify="space-between">
+          {items.map((item, idx) => (
+            <View key={idx} direction="row" gap={2}>
               <Text variant="body-2" color="neutral-faded">
-                {item.label}
+                {item.label}:
               </Text>
               <Text variant="body-2" weight="medium">
                 {item.value}

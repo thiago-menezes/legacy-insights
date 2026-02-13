@@ -5,6 +5,7 @@ import {
   SingleSaleResponse,
   SaleAnalyticsResponse,
   SaleAnalyticsFilters,
+  EnrichedSaleResponse,
 } from './types';
 
 export const list = async (filters?: SaleFilters) => {
@@ -95,6 +96,19 @@ export const getAnalytics = async (filters?: SaleAnalyticsFilters) => {
 
   const { data } = await apiClient.get<SaleAnalyticsResponse>(
     `/api/sales/analytics?${params.toString()}`,
+  );
+  return data;
+};
+
+export const getEnrichedData = async (
+  transaction: string,
+  integrationId: string,
+) => {
+  const { data } = await apiClient.get<EnrichedSaleResponse>(
+    `/api/hotmart/sales/${transaction}/enrich`,
+    {
+      params: { integrationId },
+    },
   );
   return data;
 };

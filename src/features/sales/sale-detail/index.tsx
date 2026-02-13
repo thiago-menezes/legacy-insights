@@ -5,25 +5,26 @@ import { Badge, Button, Card, Loader, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
 import { formatCurrency } from '@/utils/format-currency';
-import { STATUS_CONFIG } from '../constants';
 import { useSaleDetail } from './hooks';
 import { SaleInfoCard } from './sale-info-card';
 import styles from './styles.module.scss';
-import { SaleDetailProps, SaleInfoItem } from './types';
-
-function formatDate(dateStr: string): string {
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(dateStr));
-}
+import { SaleDetailProps } from './types';
+import { formatDate } from '@/utils/format-date';
 
 export const SaleDetail = ({ saleId }: SaleDetailProps) => {
   const router = useRouter();
-  const { sale, isLoading } = useSaleDetail(saleId);
+  const {
+    sale,
+    isLoading,
+    customerItems,
+    financialItems,
+    productItems,
+    participantItems,
+    commissionItems,
+    utmItems,
+    hotmartPriceItems,
+    statusConfig,
+  } = useSaleDetail(saleId);
 
   if (isLoading) {
     return (
@@ -40,46 +41,6 @@ export const SaleDetail = ({ saleId }: SaleDetailProps) => {
       </View>
     );
   }
-
-  const statusConfig = STATUS_CONFIG[sale.status];
-
-  const customerItems: SaleInfoItem[] = [
-    { label: 'Nome', value: sale.customerName || '—' },
-    { label: 'E-mail', value: sale.customerEmail || '—' },
-    { label: 'Telefone', value: sale.customerPhone || '—' },
-  ];
-
-  const financialItems: SaleInfoItem[] = [
-    { label: 'Valor', value: formatCurrency(sale.amount, sale.currency) },
-    {
-      label: 'Comissão',
-      value: formatCurrency(sale.commissionAmount, sale.currency),
-    },
-    { label: 'Moeda Original', value: sale.currency || 'BRL' },
-  ];
-
-  const productItems: SaleInfoItem[] = [
-    {
-      label: 'Produto',
-      value: sale.productName || sale.product?.name || '—',
-    },
-    {
-      label: 'Plataforma',
-      value: sale.integration?.type
-        ? sale.integration.type.charAt(0).toUpperCase() +
-          sale.integration.type.slice(1)
-        : '—',
-    },
-  ];
-
-  const utmItems: SaleInfoItem[] = [];
-  if (sale.utmSource) utmItems.push({ label: 'Source', value: sale.utmSource });
-  if (sale.utmMedium) utmItems.push({ label: 'Medium', value: sale.utmMedium });
-  if (sale.utmCampaign)
-    utmItems.push({ label: 'Campaign', value: sale.utmCampaign });
-  if (sale.utmContent)
-    utmItems.push({ label: 'Content', value: sale.utmContent });
-  if (sale.utmTerm) utmItems.push({ label: 'Term', value: sale.utmTerm });
 
   return (
     <View gap={4}>
@@ -130,6 +91,30 @@ export const SaleDetail = ({ saleId }: SaleDetailProps) => {
           items={financialItems}
         />
         <SaleInfoCard title="Produto" icon="tag" items={productItems} />
+
+        {hotmartPriceItems.length > 0 && (
+          <SaleInfoCard
+            title="Detalhes de Preço"
+            icon="coin"
+            items={hotmartPriceItems}
+          />
+        )}
+
+        {participantItems.length > 0 && (
+          <SaleInfoCard
+            title="Participantes"
+            icon="users"
+            items={participantItems}
+          />
+        )}
+
+        {commissionItems.length > 0 && (
+          <SaleInfoCard
+            title="Comissões"
+            icon="percentage"
+            items={commissionItems}
+          />
+        )}
 
         {utmItems.length > 0 && (
           <SaleInfoCard title="UTM Tracking" icon="link" items={utmItems} />

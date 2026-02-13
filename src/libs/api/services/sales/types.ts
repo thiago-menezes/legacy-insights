@@ -101,3 +101,74 @@ export interface SaleAnalyticsFilters {
   status?: SaleStatus;
   productId?: string;
 }
+
+export interface HotmartPriceDetails {
+  items: Array<{
+    total: { value: number; currency_code: string };
+    product: { name: string; id: number };
+    base: { value: number; currency_code: string };
+    transaction: string;
+    fee: { value: number; currency_code: string };
+    vat: { value: number; currency_code: string };
+    real_conversion_rate: number;
+  }>;
+}
+
+export interface HotmartParticipant {
+  role: 'PRODUCER' | 'BUYER' | 'COPRODUCER' | 'AFFILIATE';
+  user: {
+    name: string;
+    email: string;
+    ucode: string;
+    cellphone?: string;
+    trade_name?: string;
+    address?: {
+      city?: string;
+      country?: string;
+      state?: string;
+      address?: string;
+      zip_code?: string;
+    };
+  };
+}
+
+export interface HotmartParticipantsResponse {
+  items: Array<{
+    transaction: string;
+    users: HotmartParticipant[];
+    product: { name: string; id: number };
+  }>;
+}
+
+export interface HotmartCommission {
+  user: {
+    email: string;
+    name: string;
+    ucode: string;
+  };
+  commission: {
+    value: number;
+    currency_code: string;
+  };
+  source: string;
+}
+
+export interface HotmartCommissionsResponse {
+  items: Array<{
+    product: { id: number; name: string };
+    commissions: HotmartCommission[];
+    exchange_rate_currency_payout: number;
+    transaction: string;
+  }>;
+}
+
+export interface EnrichedSaleData {
+  priceDetails: HotmartPriceDetails | null;
+  participants: HotmartParticipantsResponse | null;
+  commissions: HotmartCommissionsResponse | null;
+}
+
+export interface EnrichedSaleResponse {
+  success: boolean;
+  data: EnrichedSaleData;
+}

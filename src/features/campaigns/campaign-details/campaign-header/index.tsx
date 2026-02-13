@@ -1,42 +1,15 @@
 import { Badge, Button, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { formatCurrency } from '@/utils/format-currency';
-import { CampaignHeaderData } from '../types';
 import styles from './styles.module.scss';
-
-interface CampaignHeaderProps {
-  campaign: CampaignHeaderData;
-  onBack: () => void;
-}
-
-const STATUS_LABELS: Record<CampaignHeaderData['status'], string> = {
-  active: 'Ativa',
-  paused: 'Pausada',
-  archived: 'Arquivada',
-  removed: 'Removida',
-  deleted: 'Excluída',
-};
-
-const STATUS_COLORS: Record<
-  CampaignHeaderData['status'],
-  'positive' | 'neutral' | 'critical' | 'primary'
-> = {
-  active: 'positive',
-  paused: 'neutral',
-  archived: 'neutral',
-  removed: 'critical',
-  deleted: 'critical',
-};
+import { formatDate } from '@/utils/format-date';
+import { STATUS_COLORS, STATUS_LABELS } from './constants';
+import { CampaignHeaderProps } from './types';
 
 export const CampaignHeader = ({ campaign, onBack }: CampaignHeaderProps) => {
   const platformLabel =
     campaign.platform === 'meta' ? 'Meta Ads' : 'Google Ads';
   const platformColor = campaign.platform === 'meta' ? 'primary' : 'critical';
-
-  const formatDate = (dateStr?: string) => {
-    if (!dateStr) return null;
-    return new Date(dateStr).toLocaleDateString('pt-BR');
-  };
 
   const budget = campaign.dailyBudget || campaign.lifetimeBudget;
   const budgetLabel = campaign.dailyBudget ? 'dia' : 'total';

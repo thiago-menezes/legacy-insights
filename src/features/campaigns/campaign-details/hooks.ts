@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { DEFAULT_DATE_RANGE, METRIC_CONFIGS } from './constants';
-import { MOCK_ATTRIBUTION_RESPONSE, MOCK_CAMPAIGN_RESPONSE } from './mock-data';
 import { CampaignHeaderData, MetricCardData, MetricKey } from './types';
 import {
   aggregateMetrics,
@@ -11,20 +10,21 @@ import {
   formatMetricValue,
   splitPeriods,
 } from './utils';
-
-// TODO: Replace mock data with real API calls when backend is ready
-// import { useCampaignAttributionQuery, useCampaignDetailsQuery } from '../api/query';
+import {
+  useCampaignAttributionQuery,
+  useCampaignDetailsQuery,
+} from '../api/query';
 
 export const useCampaignDetailsData = (campaignId: string) => {
   const [dateRange, setDateRange] = useState(DEFAULT_DATE_RANGE);
   const [selectedMetric, setSelectedMetric] = useState<MetricKey>('spend');
 
-  // Mock data — replace with real queries when backend routes are fixed
-  const campaignResponse = MOCK_CAMPAIGN_RESPONSE;
-  const attributionResponse = MOCK_ATTRIBUTION_RESPONSE;
   const isCampaignLoading = false;
   const campaignError = null;
   const isAttributionLoading = false;
+
+  const { data: campaignResponse } = useCampaignDetailsQuery(campaignId);
+  const { data: attributionResponse } = useCampaignAttributionQuery(campaignId);
 
   const campaign = useMemo((): CampaignHeaderData | null => {
     if (!campaignResponse?.data) return null;
