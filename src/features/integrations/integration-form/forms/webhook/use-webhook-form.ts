@@ -13,9 +13,22 @@ export const useWebhookForm = ({
 
   const getWebhookType = (): WebhookFormData['type'] => {
     const type = initialValues?.type;
-    if (type === 'kiwify' || type === 'kirvano' || type === 'custom_webhook') {
+
+    // Direct match for new types
+    if (
+      type === 'hotmart_webhook' ||
+      type === 'kiwify_webhook' ||
+      type === 'kirvano_webhook' ||
+      type === 'custom_webhook'
+    ) {
       return type;
     }
+
+    // Map legacy types or default from category
+    if (type === 'kiwify') return 'kiwify_webhook';
+    if (type === 'kirvano') return 'kirvano_webhook';
+    if (type === 'hotmart') return 'hotmart_webhook';
+
     return 'custom_webhook';
   };
 

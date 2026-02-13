@@ -1,19 +1,17 @@
 'use client';
 
-import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Badge, Button, Divider, Loader, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
-import {
-  HotmartConfig,
-  KirvanoConfig,
-  KiwifyConfig,
-} from '@/features/integrations/webhook-configs';
-import { HotmartSyncModal } from '@/features/integrations/hotmart-sync-modal';
-import { WebhookEvents } from '@/features/integrations/webhook-events';
-import { WebhookTester } from '@/features/integrations/webhook-tester';
 import { useIntegrationDetails } from './hooks';
+import { HotmartWebhook } from './components/webhooks/hotmart';
+import { KiwifyWebhook } from './components/webhooks/kiwify';
+import { KirvanoWebhook } from './components/webhooks/kirvano';
+import { CustomWebhook } from './components/webhooks/custom';
+import { HotmartSalesPlatform } from './components/sales-platform/hotmart';
+import { GoogleAdsIntegration } from './components/ads/google';
+import { MetaAdsIntegration } from './components/ads/meta';
 import styles from './styles.module.scss';
 
 export const IntegrationDetails = () => {
@@ -28,8 +26,6 @@ export const IntegrationDetails = () => {
     updateIntegration,
     refetch,
   } = useIntegrationDetails(integrationId);
-
-  const [showSyncModal, setShowSyncModal] = useState(false);
 
   if (isLoading) {
     return (
@@ -67,13 +63,33 @@ export const IntegrationDetails = () => {
     }
   };
 
-  const isHotmartApi =
-    integration.type === 'hotmart' &&
-    (!!integration.accessToken || !!integration.config?.clientId);
+  const renderIntegrationContent = () => {
+    const props = {
+      integration,
+      integrationId,
+      updateIntegration,
+      refetch,
+    };
 
-  const isWebhookIntegration =
-    ['kiwify', 'kirvano', 'custom_webhook'].includes(integration.type) ||
-    (integration.type === 'hotmart' && !isHotmartApi);
+    switch (integration.type) {
+      case 'hotmart_webhook':
+        return <HotmartWebhook {...props} />;
+      case 'hotmart_sales':
+        return <HotmartSalesPlatform {...props} />;
+      case 'kiwify_webhook':
+        return <KiwifyWebhook {...props} />;
+      case 'kirvano_webhook':
+        return <KirvanoWebhook {...props} />;
+      case 'custom_webhook':
+        return <CustomWebhook {...props} />;
+      case 'google_ads':
+        return <GoogleAdsIntegration {...props} />;
+      case 'meta_ads':
+        return <MetaAdsIntegration {...props} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <View gap={6}>
@@ -92,250 +108,122 @@ export const IntegrationDetails = () => {
       </View>
 
       <View maxWidth="600px" gap={6}>
-        <Text variant="featured-3" weight="bold">
-          Status da Integração
-        </Text>
-
-        <View direction="row" gap={10}>
-          <View gap={2}>
-            <Text color="neutral-faded" variant="caption-1">
-              STATUS DE CONEXÃO
-            </Text>
-            <Badge color={getStatusColor(integration.status)} variant="faded">
-              {integration.status}
-            </Badge>
-          </View>
-
-          <View gap={2}>
-            <Text color="neutral-faded" variant="caption-1">
-              STATUS DE PROCESSAMENTO
-            </Text>
-            <Badge
-              color={getStatusColor(integration.processStatus || '')}
-              variant="faded"
-            >
-              {integration.processStatus || 'N/A'}
-            </Badge>
-          </View>
-        </View>
-
-        <Divider />
-
-        <View gap={4}>
+        <View gap={6}>
           <Text variant="featured-3" weight="bold">
-            Logs e Datas
+            Status da Integração
           </Text>
 
-          <View
-            className={styles.logItem}
-            direction="row"
-            justify="space-between"
-          >
-            <Text>Última Sincronização</Text>
-            <Text weight="medium">
-              {integration.lastSyncAt
-                ? new Date(integration.lastSyncAt).toLocaleString('pt-BR')
-                : 'Nunca'}
-            </Text>
-          </View>
-
-          <View
-            className={styles.logItem}
-            direction="row"
-            justify="space-between"
-          >
-            <Text>Status da Última Sincronização</Text>
-            <Badge
-              size="small"
-              color={getStatusColor(integration.lastSyncStatus || '')}
-            >
-              {integration.lastSyncStatus || 'N/A'}
-            </Badge>
-          </View>
-
-          <View
-            className={styles.logItem}
-            direction="row"
-            justify="space-between"
-          >
-            <Text>Expiração do Token</Text>
-            <Text weight="medium">
-              {integration.tokenExpiresAt
-                ? new Date(integration.tokenExpiresAt).toLocaleString('pt-BR')
-                : 'N/A'}
-            </Text>
-          </View>
-
-          {integration.errorMessage && (
-            <View className={styles.logItem} gap={2}>
-              <Text color="critical" weight="bold">
-                Erro Recente:
+          <View direction="row" gap={10}>
+            <View gap={2}>
+              <Text color="neutral-faded" variant="caption-1">
+                STATUS DE CONEXÃO
               </Text>
-              <Text color="critical" variant="body-3">
-                {integration.errorMessage}
-              </Text>
+              <Badge color={getStatusColor(integration.status)} variant="faded">
+                {integration.status}
+              </Badge>
             </View>
-          )}
-        </View>
 
-        <Divider />
+            <View gap={2}>
+              <Text color="neutral-faded" variant="caption-1">
+                STATUS DE PROCESSAMENTO
+              </Text>
+              <Badge
+                color={getStatusColor(integration.processStatus || '')}
+                variant="faded"
+              >
+                {integration.processStatus || 'N/A'}
+              </Badge>
+            </View>
+          </View>
 
-        {isHotmartApi && (
-          <View gap={2} paddingTop={4}>
+          <Divider />
+
+          <View gap={4}>
             <Text variant="featured-3" weight="bold">
-              Sincronização de Vendas
-            </Text>
-            <Text variant="body-3" color="neutral">
-              Sincronize vendas históricas da Hotmart para o período desejado.
+              Logs e Datas
             </Text>
 
-            <View paddingBottom={6}>
-              <Button
-                color="primary"
-                icon={<Icon name="refresh" size={16} />}
-                onClick={() => setShowSyncModal(true)}
-              >
-                Sincronizar Vendas
-              </Button>
+            <View
+              className={styles.logItem}
+              direction="row"
+              justify="space-between"
+            >
+              <Text>Última Sincronização</Text>
+              <Text weight="medium">
+                {integration.lastSyncAt
+                  ? new Date(integration.lastSyncAt).toLocaleString('pt-BR')
+                  : 'Nunca'}
+              </Text>
             </View>
 
-            <Divider />
-          </View>
-        )}
-
-        <View gap={4}>
-          <Text variant="featured-3" weight="bold">
-            Configuração
-          </Text>
-          <View
-            className={styles.logItem}
-            direction="row"
-            justify="space-between"
-          >
-            <Text>Plataforma</Text>
-            <Text weight="medium">{integration.type}</Text>
-          </View>
-          <View
-            className={styles.logItem}
-            direction="row"
-            justify="space-between"
-          >
-            <Text>ID da Integração</Text>
-            <Text weight="medium" color="neutral-faded">
-              {integration.documentId}
-            </Text>
-          </View>
-
-          {isWebhookIntegration && (
-            <View className={styles.logItem} gap={2}>
-              <Text weight="medium">Webhook URL</Text>
-              <View
-                padding={2}
-                borderRadius="small"
-                backgroundColor="neutral-faded"
+            <View
+              className={styles.logItem}
+              direction="row"
+              justify="space-between"
+            >
+              <Text>Status da Última Sincronização</Text>
+              <Badge
+                size="small"
+                color={getStatusColor(integration.lastSyncStatus || '')}
               >
-                <Text variant="caption-1" color="neutral">
-                  {`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/webhooks/${integration.type}/${integrationId}`}
+                {integration.lastSyncStatus || 'N/A'}
+              </Badge>
+            </View>
+
+            <View
+              className={styles.logItem}
+              direction="row"
+              justify="space-between"
+            >
+              <Text>Expiração do Token</Text>
+              <Text weight="medium">
+                {integration.tokenExpiresAt
+                  ? new Date(integration.tokenExpiresAt).toLocaleString('pt-BR')
+                  : 'N/A'}
+              </Text>
+            </View>
+
+            {integration.errorMessage && (
+              <View className={styles.logItem} gap={2}>
+                <Text color="critical" weight="bold">
+                  Erro Recente:
+                </Text>
+                <Text color="critical" variant="body-3">
+                  {integration.errorMessage}
                 </Text>
               </View>
+            )}
+          </View>
+
+          <Divider />
+
+          <View gap={4}>
+            <Text variant="featured-3" weight="bold">
+              Configuração
+            </Text>
+            <View
+              className={styles.logItem}
+              direction="row"
+              justify="space-between"
+            >
+              <Text>Plataforma</Text>
+              <Text weight="medium">{integration.type}</Text>
             </View>
-          )}
+            <View
+              className={styles.logItem}
+              direction="row"
+              justify="space-between"
+            >
+              <Text>ID da Integração</Text>
+              <Text weight="medium" color="neutral-faded">
+                {integration.documentId}
+              </Text>
+            </View>
+          </View>
         </View>
+
+        {renderIntegrationContent()}
       </View>
-
-      {/* Platform-Specific Webhook Configuration */}
-      {isWebhookIntegration && (
-        <View maxWidth="100%">
-          <Divider />
-          <View paddingTop={6} gap={6}>
-            {integration.type === 'kiwify' && (
-              <KiwifyConfig
-                webhookUrl={`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/webhooks/kiwify/${integrationId}`}
-                onUpdateSecret={(secret) =>
-                  updateIntegration({
-                    id: integrationId,
-                    webhookSecret: secret,
-                  })
-                }
-                initialSecret={integration.webhookSecret}
-              />
-            )}
-            {integration.type === 'hotmart' && (
-              <HotmartConfig
-                webhookUrl={`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/webhooks/hotmart/${integrationId}`}
-                onUpdateSecret={(secret) =>
-                  updateIntegration({
-                    id: integrationId,
-                    webhookSecret: secret,
-                  })
-                }
-                initialSecret={integration.webhookSecret}
-              />
-            )}
-            {integration.type === 'kirvano' && (
-              <KirvanoConfig
-                webhookUrl={`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/webhooks/kirvano/${integrationId}`}
-                onUpdateSecret={(secret) =>
-                  updateIntegration({
-                    id: integrationId,
-                    webhookSecret: secret,
-                  })
-                }
-                initialSecret={integration.webhookSecret}
-              />
-            )}
-            {integration.type === 'custom_webhook' && (
-              <View className={styles.logItem} gap={2}>
-                <Text weight="medium">Webhook URL</Text>
-                <View
-                  padding={2}
-                  borderRadius="small"
-                  backgroundColor="neutral-faded"
-                >
-                  <Text variant="caption-1" color="neutral">
-                    {`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/webhooks/custom/${integrationId}`}
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            <Divider />
-
-            <WebhookTester
-              webhookUrl={`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/webhooks/${integration.type === 'custom_webhook' ? 'custom' : integration.type}/${integrationId}`}
-              source={
-                integration.type === 'custom_webhook'
-                  ? 'custom'
-                  : integration.type
-              }
-              secret={integration.webhookSecret}
-            />
-          </View>
-        </View>
-      )}
-
-      {/* Webhook Events Section */}
-      {isWebhookIntegration && (
-        <View maxWidth="100%">
-          <Divider />
-          <View paddingTop={6}>
-            <WebhookEvents integrationId={integrationId} />
-          </View>
-        </View>
-      )}
-
-      {/* Hotmart Sync Modal */}
-      {isHotmartApi && (
-        <HotmartSyncModal
-          integrationId={integrationId}
-          integrationName={integration.name}
-          isOpen={showSyncModal}
-          onClose={() => setShowSyncModal(false)}
-          onSuccess={() => {
-            refetch();
-          }}
-        />
-      )}
     </View>
   );
 };

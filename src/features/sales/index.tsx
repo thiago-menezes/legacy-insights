@@ -1,10 +1,8 @@
 'use client';
 
-import { Loader, Select, Text, View } from 'reshaped';
+import { Loader, Text, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PageTitle } from '@/components/page-title';
-import { SaleStatus } from '@/libs/api/services/sales/types';
-import { STATUS_CONFIG } from './constants';
 import { DateFilter } from './date-filter';
 import { useSalesData } from './hooks';
 import { ProductFilter } from './product-filter';
@@ -12,14 +10,6 @@ import { RevenueChart } from './revenue-chart';
 import styles from './styles.module.scss';
 import { SalesSummary } from './summary';
 import { SalesTable } from './table';
-
-const STATUS_OPTIONS = [
-  { value: '', label: 'Todos os status' },
-  ...Object.entries(STATUS_CONFIG).map(([value, config]) => ({
-    value,
-    label: config.label,
-  })),
-];
 
 export const Sales = () => {
   const {
@@ -30,7 +20,6 @@ export const Sales = () => {
     analytics,
     pagination,
     handlePageChange,
-    handleStatusFilter,
     handleDatePresetChange,
     handleDateRangeChange,
     handleProductFilter,
@@ -62,20 +51,6 @@ export const Sales = () => {
             onPresetChange={handleDatePresetChange}
             onDateRangeChange={handleDateRangeChange}
           />
-
-          <Select
-            name="status-filter"
-            onChange={({ value }) =>
-              handleStatusFilter(value ? (value as SaleStatus) : undefined)
-            }
-            value={filters.status || ''}
-          >
-            {STATUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
 
           <ProductFilter
             value={filters.productId}

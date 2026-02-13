@@ -14,15 +14,11 @@ import { formatCurrency } from '@/utils/format-currency';
 import { REVENUE_CHART_COLORS } from './constants';
 import styles from './styles.module.scss';
 import { RevenueChartProps } from './types';
-
-function formatDateLabel(dateStr: string): string {
-  const [, month, day] = dateStr.split('-');
-  return `${day}/${month}`;
-}
+import { formatDate } from '@/utils/format-date';
 
 export const RevenueChart = ({ data, isLoading }: RevenueChartProps) => {
   const chartData = data.map((point) => ({
-    name: formatDateLabel(point.date),
+    name: formatDate(point.date),
     revenue: point.revenue,
     commission: point.commission,
   }));
@@ -134,14 +130,6 @@ export const RevenueChart = ({ data, isLoading }: RevenueChartProps) => {
                   fill="url(#gradient-revenue)"
                   name="Receita"
                 />
-                <Area
-                  type="monotone"
-                  dataKey="commission"
-                  stroke={REVENUE_CHART_COLORS.commission}
-                  strokeWidth={2}
-                  fill="url(#gradient-commission)"
-                  name="Comissão"
-                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -156,17 +144,6 @@ export const RevenueChart = ({ data, isLoading }: RevenueChartProps) => {
               />
               <Text variant="caption-1" color="neutral-faded">
                 Receita
-              </Text>
-            </div>
-            <div className={styles.legendItem}>
-              <span
-                className={styles.legendDot}
-                style={{
-                  backgroundColor: REVENUE_CHART_COLORS.commission,
-                }}
-              />
-              <Text variant="caption-1" color="neutral-faded">
-                Comissão
               </Text>
             </div>
           </div>

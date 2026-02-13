@@ -20,6 +20,7 @@ export const IntegrationForm = (props: IntegrationFormProps) => {
     case 'google_ads':
       return <GoogleAdsForm {...props} />;
     case 'hotmart':
+    case 'hotmart_sales':
       if (props.category === 'webhooks') {
         return <WebhookForm {...props} />;
       }
@@ -32,8 +33,11 @@ export const IntegrationForm = (props: IntegrationFormProps) => {
         return <WebhookForm {...props} />;
       }
       return <HotmartForm {...props} />;
+    case 'hotmart_webhook':
     case 'kiwify':
+    case 'kiwify_webhook':
     case 'kirvano':
+    case 'kirvano_webhook':
     case 'custom_webhook':
       return <WebhookForm {...props} />;
     default:

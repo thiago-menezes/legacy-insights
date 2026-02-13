@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Badge, Button, Text, Tooltip, View } from 'reshaped';
 import { Icon } from '@/components/icon';
+import { PLATFORM_METADATA } from '../constants';
 import { useProfileStatus } from './hooks';
 import styles from './styles.module.scss';
 import { ProfileItemProps } from './types';
@@ -13,6 +15,20 @@ export const ProfileItem = ({
   canManage,
 }: ProfileItemProps) => {
   const { statusConfig, processStatusConfig } = useProfileStatus(profile);
+  const [copied, setCopied] = useState(false);
+
+  const platformMetadata = PLATFORM_METADATA.find(
+    (m) => m.integrationType === profile.integration.type,
+  );
+  const isWebhook = platformMetadata?.category === 'webhooks';
+
+  const handleCopy = () => {
+    if (profile.integration.webhookUrl) {
+      navigator.clipboard.writeText(profile.integration.webhookUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <div className={styles.profileItem}>
@@ -61,6 +77,35 @@ export const ProfileItem = ({
             </Tooltip>
           )}
         </View>
+
+        {isWebhook && profile.integration.webhookUrl && (
+          <div className={styles.webhookUrlContainer}>
+            <Text variant="body-3" color="neutral-faded">
+              Webhook URL:
+            </Text>
+            <div className={styles.webhookUrlWrapper}>
+              <div
+                className={styles.webhookUrl}
+                title={profile.integration.webhookUrl}
+              >
+                <Text variant="body-3">{profile.integration.webhookUrl}</Text>
+              </div>
+              <Tooltip text={copied ? 'Copiado!' : 'Copiar URL'}>
+                {(props) => (
+                  <Button
+                    {...props}
+                    variant="ghost"
+                    size="small"
+                    onClick={handleCopy}
+                    className={styles.copyButton}
+                  >
+                    <Icon name={copied ? 'check' : 'copy'} size={14} />
+                  </Button>
+                )}
+              </Tooltip>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className={styles.profileActions}>

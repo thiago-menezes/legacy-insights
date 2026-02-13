@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { subDays } from 'date-fns';
-import { SaleStatus } from '@/libs/api/services/sales/types';
 import { useSalesAnalyticsQuery } from './api/analytics-query';
 import { useSalesQuery } from './api/query';
 import { DEFAULT_PAGE_SIZE } from './constants';
@@ -63,10 +62,6 @@ export const useSalesData = () => {
     setFilters((prev) => ({ ...prev, page }));
   }, []);
 
-  const handleStatusFilter = useCallback((status: SaleStatus | undefined) => {
-    setFilters((prev) => ({ ...prev, status, page: 1 }));
-  }, []);
-
   const handleDatePresetChange = useCallback((preset: DatePreset) => {
     setFilters((prev) => ({ ...prev, datePreset: preset, page: 1 }));
   }, []);
@@ -102,7 +97,6 @@ export const useSalesData = () => {
       totalItems: pagination?.total || 0,
     },
     handlePageChange,
-    handleStatusFilter,
     handleDatePresetChange,
     handleDateRangeChange,
     handleProductFilter,

@@ -4,7 +4,7 @@ import { parseHotmartCredentials } from './utils';
 export const hotmartSchema = z
   .object({
     name: z.string().min(1, 'Nome é obrigatório'),
-    type: z.literal('hotmart'),
+    type: z.enum(['hotmart', 'hotmart_sales']),
     project: z.string().or(z.number()),
     status: z.string(),
     accessToken: z.string().optional(),

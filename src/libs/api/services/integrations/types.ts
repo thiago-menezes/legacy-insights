@@ -4,6 +4,10 @@ export type IntegrationType =
   | 'hotmart'
   | 'kiwify'
   | 'kirvano'
+  | 'hotmart_webhook'
+  | 'hotmart_sales'
+  | 'kiwify_webhook'
+  | 'kirvano_webhook'
   | 'custom_webhook';
 
 export type IntegrationStatus = 'connected' | 'disconnected' | 'token_expired';

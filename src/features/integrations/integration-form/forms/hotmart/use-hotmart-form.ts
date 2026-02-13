@@ -26,7 +26,7 @@ export const useHotmartForm = ({
     resolver: zodResolver(hotmartSchema),
     defaultValues: {
       name: initialValues?.name || '',
-      type: 'hotmart',
+      type: initialValues?.type === 'hotmart' ? 'hotmart' : 'hotmart_sales',
       project: projectId,
       status: (initialValues as StrapiIntegration)?.status || 'disconnected',
       config: (initialValues as StrapiIntegration)?.config || {},

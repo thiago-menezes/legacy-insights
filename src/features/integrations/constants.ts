@@ -37,9 +37,9 @@ export const PLATFORM_METADATA = [
     description: 'Conecte sua conta Hotmart via API e sincronize vendas',
     icon: '/icon-hotmart.png',
     category: 'sales',
-    integrationType: 'hotmart',
+    integrationType: 'hotmart_sales',
     filter: (i: StrapiIntegration) =>
-      i.type === 'hotmart' && (!!i.accessToken || !!i.config?.clientId),
+      i.type === 'hotmart_sales' && (!!i.accessToken || !!i.config?.clientId),
   },
   {
     id: 'hotmart',
@@ -47,9 +47,9 @@ export const PLATFORM_METADATA = [
     description: 'Receba eventos de vendas do Hotmart via webhook',
     icon: '/icon-hotmart.png',
     category: 'webhooks',
-    integrationType: 'hotmart',
+    integrationType: 'hotmart_webhook',
     filter: (i: StrapiIntegration) =>
-      i.type === 'hotmart' && !i.accessToken && !i.config?.clientId,
+      i.type === 'hotmart_webhook' && !i.accessToken && !i.config?.clientId,
   },
   {
     id: 'kiwify',
@@ -57,7 +57,7 @@ export const PLATFORM_METADATA = [
     description: 'Receba eventos de vendas do Kiwify',
     icon: '/icon-kiwify.png',
     category: 'webhooks',
-    integrationType: 'kiwify',
+    integrationType: 'kiwify_webhook',
   },
   {
     id: 'kirvano',
@@ -65,7 +65,7 @@ export const PLATFORM_METADATA = [
     description: 'Receba eventos de vendas do Kirvano',
     icon: '/icon-kirvano.png',
     category: 'webhooks',
-    integrationType: 'kirvano',
+    integrationType: 'kirvano_webhook',
   },
   {
     id: 'custom_webhook',
