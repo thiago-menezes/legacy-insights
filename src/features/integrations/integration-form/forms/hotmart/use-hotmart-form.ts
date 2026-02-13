@@ -36,6 +36,7 @@ export const useHotmartForm = ({
     mode: 'onChange',
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const hotmartCredentials = watch('hotmartCredentials');
 
   useEffect(() => {

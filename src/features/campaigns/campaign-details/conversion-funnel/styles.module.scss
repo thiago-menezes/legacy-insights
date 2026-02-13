@@ -1,0 +1,36 @@
+$mobile: 768px;
+
+.funnel {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+
+  @media (max-width: $mobile) {
+    flex-direction: column;
+  }
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rs-unit-x2);
+  padding: var(--rs-unit-x4);
+  border-radius: var(--rs-unit-x3);
+  background: var(--rs-color-background-neutral-faded);
+  min-width: 0;
+}
+
+.connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rs-unit-x1);
+  padding: 0 var(--rs-unit-x1);
+  flex-shrink: 0;
+
+  @media (max-width: $mobile) {
+    transform: rotate(90deg);
+  }
+}

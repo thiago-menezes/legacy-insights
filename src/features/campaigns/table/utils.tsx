@@ -18,6 +18,7 @@ export const buildCampaignRow = (apiResponse: StrapiCampaign): CampaignRow => {
 
   return {
     id: String(apiResponse.id),
+    documentId: apiResponse.documentId,
     name: apiResponse.name,
     status: apiResponse.status as CampaignStatus,
     budget: Number(apiResponse.dailyBudget || 0),
@@ -48,7 +49,7 @@ export const buildColumnDefs = (
       const row = params.data as CampaignRow;
       return (
         <Link
-          href={`/campanhas/${platform}/${row.id}`}
+          href={`/campanhas/${platform}/${row.documentId}`}
           className={styles.campaignName}
         >
           {params.value}

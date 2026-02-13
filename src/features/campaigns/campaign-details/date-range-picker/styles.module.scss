@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rs-unit-x2);
+  align-items: center;
+}
+
+.customInputs {
+  display: flex;
+  gap: var(--rs-unit-x2);
+  align-items: center;
+}
+
+.dateInput {
+  padding: var(--rs-unit-x2) var(--rs-unit-x3);
+  border: 1px solid var(--rs-color-border-neutral-faded);
+  border-radius: var(--rs-unit-x2);
+  background: var(--rs-color-background-page);
+  color: var(--rs-color-foreground-neutral);
+  font-size: 13px;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: var(--rs-color-border-primary);
+  }
+}

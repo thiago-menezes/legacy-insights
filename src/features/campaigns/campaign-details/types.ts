@@ -1,5 +1,9 @@
 import { IconNames } from '@/components/icon';
 
+export type DataSource = 'meta' | 'hotmart' | 'calculated';
+
+export type ChartGranularity = 'daily' | 'weekly';
+
 export type MetricKey =
   | 'spend'
   | 'impressions'
@@ -8,7 +12,11 @@ export type MetricKey =
   | 'cpc'
   | 'cpm'
   | 'conversions'
-  | 'costPerConversion';
+  | 'costPerConversion'
+  | 'revenue'
+  | 'roas'
+  | 'cpa'
+  | 'salesCount';
 
 export type MetricFormat = 'currency' | 'number' | 'compact' | 'percentage';
 
@@ -17,6 +25,9 @@ export interface MetricConfig {
   label: string;
   icon: IconNames;
   format: MetricFormat;
+  source?: DataSource;
+  invertColor?: boolean;
+  tooltip?: string;
 }
 
 export interface AggregatedMetrics {
@@ -28,6 +39,10 @@ export interface AggregatedMetrics {
   cpm: number;
   conversions: number;
   costPerConversion: number;
+  revenue: number;
+  roas: number;
+  cpa: number;
+  salesCount: number;
 }
 
 export interface ChartDataPoint {
@@ -41,6 +56,10 @@ export interface ChartDataPoint {
   cpm: number;
   conversions: number;
   costPerConversion: number;
+  revenue: number;
+  roas: number;
+  cpa: number;
+  salesCount: number;
 }
 
 export interface MetricCardData {
@@ -49,6 +68,14 @@ export interface MetricCardData {
   previousValue?: string;
   percentageChange?: number;
   icon?: IconNames;
+}
+
+export interface FunnelStepData {
+  label: string;
+  value: number;
+  formattedValue: string;
+  source: DataSource;
+  rate?: number;
 }
 
 export interface CampaignHeaderData {

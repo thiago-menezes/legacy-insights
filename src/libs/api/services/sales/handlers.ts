@@ -101,8 +101,8 @@ export const getAnalytics = async (filters?: SaleAnalyticsFilters) => {
 };
 
 export const getEnrichedData = async (
-  transaction: string,
-  integrationId: string,
+  transaction?: string,
+  integrationId?: string,
 ) => {
   const { data } = await apiClient.get<EnrichedSaleResponse>(
     `/api/hotmart/sales/${transaction}/enrich`,

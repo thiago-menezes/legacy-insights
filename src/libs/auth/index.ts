@@ -47,7 +47,7 @@ const config: NextAuthConfig = {
   },
   session: { strategy: 'jwt', maxAge: 8 * 60 * 60 },
   trustHost: true,
-  debug: process.env.NODE_ENV === 'development',
+  debug: process.env.AUTH_DEBUG === 'true',
   callbacks: {
     async jwt({ token, user }) {
       if (user && 'strapiJwt' in user) {

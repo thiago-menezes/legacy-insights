@@ -2,6 +2,8 @@ import { apiClient } from '../../axios';
 import {
   CampaignAttributionResponse,
   CampaignListParams,
+  CampaignPerformanceParams,
+  CampaignPerformanceResponse,
   StrapiCampaignListResponse,
   StrapiCampaignResponse,
 } from './types';
@@ -89,6 +91,36 @@ export const getAttribution = async (
   const { data } = await apiClient.get<CampaignAttributionResponse>(
     `/api/campaigns/${campaignId}/attribution`,
   );
+
+  return data;
+};
+
+export const getPerformance = async (
+  campaignId: string,
+  params: CampaignPerformanceParams = {},
+): Promise<CampaignPerformanceResponse> => {
+  const query = new URLSearchParams();
+
+  if (params.startDate) {
+    query.append('startDate', params.startDate);
+  }
+  if (params.endDate) {
+    query.append('endDate', params.endDate);
+  }
+  if (params.attributionWindowDays !== undefined) {
+    query.append(
+      'attributionWindowDays',
+      params.attributionWindowDays.toString(),
+    );
+  }
+  if (params.includeDrilldown !== undefined) {
+    query.append('includeDrilldown', params.includeDrilldown.toString());
+  }
+
+  const queryStr = query.toString();
+  const url = `/api/campaigns/${campaignId}/performance${queryStr ? `?${queryStr}` : ''}`;
+
+  const { data } = await apiClient.get<CampaignPerformanceResponse>(url);
 
   return data;
 };

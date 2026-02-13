@@ -60,7 +60,9 @@ export const useGoogleAdsForm = ({
     }
   }, [initialValues, isEditMode, setValue]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const currentRefreshToken = watch('refreshToken');
+
   const currentClientSecret = watch('config.clientSecret');
 
   const hasChanges = useMemo(() => {

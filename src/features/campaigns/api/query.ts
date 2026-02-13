@@ -1,6 +1,9 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { campaignsService } from '@/libs/api/services/campaigns';
-import { CampaignListParams } from '@/libs/api/services/campaigns/types';
+import {
+  CampaignListParams,
+  CampaignPerformanceParams,
+} from '@/libs/api/services/campaigns/types';
 
 export const useCampaignsQuery = (params?: CampaignListParams) => {
   return useQuery({
@@ -23,5 +26,17 @@ export const useCampaignDetailsQuery = (campaignId: string) => {
     queryKey: ['campaigns', campaignId, 'details'],
     queryFn: () => campaignsService.getById(campaignId),
     enabled: !!campaignId,
+  });
+};
+
+export const useCampaignPerformanceQuery = (
+  campaignId: string,
+  params: CampaignPerformanceParams = {},
+) => {
+  return useQuery({
+    queryKey: ['campaigns', campaignId, 'performance', params],
+    queryFn: () => campaignsService.getPerformance(campaignId, params),
+    enabled: !!campaignId,
+    staleTime: 5 * 60 * 1000,
   });
 };

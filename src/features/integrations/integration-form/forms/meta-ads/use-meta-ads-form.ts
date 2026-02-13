@@ -52,6 +52,7 @@ export const useMetaAdsForm = ({
     }
   }, [initialValues, isEditMode, setValue]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const currentAccessToken = watch('accessToken');
 
   const hasChanges = useMemo(() => {

@@ -91,3 +91,67 @@ export interface CampaignAttributionResponse {
 export interface StrapiCampaignResponse {
   data: StrapiCampaign;
 }
+
+export interface CampaignPerformance {
+  campaignId: string;
+  campaignDocumentId: string;
+  campaignName: string;
+  platform: 'meta' | 'google';
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  };
+  impressions: number;
+  reach: number;
+  clicks: number;
+  spend: number;
+  ctr: number;
+  cpc: number;
+  cpm: number;
+  frequency: number;
+  salesCount: number;
+  grossRevenue: number;
+  netRevenue: number;
+  refunds: number;
+  refundedAmount: number;
+  averageTicket: number;
+  totalCommission: number;
+  roas: number;
+  cpa: number;
+  conversionRate: number;
+  roi: number;
+  attributionModel: 'last_click';
+  attributionWindowDays: number;
+  unmatchedSalesCount: number;
+}
+
+export interface DrilldownPerformance {
+  level: 'adset' | 'ad';
+  id: string;
+  name: string;
+  parentId: string;
+  salesCount: number;
+  grossRevenue: number;
+  netRevenue: number;
+  refunds: number;
+  averageTicket: number;
+  spend?: number;
+  roas?: number;
+  cpa?: number;
+  conversionRate?: number;
+}
+
+export interface CampaignPerformanceResponse {
+  data: CampaignPerformance;
+  drilldown?: {
+    adsets: DrilldownPerformance[];
+    ads: DrilldownPerformance[];
+  };
+}
+
+export interface CampaignPerformanceParams {
+  startDate?: string;
+  endDate?: string;
+  attributionWindowDays?: number;
+  includeDrilldown?: boolean;
+}

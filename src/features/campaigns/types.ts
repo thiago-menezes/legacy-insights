@@ -19,6 +19,7 @@ export interface CampaignMetric {
 
 export interface CampaignRow {
   id: string;
+  documentId: string;
   name: string;
   status: CampaignStatus;
   budget: number;

@@ -38,6 +38,7 @@ export const Sidebar = ({ isVisible, onToggle, isMobile }: SidebarProps) => {
     if (isMobile) {
       onToggle();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isVisible) return;

@@ -1,0 +1,25 @@
+.card {
+  min-height: 120px;
+}
+
+.titleBar {
+  flex: 1;
+  gap: var(--rs-unit-x2);
+}
+
+.skeleton {
+  height: 120px;
+  border-radius: var(--rs-unit-x2);
+  background: var(--rs-color-background-neutral-faded);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

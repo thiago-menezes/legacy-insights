@@ -4,20 +4,6 @@ import { formatCurrency } from '@/utils/format-currency';
 import { STATUS_CONFIG } from '../constants';
 import { SaleInfoItem } from './types';
 
-const initialSaleHookData = {
-  sale: undefined,
-  isLoading: false,
-  error: undefined,
-  customerItems: [],
-  financialItems: [],
-  productItems: [],
-  participantItems: [],
-  commissionItems: [],
-  utmItems: [],
-  hotmartPriceItems: [],
-  statusConfig: undefined,
-};
-
 export const useSaleDetail = (saleId: string) => {
   const {
     data: saleData,
@@ -30,7 +16,7 @@ export const useSaleDetail = (saleId: string) => {
   });
 
   const sale = saleData?.data;
-  const isHotmart = sale?.integration?.type === 'hotmart';
+  const isHotmart = sale?.integration?.type === 'hotmart_sales';
   const transaction = sale?.externalId;
   const integrationId = sale?.integration?.documentId;
 
@@ -40,51 +26,45 @@ export const useSaleDetail = (saleId: string) => {
     error: enrichedError,
   } = useQuery({
     queryKey: ['sale', 'enriched', transaction],
-    queryFn: () => salesService.getEnrichedData(transaction!, integrationId!),
-    enabled: !!transaction && !!integrationId && isHotmart,
+    queryFn: () => salesService.getEnrichedData(transaction, integrationId),
+    enabled: !!transaction && isHotmart,
   });
 
-  if (!sale) {
-    return {
-      ...initialSaleHookData,
-      isLoading: isSaleLoading,
-      error: (saleError || enrichedError) as Error | undefined,
-    };
-  }
-
   const customerItems: SaleInfoItem[] = [
-    { label: 'Nome', value: sale.customerName || '—' },
-    { label: 'E-mail', value: sale.customerEmail || '—' },
-    { label: 'Telefone', value: sale.customerPhone || '—' },
+    { label: 'Nome', value: sale?.customerName || '—' },
+    { label: 'E-mail', value: sale?.customerEmail || '—' },
+    { label: 'Telefone', value: sale?.customerPhone || '—' },
   ];
 
   const financialItems: SaleInfoItem[] = [
-    { label: 'Valor', value: formatCurrency(sale.amount, sale.currency) },
-    { label: 'Moeda Original', value: sale.currency || 'BRL' },
+    { label: 'Valor', value: formatCurrency(sale?.amount, sale?.currency) },
+    { label: 'Moeda Original', value: sale?.currency || 'BRL' },
   ];
 
   const productItems: SaleInfoItem[] = [
     {
       label: 'Produto',
-      value: sale.productName || sale.product?.name || '—',
+      value: sale?.productName || sale?.product?.name || '—',
     },
     {
       label: 'Plataforma',
-      value: sale.integration?.type
-        ? sale.integration.type.charAt(0).toUpperCase() +
-          sale.integration.type.slice(1)
+      value: sale?.integration?.type
+        ? sale?.integration.type.charAt(0).toUpperCase() +
+          sale?.integration.type.slice(1)
         : '—',
     },
   ];
 
   const utmItems: SaleInfoItem[] = [];
-  if (sale.utmSource) utmItems.push({ label: 'Source', value: sale.utmSource });
-  if (sale.utmMedium) utmItems.push({ label: 'Medium', value: sale.utmMedium });
-  if (sale.utmCampaign)
-    utmItems.push({ label: 'Campaign', value: sale.utmCampaign });
-  if (sale.utmContent)
-    utmItems.push({ label: 'Content', value: sale.utmContent });
-  if (sale.utmTerm) utmItems.push({ label: 'Term', value: sale.utmTerm });
+  if (sale?.utmSource)
+    utmItems.push({ label: 'Source', value: sale?.utmSource });
+  if (sale?.utmMedium)
+    utmItems.push({ label: 'Medium', value: sale?.utmMedium });
+  if (sale?.utmCampaign)
+    utmItems.push({ label: 'Campaign', value: sale?.utmCampaign });
+  if (sale?.utmContent)
+    utmItems.push({ label: 'Content', value: sale?.utmContent });
+  if (sale?.utmTerm) utmItems.push({ label: 'Term', value: sale?.utmTerm });
 
   const enrichedData = enriched?.data;
 
@@ -138,6 +118,6 @@ export const useSaleDetail = (saleId: string) => {
     commissionItems,
     utmItems,
     hotmartPriceItems,
-    statusConfig: STATUS_CONFIG[sale.status],
+    statusConfig: STATUS_CONFIG[sale?.status as keyof typeof STATUS_CONFIG],
   };
 };
