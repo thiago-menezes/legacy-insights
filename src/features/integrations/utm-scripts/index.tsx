@@ -74,7 +74,6 @@ export const UtmScripts = (_props: UtmScriptsProps) => {
             <Text variant="body-2" weight="medium">
               Parâmetros de URL para Meta Ads
             </Text>
-
             <div className={styles.scriptBlock}>
               <pre className={styles.scriptContent}>{metaAdsScript.html}</pre>
               <Button
@@ -91,14 +90,15 @@ export const UtmScripts = (_props: UtmScriptsProps) => {
             <Alert title="Instruções" icon={<Icon name="activity" size={20} />}>
               {metaAdsScript.instructions}
             </Alert>
-
-            <Checkbox
-              checked={includeHotmartXcod}
-              onChange={(e) => setIncludeHotmartXcod(e.checked)}
-            >
-              Adicionar xcod (Hotmart)
-            </Checkbox>
-
+            <FormControl>
+              <Checkbox
+                name="includeHotmartXcod"
+                checked={includeHotmartXcod}
+                onChange={({ checked }) => setIncludeHotmartXcod(checked)}
+              >
+                Adicionar xcod (Hotmart)
+              </Checkbox>
+            </FormControl>
             {includeHotmartXcod && (
               <Alert
                 title="Configuração Hotmart"

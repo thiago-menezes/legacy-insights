@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, Grid, Modal, Text, TextField, View } from 'reshaped';
+import { Button, Grid, Modal, Text, TextField, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { HotmartSyncModalProps } from './types';
 import { useHotmartSync } from './hooks';
@@ -91,13 +91,16 @@ export const HotmartSyncModal = ({
         </View>
 
         {error && (
-          <Alert
-            color="critical"
-            title="Erro na sincronização"
-            icon={<Icon name="alert-circle" size={20} />}
+          <View
+            backgroundColor="critical-faded"
+            borderRadius="medium"
+            padding={4}
+            gap={3}
           >
-            {error}
-          </Alert>
+            <Text variant="body-3" color="critical">
+              {error}
+            </Text>
+          </View>
         )}
 
         {stats && (
