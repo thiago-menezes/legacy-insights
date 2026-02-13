@@ -3,7 +3,8 @@ import { GeneratedScript, UtmScriptConfig } from './types';
 export const generateMetaAdsScript = (
   config: UtmScriptConfig,
 ): GeneratedScript => {
-  const script = `utm_source=meta_ads_{{site_source_name}}&utm_campaign={{campaign.id}}{{campaign.name}}&utm_medium={{adset.id}}{{adset.name}}&utm_content={{ad.id}}_{{ad.name}}&utm_term={{placement}}`;
+  const script =
+    'utm_source=meta_ads_{{site_source_name}}&utm_campaign={{campaign.id}}{{campaign.name}}&utm_medium={{adset.id}}{{adset.name}}&utm_content={{ad.id}}_{{ad.name}}&utm_term={{placement}}';
 
   const instructions = config.includeHotmartXcod
     ? 'Adicione estes parâmetros UTM no Meta Ads e configure o xcod no Hotmart para rastreamento completo de vendas.'
@@ -21,7 +22,8 @@ ${script}
 };
 
 export const generateGoogleAdsScript = (): GeneratedScript => {
-  const script = `utm_source=google_ads&utm_campaign={campaignid}&utm_medium={adgroupid}&utm_content={creative}&utm_term={placement}::{keyword}&keyword={keyword}&device={device}&network={network}`;
+  const script =
+    'utm_source=google_ads&utm_campaign={campaignid}&utm_medium={adgroupid}&utm_content={creative}&utm_term={placement}::{keyword}&keyword={keyword}&device={device}&network={network}';
 
   const instructions =
     'Adicione estes parâmetros na configuração de rastreamento da campanha do Google Ads.';
