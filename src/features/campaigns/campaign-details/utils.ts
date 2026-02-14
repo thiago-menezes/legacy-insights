@@ -71,7 +71,7 @@ export const aggregateMetrics = (metrics: DailyMetric[]): AggregatedMetrics => {
       landingPageViews: 0,
       initiateCheckouts: 0,
       outboundClicks: 0,
-    } as any,
+    },
   );
 
   const ctr =

@@ -1,13 +1,5 @@
-import { CampaignStatus, CampaignsFilters } from '../types';
+import { CampaignsFilters } from '../types';
 import { ActiveFilter } from './types';
-
-const STATUS_LABELS: Record<string, string> = {
-  active: 'Ativa',
-  paused: 'Pausada',
-  archived: 'Arquivada',
-  removed: 'Removida',
-  deleted: 'Deletada',
-};
 
 export const getActiveFilters = (filters: CampaignsFilters): ActiveFilter[] => {
   const activeFilters: ActiveFilter[] = [];
