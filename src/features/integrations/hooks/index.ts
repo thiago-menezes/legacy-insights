@@ -54,23 +54,26 @@ export const useIntegrations = (projectId?: string) => {
     }
   };
 
-  const handleProcess = async (id: string) => {
-    await processMutation.mutateAsync(id, {
-      onError: () => {
-        show({
-          title: 'Erro',
-          text: 'Falha ao iniciar processamento.',
-          color: 'critical',
-        });
+  const handleProcess = async (id: string, startDate?: string) => {
+    await processMutation.mutateAsync(
+      { id, startDate },
+      {
+        onError: () => {
+          show({
+            title: 'Erro',
+            text: 'Falha ao iniciar processamento.',
+            color: 'critical',
+          });
+        },
+        onSuccess: () => {
+          show({
+            title: 'Processamento',
+            text: 'O Processamento foi iniciado com sucesso. Aguarde o término do processamento para continuar!',
+            color: 'neutral',
+          });
+        },
       },
-      onSuccess: () => {
-        show({
-          title: 'Processamento',
-          text: 'O Processamento foi iniciado com sucesso. Aguarde o término do processamento para continuar!',
-          color: 'neutral',
-        });
-      },
-    });
+    );
   };
 
   const handleFormSubmit = async (values: IntegrationCreateInput) => {

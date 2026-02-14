@@ -36,6 +36,12 @@ export const aggregateMetrics = (metrics: DailyMetric[]): AggregatedMetrics => {
       roas: 0,
       cpa: 0,
       salesCount: 0,
+      results: 0,
+      purchases: 0,
+      purchaseValue: 0,
+      landingPageViews: 0,
+      initiateCheckouts: 0,
+      outboundClicks: 0,
     };
   }
 
@@ -45,8 +51,27 @@ export const aggregateMetrics = (metrics: DailyMetric[]): AggregatedMetrics => {
       impressions: acc.impressions + Number(m.impressions || 0),
       clicks: acc.clicks + Number(m.clicks || 0),
       conversions: acc.conversions + (m.conversions || 0),
+      results: (acc.results || 0) + Number(m.results || 0),
+      purchases: (acc.purchases || 0) + Number(m.purchases || 0),
+      purchaseValue: (acc.purchaseValue || 0) + Number(m.purchaseValue || 0),
+      landingPageViews:
+        (acc.landingPageViews || 0) + Number(m.landingPageViews || 0),
+      initiateCheckouts:
+        (acc.initiateCheckouts || 0) + Number(m.initiateCheckouts || 0),
+      outboundClicks: (acc.outboundClicks || 0) + Number(m.outboundClicks || 0),
     }),
-    { spend: 0, impressions: 0, clicks: 0, conversions: 0 },
+    {
+      spend: 0,
+      impressions: 0,
+      clicks: 0,
+      conversions: 0,
+      results: 0,
+      purchases: 0,
+      purchaseValue: 0,
+      landingPageViews: 0,
+      initiateCheckouts: 0,
+      outboundClicks: 0,
+    } as any,
   );
 
   const ctr =
@@ -63,10 +88,10 @@ export const aggregateMetrics = (metrics: DailyMetric[]): AggregatedMetrics => {
     cpc,
     cpm,
     costPerConversion,
-    revenue: 0,
-    roas: 0,
-    cpa: 0,
-    salesCount: 0,
+    revenue: totals.purchaseValue,
+    roas: totals.spend > 0 ? totals.purchaseValue / totals.spend : 0,
+    cpa: totals.purchases > 0 ? totals.spend / totals.purchases : 0,
+    salesCount: totals.purchases,
   };
 };
 
@@ -116,10 +141,16 @@ export const buildChartData = (metrics: DailyMetric[]): ChartDataPoint[] => {
       cpm: m.cpm || 0,
       conversions: m.conversions || 0,
       costPerConversion: m.costPerConversion || 0,
-      revenue: 0,
-      roas: 0,
-      cpa: 0,
-      salesCount: 0,
+      revenue: m.purchaseValue || 0,
+      roas: m.purchaseRoas || 0,
+      cpa: m.costPerPurchase || 0,
+      salesCount: m.purchases || 0,
+      results: m.results || 0,
+      purchases: m.purchases || 0,
+      purchaseValue: m.purchaseValue || 0,
+      landingPageViews: m.landingPageViews || 0,
+      initiateCheckouts: m.initiateCheckouts || 0,
+      outboundClicks: m.outboundClicks || 0,
     }));
 };
 

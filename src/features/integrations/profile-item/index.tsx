@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Badge, Button, Text, Tooltip, View } from 'reshaped';
+import { Badge, Button, Text, TextField, Tooltip, View } from 'reshaped';
 import { Icon } from '@/components/icon';
 import { PLATFORM_METADATA } from '../constants';
 import { useProfileStatus } from './hooks';
@@ -16,6 +16,7 @@ export const ProfileItem = ({
 }: ProfileItemProps) => {
   const { statusConfig, processStatusConfig } = useProfileStatus(profile);
   const [copied, setCopied] = useState(false);
+  const [startDate, setStartDate] = useState('');
 
   const platformMetadata = PLATFORM_METADATA.find(
     (m) => m.integrationType === profile.integration.type,
@@ -124,19 +125,35 @@ export const ProfileItem = ({
 
         {canManage && (
           <>
-            <Tooltip text="Processar Campanhas">
-              {(props) => (
-                <Button
-                  {...props}
-                  variant="outline"
-                  aria-label="Processar"
-                  onClick={() => onProcess(profile.id)}
-                  loading={profile.processStatus === 'processando'}
-                >
-                  <Icon name="player-play" size={18} />
-                </Button>
-              )}
-            </Tooltip>
+            <View direction="row" align="center" gap={2}>
+              <TextField
+                name="startDate"
+                inputAttributes={{ type: 'date' }}
+                size="small"
+                value={startDate}
+                onChange={(e) => setStartDate(e.value)}
+                placeholder="Data início"
+              />
+              <Tooltip
+                text={
+                  startDate
+                    ? 'Sincronizar desde a data'
+                    : 'Processar Campanhas (90 dias)'
+                }
+              >
+                {(props) => (
+                  <Button
+                    {...props}
+                    variant="outline"
+                    aria-label="Processar"
+                    onClick={() => onProcess(profile.id, startDate)}
+                    loading={profile.processStatus === 'processando'}
+                  >
+                    <Icon name="player-play" size={18} />
+                  </Button>
+                )}
+              </Tooltip>
+            </View>
 
             <Button
               variant="outline"

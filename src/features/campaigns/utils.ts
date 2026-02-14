@@ -7,48 +7,47 @@ export const mapStrapiToCampaignsData = (
   response: StrapiCampaignListResponse,
 ): CampaignsData => {
   const { data, meta } = response;
+  const metricsData = meta.metrics || {
+    totalSpend: 0,
+    totalLeads: 0,
+    totalClicks: 0,
+    totalConversions: 0,
+  };
 
-  let totalSpend = 0;
-  let totalLeads = 0;
-  let totalClicks = 0;
-  let totalConversions = 0;
-
-  const campaignRows = data.map((campaign) => {
-    campaign.dailyMetrics?.forEach((m) => {
-      totalSpend += Number(m.spend);
-      totalLeads += Number(m.leads);
-      totalClicks += Number(m.clicks);
-      totalConversions += Number(m.conversions);
-    });
-
-    return buildCampaignRow(campaign);
-  });
+  const campaignRows = data.map((campaign) => buildCampaignRow(campaign));
 
   const metrics = [
     {
       title: 'Valor investido',
-      value: formatCurrency(totalSpend),
+      value: formatCurrency(metricsData.totalSpend),
       previousValue: formatCurrency(0),
       percentageChange: 0,
       icon: 'wallet' as const,
     },
     {
       title: 'Leads',
-      value: formatNumber(totalLeads),
+      value: formatNumber(metricsData.totalLeads),
       previousValue: formatNumber(0),
       percentageChange: 0,
       icon: 'users' as const,
     },
     {
       title: 'Custo por aquisição',
-      value: formatCurrency(totalLeads > 0 ? totalSpend / totalLeads : 0),
+      value: formatCurrency(
+        metricsData.totalLeads > 0
+          ? metricsData.totalSpend / metricsData.totalLeads
+          : 0,
+      ),
       previousValue: formatCurrency(0),
       percentageChange: 0,
       icon: 'receipt' as const,
     },
     {
       title: 'Conversão em venda',
-      value: `${(totalClicks > 0 ? (totalConversions / totalClicks) * 100 : 0)
+      value: `${(metricsData.totalClicks > 0
+        ? (metricsData.totalConversions / metricsData.totalClicks) * 100
+        : 0
+      )
         .toFixed(2)
         .replace('.', ',')}%`,
       previousValue: '0%',

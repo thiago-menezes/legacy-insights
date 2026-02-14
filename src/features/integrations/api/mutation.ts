@@ -61,7 +61,13 @@ export const useProcessIntegrationMutation = (projectId?: string | number) => {
   const { refetch } = useIntegrationsQuery(projectId);
 
   return useMutation({
-    mutationFn: (id: string | number) => integrationsService.process(id),
+    mutationFn: ({
+      id,
+      startDate,
+    }: {
+      id: string | number;
+      startDate?: string;
+    }) => integrationsService.process(id, startDate),
     onSuccess: () => {
       refetch();
     },

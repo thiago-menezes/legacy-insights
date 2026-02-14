@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCampaignsQuery } from './api/query';
 import { CampaignsFilters } from './types';
 import { mapStrapiToCampaignsData } from './utils';
@@ -7,11 +8,20 @@ export const useCampaignsData = (
   platform: 'meta' | 'google' = 'meta',
   integrationId?: string | number,
 ) => {
-  const [filters, setFilters] = useState<CampaignsFilters>({
-    page: 1,
-    pageSize: 10,
-    integrationId,
-    sortBy: 'name',
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [filters, setFilters] = useState<CampaignsFilters>(() => {
+    const showOnlyActive = searchParams.get('active') === 'true';
+
+    return {
+      page: 1,
+      pageSize: 10,
+      integrationId,
+      sortBy: 'name',
+      showOnlyActive,
+    };
   });
 
   const { data, isLoading, error, refetch } = useCampaignsQuery({
@@ -74,13 +84,24 @@ export const useCampaignsData = (
     }));
   }, []);
 
-  const handleShowOnlyActiveChange = useCallback((value: boolean) => {
-    setFilters((prev) => ({
-      ...prev,
-      showOnlyActive: value,
-      page: 1,
-    }));
-  }, []);
+  const handleShowOnlyActiveChange = useCallback(
+    (value: boolean) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set('active', 'true');
+      } else {
+        params.delete('active');
+      }
+      router.replace(`${pathname}?${params.toString()}`);
+
+      setFilters((prev) => ({
+        ...prev,
+        showOnlyActive: value,
+        page: 1,
+      }));
+    },
+    [pathname, router, searchParams],
+  );
 
   const handleStatusChange = useCallback(
     (status: CampaignsFilters['status']) => {
@@ -131,6 +152,10 @@ export const useCampaignsData = (
   );
 
   const handleClearAllFilters = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('active');
+    router.replace(`${pathname}?${params.toString()}`);
+
     setFilters((prev) => ({
       page: 1,
       pageSize: prev.pageSize,
@@ -138,7 +163,7 @@ export const useCampaignsData = (
       sortBy: prev.sortBy,
       sortOrder: prev.sortOrder,
     }));
-  }, []);
+  }, [pathname, router, searchParams]);
 
   return {
     data: mappedData,

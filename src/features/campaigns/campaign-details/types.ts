@@ -16,7 +16,13 @@ export type MetricKey =
   | 'revenue'
   | 'roas'
   | 'cpa'
-  | 'salesCount';
+  | 'salesCount'
+  | 'results'
+  | 'purchases'
+  | 'purchaseValue'
+  | 'landingPageViews'
+  | 'initiateCheckouts'
+  | 'outboundClicks';
 
 export type MetricFormat = 'currency' | 'number' | 'compact' | 'percentage';
 
@@ -43,6 +49,12 @@ export interface AggregatedMetrics {
   roas: number;
   cpa: number;
   salesCount: number;
+  results: number;
+  purchases: number;
+  purchaseValue: number;
+  landingPageViews: number;
+  initiateCheckouts: number;
+  outboundClicks: number;
 }
 
 export interface ChartDataPoint {
@@ -60,6 +72,12 @@ export interface ChartDataPoint {
   roas: number;
   cpa: number;
   salesCount: number;
+  results: number;
+  purchases: number;
+  purchaseValue: number;
+  landingPageViews: number;
+  initiateCheckouts: number;
+  outboundClicks: number;
 }
 
 export interface MetricCardData {

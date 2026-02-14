@@ -49,7 +49,13 @@ export const validate = async (id: string | number) => {
   return data;
 };
 
-export const process = async (id: string | number) => {
-  const { data } = await apiClient.post(`/api/integrations/${id}/process`);
+export const process = async (id: string | number, startDate?: string) => {
+  const endDate = startDate
+    ? new Date().toISOString().split('T')[0]
+    : undefined;
+  const { data } = await apiClient.post(`/api/integrations/${id}/process`, {
+    startDate,
+    endDate,
+  });
   return data;
 };

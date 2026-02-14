@@ -1,4 +1,9 @@
-export type UtmPlatform = 'meta_ads' | 'google_ads' | 'custom';
+export type UtmPlatform =
+  | 'meta_ads'
+  | 'google_ads'
+  | 'tiktok_ads'
+  | 'custom'
+  | 'tracking_script';
 
 export interface UtmScriptConfig {
   platform: UtmPlatform;

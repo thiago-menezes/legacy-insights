@@ -30,24 +30,5 @@ export const getActiveFilters = (filters: CampaignsFilters): ActiveFilter[] => {
     });
   }
 
-  // Status filter
-  if (filters.status && filters.status.length > 0) {
-    filters.status.forEach((status: CampaignStatus) => {
-      activeFilters.push({
-        key: 'status',
-        label: `Status: ${STATUS_LABELS[status] || status}`,
-        value: status,
-      });
-    });
-  }
-
-  // Show only active filter
-  if (filters.showOnlyActive) {
-    activeFilters.push({
-      key: 'showOnlyActive',
-      label: 'Apenas ativas',
-    });
-  }
-
   return activeFilters;
 };

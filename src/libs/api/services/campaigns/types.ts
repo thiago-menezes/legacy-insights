@@ -14,6 +14,23 @@ export interface DailyMetric {
   conversionRate: number;
   costPerConversion: number;
   costPerLead: number;
+  results: number;
+  costPerResult: number;
+  purchases: number;
+  purchaseValue: number;
+  purchaseRoas: number;
+  costPerPurchase: number;
+  landingPageViews: number;
+  costPerLandingPageView: number;
+  initiateCheckouts: number;
+  costPerInitiateCheckout: number;
+  outboundClicks: number;
+  costPerOutboundClick: number;
+  outboundClicksCtr: number;
+  connectRate: number;
+  initiateCheckoutRate: number;
+  checkoutRate: number;
+  overallConversionRate: number;
 }
 
 export interface StrapiCampaign {
@@ -39,6 +56,12 @@ export interface StrapiCampaignListResponse {
       pageSize: number;
       pageCount: number;
       total: number;
+    };
+    metrics?: {
+      totalSpend: number;
+      totalLeads: number;
+      totalClicks: number;
+      totalConversions: number;
     };
   };
 }

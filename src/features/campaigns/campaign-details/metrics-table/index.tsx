@@ -42,8 +42,11 @@ export const MetricsTable = ({ data }: MetricsTableProps) => {
                 <Table.Cell>CTR</Table.Cell>
                 <Table.Cell>CPC</Table.Cell>
                 <Table.Cell>CPM</Table.Cell>
-                <Table.Cell>Conversões</Table.Cell>
-                <Table.Cell>Custo/Conv.</Table.Cell>
+                <Table.Cell>Resultados</Table.Cell>
+                <Table.Cell>Vendas</Table.Cell>
+                <Table.Cell>Receita</Table.Cell>
+                <Table.Cell>Viz. Página</Table.Cell>
+                <Table.Cell>Checkouts</Table.Cell>
               </Table.Row>
             </Table.Head>
             <Table.Body>
@@ -77,10 +80,33 @@ export const MetricsTable = ({ data }: MetricsTableProps) => {
                     <Text>{formatCurrency(metric.cpm)}</Text>
                   </Table.Cell>
                   <Table.Cell>
-                    <Text>{metric.conversions || 0}</Text>
+                    <Text>
+                      {formatCompactNumber(Number(metric.results || 0))}
+                    </Text>
                   </Table.Cell>
                   <Table.Cell>
-                    <Text>{formatCurrency(metric.costPerConversion)}</Text>
+                    <Text>
+                      {formatCompactNumber(Number(metric.purchases || 0))}
+                    </Text>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Text>
+                      {formatCurrency(Number(metric.purchaseValue || 0))}
+                    </Text>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Text>
+                      {formatCompactNumber(
+                        Number(metric.landingPageViews || 0),
+                      )}
+                    </Text>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Text>
+                      {formatCompactNumber(
+                        Number(metric.initiateCheckouts || 0),
+                      )}
+                    </Text>
                   </Table.Cell>
                 </Table.Row>
               ))}

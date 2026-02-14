@@ -5,10 +5,12 @@ import {
   generateCustomUtmUrl,
   generateGoogleAdsScript,
   generateMetaAdsScript,
+  generateTikTokAdsScript,
+  generateCaptureScriptSnippet,
 } from './script-generator';
-import { UtmPlatform, UtmScriptConfig } from './types';
+import { UtmPlatform, UtmScriptConfig, UtmScriptsProps } from './types';
 
-export const useUtmScripts = () => {
+export const useUtmScripts = (props: UtmScriptsProps) => {
   const [selectedPlatform, setSelectedPlatform] =
     useState<UtmPlatform>('meta_ads');
   const [includeHotmartXcod, setIncludeHotmartXcod] = useState(false);
@@ -28,13 +30,13 @@ export const useUtmScripts = () => {
     if (success) {
       show({
         title: 'Copiado!',
-        text: 'Script copiado para a área de transferência',
+        text: 'Copiado para a área de transferência',
         color: 'positive',
       });
     } else {
       show({
         title: 'Erro',
-        text: 'Falha ao copiar script',
+        text: 'Falha ao copiar',
         color: 'critical',
       });
     }
@@ -54,6 +56,14 @@ export const useUtmScripts = () => {
     return generateGoogleAdsScript();
   };
 
+  const getTikTokAdsScript = () => {
+    return generateTikTokAdsScript();
+  };
+
+  const getCaptureScript = () => {
+    return generateCaptureScriptSnippet(props.projectId);
+  };
+
   const getCustomUtmUrl = () => {
     return generateCustomUtmUrl(customConfig);
   };
@@ -68,6 +78,8 @@ export const useUtmScripts = () => {
     handleCopy,
     getMetaAdsScript,
     getGoogleAdsScript,
+    getTikTokAdsScript,
+    getCaptureScript,
     getCustomUtmUrl,
   };
 };

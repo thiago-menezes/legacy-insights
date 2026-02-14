@@ -2,11 +2,9 @@
 
 import { useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { Button, Grid, Tabs, View } from 'reshaped';
-import { Icon } from '@/components/icon';
+import { Grid, Switch, Tabs, View } from 'reshaped';
 import { MetricCard } from '@/components/metric-card';
 import { useDataAccessStatus } from '@/hooks';
-import { AdvancedFilters } from './advanced-filters';
 import { CampaignSearch } from './campaign-search';
 import { TABS } from './constants';
 import { DateRangeFilter } from './date-range-filter';
@@ -24,7 +22,6 @@ export const Campaigns = () => {
   const searchParams = useSearchParams();
   const integrationId = searchParams.get('integrationId');
   const [dateRange, setDateRange] = useState(90);
-  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
 
   const {
     data,
@@ -34,7 +31,7 @@ export const Campaigns = () => {
     handlePageSizeChange,
     handleSearchChange,
     handleDateRangeChange,
-    handleAdvancedFiltersChange,
+    handleShowOnlyActiveChange,
     handleRemoveFilter,
     handleClearAllFilters,
   } = useCampaignsData(platformParam, integrationId || undefined);
@@ -144,13 +141,13 @@ export const Campaigns = () => {
             }}
           />
 
-          <Button
-            variant="outline"
-            icon={<Icon name="adjustments-horizontal" size={18} />}
-            onClick={() => setIsFiltersModalOpen(true)}
+          <Switch
+            name="showOnlyActive"
+            checked={!!filters.showOnlyActive}
+            onChange={({ checked }) => handleShowOnlyActiveChange(checked)}
           >
-            Filtros
-          </Button>
+            Somente ativas
+          </Switch>
         </div>
       </View>
 
@@ -179,17 +176,6 @@ export const Campaigns = () => {
           platform={platformParam}
         />
       )}
-
-      <AdvancedFilters
-        key={isFiltersModalOpen ? 'open' : 'closed'}
-        active={isFiltersModalOpen}
-        onClose={() => setIsFiltersModalOpen(false)}
-        onApply={handleAdvancedFiltersChange}
-        currentFilters={{
-          status: filters.status,
-          showOnlyActive: filters.showOnlyActive,
-        }}
-      />
     </View>
   );
 };
