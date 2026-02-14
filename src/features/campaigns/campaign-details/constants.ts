@@ -91,6 +91,12 @@ export const CHART_COLORS: Record<MetricKey, string> = {
   roas: '#f59e0b',
   cpa: '#ef4444',
   salesCount: '#8b5cf6',
+  results: '#3b82f6',
+  purchases: '#10b981',
+  purchaseValue: '#f59e0b',
+  landingPageViews: '#6366f1',
+  initiateCheckouts: '#f43f5e',
+  outboundClicks: '#8b5cf6',
 };
 
 export const DEFAULT_DATE_RANGE = 30;
